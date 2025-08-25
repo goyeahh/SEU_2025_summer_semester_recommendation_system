@@ -1,0 +1,2 @@
+# SEU_2025_summer_semester_recommendation_system
+2025暑期学校专业技能实训大数据推荐系统
