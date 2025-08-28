@@ -1,0 +1,232 @@
+2025-08-28 23:05:15,667 - __main__ - INFO - 多平台电影爬虫系统初始化完成
+2025-08-28 23:05:23,162 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-08-28 23:05:23,162 - __main__ - ERROR - 爬取 douban 时发生异常: 'DoubanMovieCrawler' object has no attribute 'get_supported_categories'
+2025-08-28 23:05:23,164 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-08-28 23:05:23,164 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['popular'], 最大数量: 50
+2025-08-28 23:05:23,165 - imdb_crawler.crawler - INFO - 生成了 1 个列表页面URL
+2025-08-28 23:05:23,199 - WDM - INFO - ====== WebDriver manager ======
+2025-08-28 23:05:23,979 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:05:24,601 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:05:25,123 - WDM - INFO - There is no [win64] chromedriver "139.0.7258.154" for browser google-chrome "139.0.7258" in cache
+2025-08-28 23:05:25,123 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:05:26,791 - WDM - INFO - WebDriver version 139.0.7258.154 selected
+2025-08-28 23:05:26,797 - WDM - INFO - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-08-28 23:05:26,797 - WDM - INFO - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-08-28 23:05:27,495 - WDM - INFO - Driver downloading response is 200
+2025-08-28 23:05:29,273 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:05:30,500 - WDM - INFO - Driver has been saved in cache [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154]
+2025-08-28 23:05:32,213 - imdb_crawler.network - INFO - Chrome WebDriver 初始化成功
+2025-08-28 23:05:36,737 - imdb_crawler.parser - INFO - 从IMDB列表页面解析到 100 个电影链接
+2025-08-28 23:05:36,737 - imdb_crawler.crawler - INFO - 从 popular 分类收集到 50 个电影链接
+2025-08-28 23:05:36,738 - imdb_crawler.crawler - INFO - 收集到 50 个唯一电影链接
+2025-08-28 23:05:36,738 - imdb_crawler.crawler - INFO - 将爬取 50 部电影的详情
+2025-08-28 23:05:40,343 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Elio
+2025-08-28 23:05:44,207 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Anniversary
+2025-08-28 23:05:47,695 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Mahavatar Narsimha
+2025-08-28 23:05:52,800 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Death of a Unicorn
+2025-08-28 23:05:56,763 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Eddington
+2025-08-28 23:06:00,349 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Roses
+2025-08-28 23:06:05,112 - imdb_crawler.parser - INFO - 成功解析IMDB电影: 28 Years Later
+2025-08-28 23:06:09,621 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Good Boy
+2025-08-28 23:06:12,805 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Broke
+2025-08-28 23:06:17,186 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Bring Her Back
+2025-08-28 23:06:20,517 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Mastermind
+2025-08-28 23:06:24,792 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Phoenician Scheme
+2025-08-28 23:06:28,562 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Eden
+2025-08-28 23:06:32,328 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Tehran
+2025-08-28 23:06:35,889 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Heads of State
+2025-08-28 23:06:39,890 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Inception
+2025-08-28 23:06:44,653 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Dangerous Animals
+2025-08-28 23:06:47,408 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Honey Don't!
+2025-08-28 23:06:51,809 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Oppenheimer
+2025-08-28 23:06:54,805 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Weapons
+2025-08-28 23:06:57,943 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Pickup
+2025-08-28 23:07:01,414 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Maa
+2025-08-28 23:07:06,267 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Americana
+2025-08-28 23:07:08,790 - imdb_crawler.parser - INFO - 成功解析IMDB电影: War 2
+2025-08-28 23:07:13,738 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Substance
+2025-08-28 23:07:18,587 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Kiss of the Spider Woman
+2025-08-28 23:07:22,619 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Bad Guys 2
+2025-08-28 23:07:26,127 - imdb_crawler.parser - INFO - 成功解析IMDB电影: War of the Worlds
+2025-08-28 23:07:29,274 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Primitive War
+2025-08-28 23:07:33,576 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Shawshank Redemption
+2025-08-28 23:07:36,575 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Thunderbolts*
+2025-08-28 23:07:39,596 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Se7en
+2025-08-28 23:07:43,544 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Amateur
+2025-08-28 23:07:46,226 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Companion
+2025-08-28 23:07:49,260 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Alien
+2025-08-28 23:07:53,171 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Life of Chuck
+2025-08-28 23:07:57,136 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Coolie
+2025-08-28 23:08:00,773 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Inglourious Basterds
+2025-08-28 23:08:03,282 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Fall for Me
+2025-08-28 23:08:07,112 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Once Upon a Time... in Hollywood
+2025-08-28 23:08:11,104 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Black Bag
+2025-08-28 23:08:15,660 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Fantastic Four: First Steps
+2025-08-28 23:08:20,013 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Final Destination: Bloodlines
+2025-08-28 23:08:23,762 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Godfather
+2025-08-28 23:08:27,001 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Barbarian
+2025-08-28 23:08:31,166 - imdb_crawler.parser - INFO - 成功解析IMDB电影: The Monkey
+2025-08-28 23:08:34,526 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Materialists
+2025-08-28 23:08:38,637 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Night Always Comes
+2025-08-28 23:08:42,582 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Nonnas
+2025-08-28 23:08:47,067 - imdb_crawler.parser - INFO - 成功解析IMDB电影: Happy Gilmore 2
+2025-08-28 23:08:47,068 - imdb_crawler.crawler - INFO - 成功爬取 50 部电影详情
+2025-08-28 23:08:47,068 - imdb_crawler.data_processor - INFO - 数据清洗完成，有效数据: 50 条
+2025-08-28 23:08:47,903 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt4900148.jpg
+2025-08-28 23:08:47,903 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt4900148.jpg
+2025-08-28 23:08:48,010 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt12583926.jpg
+2025-08-28 23:08:48,010 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt12583926.jpg
+2025-08-28 23:08:48,193 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt34365591.jpg
+2025-08-28 23:08:48,193 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt34365591.jpg
+2025-08-28 23:08:48,718 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt28443655.jpg
+2025-08-28 23:08:48,719 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt28443655.jpg
+2025-08-28 23:08:49,056 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt31176520.jpg
+2025-08-28 23:08:49,056 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt31176520.jpg
+2025-08-28 23:08:49,481 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt31973693.jpg
+2025-08-28 23:08:49,481 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt31973693.jpg
+2025-08-28 23:08:49,772 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt10548174.jpg
+2025-08-28 23:08:49,773 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt10548174.jpg
+2025-08-28 23:08:49,829 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt35521922.jpg
+2025-08-28 23:08:49,830 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt35521922.jpg
+2025-08-28 23:08:50,150 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt35048826.jpg
+2025-08-28 23:08:50,151 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt35048826.jpg
+2025-08-28 23:08:50,323 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt32246771.jpg
+2025-08-28 23:08:50,323 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt32246771.jpg
+2025-08-28 23:08:50,538 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt33455099.jpg
+2025-08-28 23:08:50,538 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt33455099.jpg
+2025-08-28 23:08:50,652 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30840798.jpg
+2025-08-28 23:08:50,652 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30840798.jpg
+2025-08-28 23:08:50,948 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt23149780.jpg
+2025-08-28 23:08:50,948 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt23149780.jpg
+2025-08-28 23:08:51,153 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt21818782.jpg
+2025-08-28 23:08:51,154 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt21818782.jpg
+2025-08-28 23:08:51,257 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt13357520.jpg
+2025-08-28 23:08:51,257 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt13357520.jpg
+2025-08-28 23:08:51,418 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt1375666.jpg
+2025-08-28 23:08:51,418 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt1375666.jpg
+2025-08-28 23:08:51,696 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt32299316.jpg
+2025-08-28 23:08:51,696 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt32299316.jpg
+2025-08-28 23:08:51,965 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30645201.jpg
+2025-08-28 23:08:51,965 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30645201.jpg
+2025-08-28 23:08:52,345 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt15398776.jpg
+2025-08-28 23:08:52,345 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt15398776.jpg
+2025-08-28 23:08:52,623 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt26581740.jpg
+2025-08-28 23:08:52,623 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt26581740.jpg
+2025-08-28 23:08:52,931 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30445556.jpg
+2025-08-28 23:08:52,931 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30445556.jpg
+2025-08-28 23:08:53,175 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30496762.jpg
+2025-08-28 23:08:53,175 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30496762.jpg
+2025-08-28 23:08:53,517 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt17676734.jpg
+2025-08-28 23:08:53,517 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt17676734.jpg
+2025-08-28 23:08:53,696 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt27425164.jpg
+2025-08-28 23:08:53,696 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt27425164.jpg
+2025-08-28 23:08:53,865 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt17526714.jpg
+2025-08-28 23:08:53,865 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt17526714.jpg
+2025-08-28 23:08:54,573 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30400277.jpg
+2025-08-28 23:08:54,573 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30400277.jpg
+2025-08-28 23:08:54,922 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30017619.jpg
+2025-08-28 23:08:54,923 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30017619.jpg
+2025-08-28 23:08:55,125 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt13186306.jpg
+2025-08-28 23:08:55,126 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt13186306.jpg
+2025-08-28 23:08:55,421 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt18312380.jpg
+2025-08-28 23:08:55,421 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt18312380.jpg
+2025-08-28 23:08:55,782 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0111161.jpg
+2025-08-28 23:08:55,782 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0111161.jpg
+2025-08-28 23:08:55,838 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt20969586.jpg
+2025-08-28 23:08:55,839 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt20969586.jpg
+2025-08-28 23:08:56,026 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0114369.jpg
+2025-08-28 23:08:56,026 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0114369.jpg
+2025-08-28 23:08:56,262 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0899043.jpg
+2025-08-28 23:08:56,262 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0899043.jpg
+2025-08-28 23:08:56,395 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt26584495.jpg
+2025-08-28 23:08:56,395 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt26584495.jpg
+2025-08-28 23:08:56,701 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0078748.jpg
+2025-08-28 23:08:56,702 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0078748.jpg
+2025-08-28 23:08:57,026 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt12908150.jpg
+2025-08-28 23:08:57,026 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt12908150.jpg
+2025-08-28 23:08:57,310 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt27441481.jpg
+2025-08-28 23:08:57,310 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt27441481.jpg
+2025-08-28 23:08:57,467 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0361748.jpg
+2025-08-28 23:08:57,469 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0361748.jpg
+2025-08-28 23:08:57,569 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt32543884.jpg
+2025-08-28 23:08:57,569 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt32543884.jpg
+2025-08-28 23:08:57,739 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt7131622.jpg
+2025-08-28 23:08:57,740 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt7131622.jpg
+2025-08-28 23:08:58,008 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30988739.jpg
+2025-08-28 23:08:58,009 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30988739.jpg
+2025-08-28 23:08:58,205 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt10676052.jpg
+2025-08-28 23:08:58,205 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt10676052.jpg
+2025-08-28 23:08:58,310 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt9619824.jpg
+2025-08-28 23:08:58,310 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt9619824.jpg
+2025-08-28 23:08:58,471 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt0068646.jpg
+2025-08-28 23:08:58,472 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt0068646.jpg
+2025-08-28 23:08:58,702 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt15791034.jpg
+2025-08-28 23:08:58,702 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt15791034.jpg
+2025-08-28 23:08:59,027 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt27714946.jpg
+2025-08-28 23:08:59,027 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt27714946.jpg
+2025-08-28 23:08:59,282 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt30253473.jpg
+2025-08-28 23:08:59,282 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt30253473.jpg
+2025-08-28 23:08:59,501 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt31567422.jpg
+2025-08-28 23:08:59,501 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt31567422.jpg
+2025-08-28 23:08:59,595 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt28309594.jpg
+2025-08-28 23:08:59,596 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt28309594.jpg
+2025-08-28 23:08:59,762 - imdb_crawler.network - INFO - 成功下载图片: data/imdb_posters\tt31868189.jpg
+2025-08-28 23:08:59,762 - imdb_crawler.data_processor - INFO - 成功下载IMDB海报: tt31868189.jpg
+2025-08-28 23:08:59,762 - imdb_crawler.data_processor - INFO - 生成神经网络特征完成: (50, 38)
+2025-08-28 23:09:00,190 - imdb_crawler.data_processor - INFO - 处理后的数据已保存:
+2025-08-28 23:09:00,190 - imdb_crawler.data_processor - INFO - - JSON: data\imdb_movies_20250828_230859.json
+2025-08-28 23:09:00,190 - imdb_crawler.data_processor - INFO - - XLSX: data\imdb_movies_20250828_230859.xlsx
+2025-08-28 23:09:00,190 - imdb_crawler.data_processor - INFO - - CSV: data\imdb_movies_20250828_230859.csv
+2025-08-28 23:09:00,191 - imdb_crawler.data_processor - INFO - - FEATURES: data\imdb_neural_features_20250828_230859.npy
+2025-08-28 23:09:00,191 - imdb_crawler.data_processor - INFO - - FEATURE_INFO: data\imdb_feature_info_20250828_230859.json
+2025-08-28 23:09:00,191 - imdb_crawler.crawler - INFO - 爬虫任务完成！成功获取 50 部电影信息
+2025-08-28 23:09:02,301 - imdb_crawler.network - INFO - WebDriver 已关闭
+2025-08-28 23:09:02,304 - rotten_tomatoes_crawler.crawler - INFO - 烂番茄电影爬虫初始化完成
+2025-08-28 23:09:02,304 - rotten_tomatoes_crawler.crawler - INFO - 开始爬取烂番茄电影数据 - 分类: ['most_popular'], 最大数量: 50
+2025-08-28 23:09:02,304 - rotten_tomatoes_crawler.crawler - INFO - 生成了 2 个列表页面URL
+2025-08-28 23:09:02,305 - WDM - INFO - ====== WebDriver manager ======
+2025-08-28 23:09:03,040 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:09:03,799 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:09:04,748 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-08-28 23:09:05,843 - rotten_tomatoes_crawler.network - INFO - Chrome WebDriver 初始化成功
+2025-08-28 23:09:20,687 - rotten_tomatoes_crawler.parser - INFO - 从烂番茄列表页面解析到 33 个电影链接
+2025-08-28 23:09:40,720 - rotten_tomatoes_crawler.parser - INFO - 从烂番茄列表页面解析到 33 个电影链接
+2025-08-28 23:09:42,722 - rotten_tomatoes_crawler.crawler - INFO - 从 most_popular 分类收集到 33 个电影链接
+2025-08-28 23:09:42,723 - rotten_tomatoes_crawler.crawler - INFO - 收集到 33 个唯一电影链接
+2025-08-28 23:09:42,723 - rotten_tomatoes_crawler.crawler - INFO - 将爬取 33 部电影的详情
+2025-08-28 23:09:53,546 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Stans | Rotten Tomatoes
+2025-08-28 23:10:06,636 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Together (2025) | Rotten Tomatoes
+2025-08-28 23:17:24,066 - __main__ - INFO - 多平台电影爬虫系统初始化完成
+2025-08-28 23:17:31,173 - rotten_tomatoes_crawler.crawler - INFO - 烂番茄电影爬虫初始化完成
+2025-08-28 23:17:31,173 - rotten_tomatoes_crawler.crawler - INFO - 开始爬取烂番茄电影数据 - 分类: ['most_popular'], 最大数量: 10
+2025-08-28 23:17:31,173 - rotten_tomatoes_crawler.crawler - INFO - 生成了 1 个列表页面URL
+2025-08-28 23:17:31,181 - WDM - INFO - ====== WebDriver manager ======
+2025-08-28 23:17:31,924 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:17:32,460 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:17:33,150 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-08-28 23:17:34,266 - rotten_tomatoes_crawler.network - INFO - Chrome WebDriver 初始化成功
+2025-08-28 23:17:51,113 - rotten_tomatoes_crawler.parser - INFO - 从烂番茄列表页面解析到 33 个电影链接
+2025-08-28 23:17:51,114 - rotten_tomatoes_crawler.crawler - INFO - 从 most_popular 分类收集到 10 个电影链接
+2025-08-28 23:17:51,114 - rotten_tomatoes_crawler.crawler - INFO - 收集到 10 个唯一电影链接
+2025-08-28 23:17:51,114 - rotten_tomatoes_crawler.crawler - INFO - 将爬取 10 部电影的详情
+2025-08-28 23:18:06,561 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Together (2025) | Rotten Tomatoes
+2025-08-28 23:18:19,121 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Red Sonja | Rotten Tomatoes
+2025-08-28 23:18:29,848 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Roy Orbison and Friends: A Black and White Night | Rotten Tomatoes
+2025-08-28 23:18:41,864 - rotten_tomatoes_crawler.parser - INFO - 成功解析烂番茄电影: Puberty Blues | Rotten Tomatoes
+2025-08-28 23:18:50,349 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)': /session/a39717439c820a1de96239716449402d
+2025-08-28 23:18:54,425 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001C7F7C7D5E0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/a39717439c820a1de96239716449402d
+2025-08-28 23:18:58,517 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001C7F7C7D700>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/a39717439c820a1de96239716449402d
+2025-08-28 23:19:02,597 - rotten_tomatoes_crawler.network - INFO - WebDriver 已关闭
+2025-08-28 23:20:38,610 - __main__ - INFO - 多平台电影爬虫系统初始化完成
+2025-08-28 23:20:45,419 - rotten_tomatoes_crawler.crawler - INFO - 烂番茄电影爬虫初始化完成
+2025-08-28 23:20:45,420 - rotten_tomatoes_crawler.crawler - INFO - 开始爬取烂番茄电影数据 - 分类: ['most_popular'], 最大数量: 2
+2025-08-28 23:20:45,420 - rotten_tomatoes_crawler.crawler - INFO - 生成了 1 个列表页面URL
+2025-08-28 23:20:45,427 - WDM - INFO - ====== WebDriver manager ======
+2025-08-28 23:20:46,151 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:21:07,602 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-28 23:21:29,032 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-08-28 23:21:30,164 - rotten_tomatoes_crawler.network - INFO - Chrome WebDriver 初始化成功
+2025-08-28 23:22:03,242 - rotten_tomatoes_crawler.parser - INFO - 从烂番茄列表页面解析到 33 个电影链接
+2025-08-28 23:22:03,243 - rotten_tomatoes_crawler.crawler - INFO - 从 most_popular 分类收集到 2 个电影链接
+2025-08-28 23:22:03,243 - rotten_tomatoes_crawler.crawler - INFO - 收集到 2 个唯一电影链接
+2025-08-28 23:22:03,243 - rotten_tomatoes_crawler.crawler - INFO - 将爬取 2 部电影的详情
