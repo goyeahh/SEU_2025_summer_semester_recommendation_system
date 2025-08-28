@@ -63,6 +63,7 @@ class DataProcessor:
         
         for movie in raw_data:
             if not movie or not self._is_valid_movie(movie):
+                #self.logger.warning("debug1")
                 continue
             
             cleaned_movie = self._clean_single_movie(movie)

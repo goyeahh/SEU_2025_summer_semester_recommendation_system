@@ -1,0 +1,78 @@
+2025-08-29 03:36:09,935 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-08-29 03:36:09,935 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot'], 最大数量: 50
+2025-08-29 03:36:09,936 - douban_crawler.crawler - INFO - 生成了 5 个列表页面URL
+2025-08-29 03:36:10,639 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:36:12,334 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:36:13,122 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:36:14,894 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:36:16,157 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:36:17,245 - douban_crawler.crawler - INFO - 收集到 10 个唯一电影链接
+2025-08-29 03:36:17,245 - douban_crawler.crawler - INFO - 将爬取 10 部电影的详情
+2025-08-29 03:36:18,083 - douban_crawler.parser - INFO - 成功解析电影: 关于约会的一切 - 电影
+ - 豆瓣
+2025-08-29 03:36:20,321 - douban_crawler.parser - INFO - 成功解析电影: 同甘共苦 - 电影
+ - 豆瓣
+2025-08-29 03:36:22,938 - douban_crawler.parser - INFO - 成功解析电影: 8号出口 - 电影
+ - 豆瓣
+2025-08-29 03:36:25,163 - douban_crawler.parser - INFO - 成功解析电影: 夜班 - 电影
+ - 豆瓣
+2025-08-29 03:36:26,790 - douban_crawler.parser - INFO - 成功解析电影: 初吻 - 电影
+ - 豆瓣
+2025-08-29 03:36:28,728 - douban_crawler.parser - INFO - 成功解析电影: 鬼灭之刃剧场版无限城篇第一章猗窝座再来 - 电影
+ - 豆瓣
+2025-08-29 03:36:30,258 - douban_crawler.parser - INFO - 成功解析电影: 凶器 - 电影
+ - 豆瓣
+2025-08-29 03:36:32,474 - douban_crawler.parser - INFO - 成功解析电影: 有朵云像你 - 电影
+ - 豆瓣
+2025-08-29 03:36:34,467 - douban_crawler.parser - INFO - 成功解析电影: 惊变28年 - 电影
+ - 豆瓣
+2025-08-29 03:36:36,578 - douban_crawler.parser - INFO - 成功解析电影: 物质主义者 - 电影
+ - 豆瓣
+2025-08-29 03:36:37,600 - douban_crawler.crawler - INFO - 成功爬取 10 部电影详情
+2025-08-29 03:36:37,600 - douban_crawler.data_processor - INFO - 数据清洗完成，有效数据: 0 条
+2025-08-29 03:36:37,600 - douban_crawler.data_processor - WARNING - 数据清洗后没有有效数据
+2025-08-29 03:36:37,600 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 0 部电影信息
+2025-08-29 03:41:31,589 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-08-29 03:41:31,590 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot'], 最大数量: 50
+2025-08-29 03:41:31,590 - douban_crawler.crawler - INFO - 生成了 5 个列表页面URL
+2025-08-29 03:41:32,600 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:41:33,635 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:41:34,645 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:41:36,159 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:41:37,881 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-08-29 03:41:38,575 - douban_crawler.crawler - INFO - 收集到 10 个唯一电影链接
+2025-08-29 03:41:38,575 - douban_crawler.crawler - INFO - 将爬取 10 部电影的详情
+2025-08-29 03:41:39,425 - douban_crawler.parser - INFO - 成功解析电影: 惊变28年 - 电影
+ - 豆瓣
+2025-08-29 03:41:41,086 - douban_crawler.parser - INFO - 成功解析电影: 初吻 - 电影
+ - 豆瓣
+2025-08-29 03:41:42,824 - douban_crawler.parser - INFO - 成功解析电影: 有朵云像你 - 电影
+ - 豆瓣
+2025-08-29 03:41:45,361 - douban_crawler.parser - INFO - 成功解析电影: 同甘共苦 - 电影
+ - 豆瓣
+2025-08-29 03:41:47,008 - douban_crawler.parser - INFO - 成功解析电影: 8号出口 - 电影
+ - 豆瓣
+2025-08-29 03:41:49,401 - douban_crawler.parser - INFO - 成功解析电影: 凶器 - 电影
+ - 豆瓣
+2025-08-29 03:41:51,640 - douban_crawler.parser - INFO - 成功解析电影: 鬼灭之刃剧场版无限城篇第一章猗窝座再来 - 电影
+ - 豆瓣
+2025-08-29 03:41:53,562 - douban_crawler.parser - INFO - 成功解析电影: 夜班 - 电影
+ - 豆瓣
+2025-08-29 03:41:55,703 - douban_crawler.parser - INFO - 成功解析电影: 关于约会的一切 - 电影
+ - 豆瓣
+2025-08-29 03:41:57,905 - douban_crawler.parser - INFO - 成功解析电影: 物质主义者 - 电影
+ - 豆瓣
+2025-08-29 03:41:59,341 - douban_crawler.crawler - INFO - 成功爬取 10 部电影详情
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数1
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - INFO - 数据清洗完成，有效数据: 0 条
+2025-08-29 03:41:59,341 - douban_crawler.data_processor - WARNING - 数据清洗后没有有效数据
+2025-08-29 03:41:59,341 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 0 部电影信息

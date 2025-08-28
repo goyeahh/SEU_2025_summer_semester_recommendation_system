@@ -7,12 +7,12 @@
 
 import sys
 import os
-from douban_crawler import DoubanMovieCrawler, Config
+from douban_crawler import DoubanCrawler, Config
 
 
 def main():
     """主函数"""
-    print("🎬 豆瓣电影爬虫系统 v1.0")
+    print(" 豆瓣电影爬虫系统 v1.0")
     print("=" * 50)
     print("适用于：大数据真值推荐系统项目")
     print("功能：从豆瓣官网爬取电影数据，为推荐算法提供数据支持")
@@ -35,31 +35,31 @@ def main():
                 print("感谢使用豆瓣电影爬虫系统！")
                 break
             else:
-                print("❌ 无效选择，请重新输入")
+                print(" 无效选择，请重新输入")
                 
         except KeyboardInterrupt:
-            print("\n\n👋 用户中断，程序退出")
+            print("\n\n 用户中断，程序退出")
             break
         except Exception as e:
-            print(f"❌ 程序运行出错: {e}")
+            print(f" 程序运行出错: {e}")
 
 
 def show_menu():
     """显示功能菜单"""
-    print("\n📋 功能菜单:")
-    print("1. 🔥 简单爬取 (推荐) - 爬取50部热门电影")
-    print("2. 📦 批量爬取 - 爬取多个分类的电影数据")
-    print("3. ⚙️  自定义爬取 - 自定义爬取参数")
-    print("4. 🚪 退出程序")
+    print("\n 功能菜单:")
+    print("1.  简单爬取 (推荐) - 爬取50部热门电影")
+    print("2.  批量爬取 - 爬取多个分类的电影数据")
+    print("3.   自定义爬取 - 自定义爬取参数")
+    print("4.  退出程序")
 
 
 def run_simple_crawl():
     """运行简单爬取"""
-    print("\n🔥 开始简单爬取模式")
+    print("\n 开始简单爬取模式")
     print("-" * 30)
     
     try:
-        with DoubanMovieCrawler() as crawler:
+        with DoubanCrawler() as crawler:
             raw_data, cleaned_data, saved_files = crawler.crawl_movies(
                 categories=['hot'],
                 max_movies=50,
@@ -69,12 +69,12 @@ def run_simple_crawl():
             show_results(cleaned_data, saved_files)
             
     except Exception as e:
-        print(f"❌ 爬取失败: {e}")
+        print(f" 爬取失败: {e}")
 
 
 def run_batch_crawl():
     """运行批量爬取"""
-    print("\n📦 开始批量爬取模式")
+    print("\n 开始批量爬取模式")
     print("-" * 30)
     
     # 批量爬取配置
@@ -91,7 +91,7 @@ def run_batch_crawl():
         print(f"\n第 {i}/{len(batch_configs)} 批：{config['name']}")
         
         try:
-            with DoubanMovieCrawler() as crawler:
+            with DoubanCrawler() as crawler:
                 raw_data, cleaned_data, saved_files = crawler.crawl_movies(
                     categories=config["categories"],
                     max_movies=config["max_movies"],
@@ -104,10 +104,10 @@ def run_batch_crawl():
                 print(f"✅ {config['name']} 完成: {len(cleaned_data)} 部电影")
                 
         except Exception as e:
-            print(f"❌ {config['name']} 失败: {e}")
+            print(f" {config['name']} 失败: {e}")
     
     # 显示总结
-    print(f"\n📊 批量爬取总结:")
+    print(f"\n 批量爬取总结:")
     print(f"总计获得: {len(all_data)} 部电影")
     
     for name, files in all_files.items():
@@ -118,12 +118,12 @@ def run_batch_crawl():
 
 def run_custom_crawl():
     """运行自定义爬取"""
-    print("\n⚙️ 自定义爬取模式")
+    print("\n 自定义爬取模式")
     print("-" * 30)
     
     try:
         # 获取用户输入
-        print("📝 请设置爬取参数:")
+        print(" 请设置爬取参数:")
         
         # 选择分类
         print("\n可选分类:")
@@ -158,7 +158,7 @@ def run_custom_crawl():
         print(f"- 最大页数: {max_pages}")
         
         # 开始爬取
-        with DoubanMovieCrawler() as crawler:
+        with DoubanCrawler() as crawler:
             raw_data, cleaned_data, saved_files = crawler.crawl_movies(
                 categories=categories,
                 max_movies=max_movies,
@@ -168,36 +168,36 @@ def run_custom_crawl():
             show_results(cleaned_data, saved_files)
             
     except Exception as e:
-        print(f"❌ 自定义爬取失败: {e}")
+        print(f" 自定义爬取失败: {e}")
 
 
 def show_results(cleaned_data, saved_files):
     """显示爬取结果"""
-    print(f"\n🎉 爬取完成!")
-    print(f"📊 成功获取 {len(cleaned_data)} 部电影信息")
+    print(f"\n 爬取完成!")
+    print(f" 成功获取 {len(cleaned_data)} 部电影信息")
     
     # 显示保存的文件
-    print(f"\n📁 数据文件保存位置:")
+    print(f"\n 数据文件保存位置:")
     for file_type, filepath in saved_files.items():
         print(f"  - {file_type.upper()}: {filepath}")
     
     # 显示数据预览
     if cleaned_data:
-        print(f"\n🎬 数据预览 (前3部电影):")
+        print(f"\n 数据预览 (前3部电影):")
         for i, movie in enumerate(cleaned_data[:3], 1):
             print(f"\n{i}. {movie.get('title', '未知')}")
-            print(f"   📅 年份: {movie.get('year', 'N/A')}")
-            print(f"   ⭐ 评分: {movie.get('rating', 'N/A')}")
-            print(f"   🎭 类型: {', '.join(movie.get('genres', []))}")
-            print(f"   🎬 导演: {', '.join(movie.get('directors', []))}")
-            print(f"   🎪 主演: {', '.join(movie.get('actors', [])[:3])}")
+            print(f"    年份: {movie.get('year', 'N/A')}")
+            print(f"    评分: {movie.get('rating', 'N/A')}")
+            print(f"    类型: {', '.join(movie.get('genres', []))}")
+            print(f"    导演: {', '.join(movie.get('directors', []))}")
+            print(f"    主演: {', '.join(movie.get('actors', [])[:3])}")
         
         if len(cleaned_data) > 3:
             print(f"\n   ... 还有 {len(cleaned_data) - 3} 部电影")
     
     # 数据统计
     if cleaned_data:
-        print(f"\n📈 数据统计:")
+        print(f"\n 数据统计:")
         ratings = [m.get('rating', 0) for m in cleaned_data if m.get('rating')]
         if ratings:
             print(f"   平均评分: {sum(ratings)/len(ratings):.2f}")
