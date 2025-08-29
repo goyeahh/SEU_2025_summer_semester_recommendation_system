@@ -98,30 +98,35 @@ class PageParser:
             # 备用方法1：查找h1标签
             title_element = soup.find('h1')
         if not title_element:
-            # 备用方法2：查找title标签内容
-            title_tag = soup.find('title')
-            if title_tag:
-                title_text = title_tag.text.strip()
-                # 提取电影标题（去掉后缀）
-                # 处理 "电影名 - 电影 - 豆瓣" 格式
-                if ' - 电影 - 豆瓣' in title_text:
-                    title_text = title_text.split(' - 电影 - 豆瓣')[0].strip()
-                elif '(' in title_text:
-                    title_text = title_text.split('(')[0].strip()
-                info['title'] = title_text if title_text else None
-        else:
-            title_text = title_element.text.strip() if title_element else None
-            # 也处理其他格式的标题清理
-            if title_text and ' - 电影 - 豆瓣' in title_text:
-                title_text = title_text.split(' - 电影 - 豆瓣')[0].strip()
-            info['title'] = title_text
+            # 备用方法2：查找title class
+            title_element = soup.find('div', class_='title')
         
-        # 年份
+        info['title'] = title_element.get_text(strip=True) if title_element else ''
+        
+        # 年份 - 优化提取方法
         year_element = soup.find('span', class_='year')
         if year_element:
-            year_text = year_element.text.strip()
-            year_match = re.search(r'(\d{4})', year_text)
+            year_text = year_element.get_text(strip=True)
+            year_match = re.search(r'\((\d{4})\)', year_text)
             info['year'] = int(year_match.group(1)) if year_match else None
+        else:
+            # 备用方法：从页面标题或其他位置提取
+            page_title = soup.find('title')
+            if page_title:
+                year_match = re.search(r'\((\d{4})\)', page_title.get_text())
+                info['year'] = int(year_match.group(1)) if year_match else None
+            else:
+                info['year'] = None
+        
+        # 原名
+        aka_elements = soup.find_all('span', string=re.compile(r'又名:|原名:'))
+        original_titles = []
+        for element in aka_elements:
+            next_text = element.find_next_sibling(string=True)
+            if next_text:
+                original_titles.append(next_text.strip())
+        
+        info['original_title'] = ' / '.join(original_titles) if original_titles else ''
         
         return info
     

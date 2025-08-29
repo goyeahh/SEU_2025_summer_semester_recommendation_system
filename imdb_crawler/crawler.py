@@ -1,216 +1,240 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-IMDB电影爬虫主控制器
-协调各个模块完成电影数据爬取任务
+IMDB主爬虫类
+整合所有模块，提供统一的爬虫接口
 """
 
+import os
 import logging
-import time
 from tqdm import tqdm
+import random
+import time
+
 from .config import IMDBConfig
-from .network import IMDBNetwork
-from .parser import IMDBParser
+from .network import IMDBNetworkManager
+from .parser import IMDBPageParser
 from .data_processor import IMDBDataProcessor
 
 
-class IMDBCrawler:
+class IMDBMovieCrawler:
     """IMDB电影爬虫主类"""
     
     def __init__(self, config=None):
-        """
-        初始化爬虫
-        
-        Args:
-            config: 配置对象，默认使用IMDBConfig
-        """
+        """初始化爬虫"""
         self.config = config or IMDBConfig()
-        self.network = IMDBNetwork(self.config)
-        self.parser = IMDBParser(self.config)
-        self.data_processor = IMDBDataProcessor(self.config)
+        self.network_manager = IMDBNetworkManager()
+        self.parser = IMDBPageParser()
+        self.data_processor = IMDBDataProcessor()
+        
+        # 创建输出目录
+        if not os.path.exists(self.config.OUTPUT_DIR):
+            os.makedirs(self.config.OUTPUT_DIR)
         
         # 设置日志
         self._setup_logging()
-        self.logger = logging.getLogger(__name__)
         
         self.logger.info("IMDB电影爬虫初始化完成")
     
     def _setup_logging(self):
-        """设置日志配置"""
+        """设置日志记录"""
+        log_config = self.config.LOG_CONFIG
         logging.basicConfig(
-            level=getattr(logging, self.config.LOG_LEVEL, logging.INFO),
-            format=self.config.LOG_FORMAT,
+            level=getattr(logging, log_config['level']),
+            format=log_config['format'],
             handlers=[
-                logging.StreamHandler(),
-                logging.FileHandler('imdb_crawler.log', encoding='utf-8')
+                logging.FileHandler(log_config['file'], encoding='utf-8'),
+                logging.StreamHandler()
             ]
         )
+        self.logger = logging.getLogger(__name__)
     
-    def crawl_movies(self, categories=None, max_movies=None):
+    def crawl_movies(self, categories=None, max_movies=None, max_pages=5):
         """
         爬取电影数据
         
         Args:
-            categories: 要爬取的分类列表，None表示使用默认分类
-            max_movies: 最大爬取数量，None表示使用配置中的值
+            categories: 要爬取的分类列表，默认['top250']
+            max_movies: 最大爬取电影数量，默认使用配置值
+            max_pages: 每个分类最大页数，默认5
             
         Returns:
-            dict: 包含爬取结果和文件路径的字典
+            dict: 爬取结果信息
         """
-        # 参数处理
-        if categories is None:
-            categories = ['popular']  # 默认爬取热门电影
-        
-        if max_movies is None:
-            max_movies = self.config.MAX_MOVIES
+        categories = categories or ['top250']
+        max_movies = max_movies or self.config.MAX_MOVIES
         
         self.logger.info(f"开始爬取IMDB电影数据 - 分类: {categories}, 最大数量: {max_movies}")
         
         try:
-            # 1. 获取电影链接
-            movie_urls = self._collect_movie_urls(categories, max_movies)
+            # 第一步：获取电影列表URLs
+            list_urls = self.config.get_movie_list_urls(categories, max_pages)
+            self.logger.info(f"生成了 {len(list_urls)} 个列表页面URL")
             
-            if not movie_urls:
-                self.logger.warning("没有收集到电影链接")
-                return {'success': False, 'data': [], 'file_paths': {}}
+            # 第二步：解析电影列表，获取详情页链接
+            movie_links = self._collect_movie_links(list_urls)
             
-            self.logger.info(f"收集到 {len(movie_urls)} 个唯一电影链接")
+            # 限制电影数量
+            if len(movie_links) > max_movies:
+                movie_links = random.sample(movie_links, max_movies)
             
-            # 2. 爬取电影详情
-            movies_data = self._crawl_movie_details(movie_urls)
+            self.logger.info(f"将爬取 {len(movie_links)} 部电影的详情")
             
-            if not movies_data:
-                self.logger.warning("没有成功爬取到电影详情")
-                return {'success': False, 'data': [], 'file_paths': {}}
+            # 第三步：爬取电影详情
+            raw_movie_data = self._crawl_movie_details(movie_links)
             
-            self.logger.info(f"成功爬取 {len(movies_data)} 部电影详情")
+            # 第四步：数据清洗和处理
+            cleaned_data = self.data_processor.clean_movie_data(raw_movie_data)
             
-            # 3. 处理数据
-            result = self.data_processor.process_movies(movies_data)
+            # 第五步：保存数据
+            saved_files = self.data_processor.save_processed_data(
+                cleaned_data, 
+                self.config.OUTPUT_DIR
+            )
             
-            self.logger.info("爬虫任务完成！成功获取 {} 部电影信息".format(
-                len(result.get('cleaned_data', []))
-            ))
+            self.logger.info(f"IMDB爬虫任务完成！成功获取 {len(cleaned_data)} 部电影信息")
             
+            # 返回格式与豆瓣爬虫保持一致
             return {
                 'success': True,
-                'data': result.get('cleaned_data', []),
-                'file_paths': result.get('file_paths', {}),
-                'features': result.get('features', {}),
-                'total_crawled': len(movies_data),
-                'total_processed': len(result.get('cleaned_data', []))
+                'data_count': len(cleaned_data),
+                'file_paths': saved_files,
+                'message': f'成功爬取 {len(cleaned_data)} 部IMDB电影'
             }
             
         except Exception as e:
-            self.logger.error(f"爬虫任务执行失败: {e}")
-            return {'success': False, 'error': str(e), 'data': [], 'file_paths': {}}
-        
+            self.logger.error(f"IMDB爬虫运行出错: {e}")
+            return {
+                'success': False,
+                'data_count': 0,
+                'file_paths': {},
+                'message': f'IMDB爬取失败: {str(e)}'
+            }
         finally:
-            # 清理资源
-            self.network.close_driver()
+            self.network_manager.close()
     
-    def _collect_movie_urls(self, categories, max_movies):
-        """
-        收集电影URL链接
+    def _collect_movie_links(self, list_urls):
+        """收集电影详情页链接"""
+        all_movie_links = []
         
-        Args:
-            categories: 分类列表
-            max_movies: 最大数量
-            
-        Returns:
-            list: 电影URL列表
-        """
-        all_movie_urls = set()
-        movies_per_category = max_movies // len(categories)
-        
-        # 计算需要生成的页面数量
-        pages_to_crawl = max(1, (movies_per_category + 49) // 50)  # 每页大约50部电影
-        
-        self.logger.info(f"生成了 {len(categories) * pages_to_crawl} 个列表页面URL")
-        
-        # 遍历每个分类
-        for category in tqdm(categories, desc="解析电影列表页面"):
-            category_urls = set()
-            
-            # 获取多页数据
-            for page in range(pages_to_crawl):
-                start_index = page * 50 + 1
-                category_url = self.config.get_category_url(category, start=start_index, count=50)
-                
-                if not category_url:
-                    self.logger.warning(f"无效的分类: {category}")
-                    continue
-                
-                # IMDB需要JavaScript渲染，直接使用Selenium
-                use_selenium = True
-                wait_element = '.ipc-title'
-                
-                # 获取页面内容
-                html = self.network.get_page(category_url, use_selenium=use_selenium, wait_element=wait_element)
-                
-                if not html:
-                    self.logger.warning(f"获取页面失败: {category_url}")
-                    continue
-                
-                # 解析电影链接
-                page_urls = self.parser.parse_movie_list(html, category)
-                category_urls.update(page_urls)
-                
-                # 如果获取的链接数量已经足够，则停止
-                if len(category_urls) >= movies_per_category:
-                    break
-                
-                # 适当延时
-                time.sleep(1)
-            
-            # 限制每个分类的数量
-            category_urls = list(category_urls)[:movies_per_category]
-            all_movie_urls.update(category_urls)
-            
-            self.logger.info(f"从 {category} 分类收集到 {len(category_urls)} 个电影链接")
-        
-        # 转换为列表并限制总数量
-        movie_urls = list(all_movie_urls)[:max_movies]
-        
-        return movie_urls
-    
-    def _crawl_movie_details(self, movie_urls):
-        """
-        爬取电影详情
-        
-        Args:
-            movie_urls: 电影URL列表
-            
-        Returns:
-            list: 电影详情数据列表
-        """
-        movies_data = []
-        
-        self.logger.info(f"将爬取 {len(movie_urls)} 部电影的详情")
-        
-        # 使用进度条显示爬取进度
-        for url in tqdm(movie_urls, desc="爬取电影详情"):
+        for url in tqdm(list_urls, desc="解析IMDB电影列表页面"):
             try:
-                # IMDB详情页面需要JavaScript渲染，使用Selenium
-                html = self.network.get_page(url, use_selenium=True, wait_element='.ipc-page-content-container')
+                response = self.network_manager.get_page(url, use_selenium=True)
                 
-                if not html:
-                    self.logger.warning(f"获取电影页面失败: {url}")
-                    continue
-                
-                # 解析电影详情
-                movie_data = self.parser.parse_movie_detail(html, url)
-                
-                if movie_data:
-                    movies_data.append(movie_data)
+                # 确定URL类型
+                if 'chart' in url:
+                    url_type = 'chart'
+                elif 'search' in url:
+                    url_type = 'search'
                 else:
-                    self.logger.warning(f"解析电影详情失败: {url}")
+                    url_type = 'chart'
+                
+                movie_links = self.parser.parse_movie_list(response, url_type)
+                all_movie_links.extend(movie_links)
+                
+                # 随机延时
+                time.sleep(random.uniform(
+                    self.config.DELAY_MIN, 
+                    self.config.DELAY_MAX
+                ))
                 
             except Exception as e:
-                self.logger.error(f"处理电影详情时出错 {url}: {e}")
+                self.logger.warning(f"解析IMDB列表页面失败: {url}, 错误: {e}")
                 continue
         
-        return movies_data
+        # 去重
+        unique_links = list(set(all_movie_links))
+        self.logger.info(f"收集到 {len(unique_links)} 个唯一IMDB电影链接")
+        
+        return unique_links
+    
+    def _crawl_movie_details(self, movie_links):
+        """爬取电影详情"""
+        movie_data = []
+        
+        for link in tqdm(movie_links, desc="爬取IMDB电影详情"):
+            try:
+                response = self.network_manager.get_page(link, use_selenium=True)
+                movie_info = self.parser.parse_movie_detail(response, link)
+                
+                if movie_info:
+                    movie_data.append(movie_info)
+                
+                # 随机延时避免被封
+                time.sleep(random.uniform(
+                    self.config.DELAY_MIN, 
+                    self.config.DELAY_MAX
+                ))
+                
+            except Exception as e:
+                self.logger.warning(f"爬取IMDB电影详情失败: {link}, 错误: {e}")
+                continue
+        
+        self.logger.info(f"成功爬取 {len(movie_data)} 部IMDB电影详情")
+        return movie_data
+    
+    def get_movie_by_id(self, imdb_id):
+        """根据IMDB ID获取单个电影信息"""
+        url = f"{self.config.BASE_URL}/title/{imdb_id}/"
+        
+        try:
+            response = self.network_manager.get_page(url, use_selenium=True)
+            movie_info = self.parser.parse_movie_detail(response, url)
+            
+            if movie_info:
+                cleaned_data = self.data_processor.clean_movie_data([movie_info])
+                return cleaned_data[0] if cleaned_data else None
+            
+        except Exception as e:
+            self.logger.error(f"获取IMDB电影信息失败 (ID: {imdb_id}): {e}")
+            
+        return None
+    
+    def search_movies(self, keyword, max_results=20):
+        """搜索电影"""
+        search_url = f"{self.config.BASE_URL}/find?q={keyword}&s=tt&ttype=ft"
+        
+        try:
+            response = self.network_manager.get_page(search_url, use_selenium=True)
+            movie_links = self.parser.parse_movie_list(response, 'search')
+            
+            # 限制结果数量
+            if len(movie_links) > max_results:
+                movie_links = movie_links[:max_results]
+            
+            # 获取电影详情
+            movie_data = []
+            for link in movie_links:
+                try:
+                    detail_response = self.network_manager.get_page(link, use_selenium=True)
+                    movie_info = self.parser.parse_movie_detail(detail_response, link)
+                    if movie_info:
+                        movie_data.append(movie_info)
+                except Exception as e:
+                    self.logger.warning(f"获取搜索结果详情失败: {link}, {e}")
+                    continue
+            
+            return self.data_processor.clean_movie_data(movie_data)
+            
+        except Exception as e:
+            self.logger.error(f"搜索IMDB电影失败: {e}")
+            return []
+    
+    def get_movies_by_genre(self, genre, max_movies=50):
+        """根据类型获取电影"""
+        try:
+            urls = self.config.get_genre_url(genre)
+            movie_links = self._collect_movie_links(urls)
+            
+            if len(movie_links) > max_movies:
+                movie_links = random.sample(movie_links, max_movies)
+            
+            raw_data = self._crawl_movie_details(movie_links)
+            return self.data_processor.clean_movie_data(raw_data)
+            
+        except Exception as e:
+            self.logger.error(f"根据类型获取电影失败: {e}")
+            return []
     
     def get_supported_categories(self):
         """
@@ -226,24 +250,19 @@ class IMDBCrawler:
         测试网络连接
         
         Returns:
-            bool: 连接是否正常
+            bool: 连接是否成功
         """
         try:
-            test_url = "https://www.imdb.com"
-            html = self.network.get_page(test_url)
-            
-            if html and "IMDb" in html:
-                self.logger.info("IMDB网络连接测试成功")
-                return True
-            else:
-                self.logger.error("IMDB网络连接测试失败")
-                return False
-                
+            response = self.network_manager.get_page(self.config.BASE_URL, use_selenium=True)
+            return response is not None
         except Exception as e:
-            self.logger.error(f"IMDB网络连接测试异常: {e}")
+            self.logger.error(f"IMDB连接测试失败: {e}")
             return False
     
-    def __del__(self):
-        """析构函数，确保资源被正确释放"""
-        if hasattr(self, 'network'):
-            self.network.close_driver()
+    def __enter__(self):
+        """上下文管理器进入"""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """上下文管理器退出"""
+        self.network_manager.close()

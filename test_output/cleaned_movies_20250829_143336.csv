@@ -1,0 +1,2 @@
+﻿douban_id,title,url,year,rating,rating_count,directors,actors,genres,countries,languages,release_dates,runtime_minutes,imdb_id,summary,tags,star_5,star_4,star_3,star_2,star_1,poster_path,rating_normalized,rating_count_log,runtime_normalized,rating_variance,genre_count,actor_count,director_count,country_count
+1292052,肖申克的救赎,https://movie.douban.com/subject/1292052/,1994,9.7,2800000,['弗兰克·德拉邦特'],"['蒂姆·罗宾斯', '摩根·弗里曼']","['剧情', '犯罪']",[],[],[],,,,[],0.0,0.0,0.0,0.0,0.0,,0.97,14.845130332288226,0.0,0.0,2,2,1,0

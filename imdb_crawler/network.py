@@ -2,216 +2,165 @@
 # -*- coding: utf-8 -*-
 """
 IMDB网络请求模块
-处理所有HTTP请求和浏览器自动化操作
+负责处理HTTP请求和浏览器操作
 """
 
+import requests
 import time
 import random
-import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
+from fake_useragent import UserAgent
+from retrying import retry
 import logging
+
 from .config import IMDBConfig
 
 
-class IMDBNetwork:
-    """IMDB网络请求处理类"""
+class IMDBNetworkManager:
+    """IMDB网络请求管理器"""
     
-    def __init__(self, config=None):
-        """
-        初始化网络请求处理器
-        
-        Args:
-            config: 配置对象，默认使用IMDBConfig
-        """
-        self.config = config or IMDBConfig()
+    def __init__(self):
         self.session = requests.Session()
-        self.session.headers.update(self.config.DEFAULT_HEADERS)
         self.driver = None
         self.logger = logging.getLogger(__name__)
-        
-        # 添加随机User-Agent轮换
-        self._user_agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
-        ]
-        
-        # 设置请求会话
-        self.session.headers.update({
-            'Referer': 'https://www.imdb.com/',
-            'Origin': 'https://www.imdb.com'
-        })
+        self._setup_session()
     
-    def get_page(self, url, use_selenium=False, wait_element=None, timeout=10):
-        """
-        获取网页内容
-        
-        Args:
-            url: 目标URL
-            use_selenium: 是否使用Selenium
-            wait_element: 等待的元素选择器
-            timeout: 超时时间
-            
-        Returns:
-            str: 网页HTML内容，失败返回None
-        """
-        for attempt in range(self.config.RETRY_TIMES):
-            try:
-                if use_selenium:
-                    return self._get_page_selenium(url, wait_element, timeout)
-                else:
-                    return self._get_page_requests(url)
-            except Exception as e:
-                self.logger.warning(f"第 {attempt + 1} 次请求失败: {url}, 错误: {e}")
-                if attempt < self.config.RETRY_TIMES - 1:
-                    time.sleep(self.config.RETRY_DELAY * (attempt + 1))
-                else:
-                    self.logger.error(f"请求失败，已重试 {self.config.RETRY_TIMES} 次: {url}")
-                    return None
+    def _setup_session(self):
+        """设置requests会话"""
+        try:
+            ua = UserAgent()
+            headers = IMDBConfig.DEFAULT_HEADERS.copy()
+            headers['User-Agent'] = ua.chrome
+            self.session.headers.update(headers)
+        except Exception:
+            # 如果UserAgent失败，使用默认的
+            headers = IMDBConfig.DEFAULT_HEADERS.copy()
+            headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            self.session.headers.update(headers)
     
-    def _get_page_requests(self, url):
-        """
-        使用requests获取网页
-        
-        Args:
-            url: 目标URL
+    @retry(stop_max_attempt_number=IMDBConfig.MAX_RETRY_TIMES, wait_fixed=IMDBConfig.RETRY_DELAY)
+    def get_page(self, url, use_selenium=True):
+        """获取网页内容 - IMDB通常需要JavaScript渲染"""
+        try:
+            if use_selenium:
+                return self._get_with_selenium(url)
+            else:
+                return self._get_with_requests(url)
+        except Exception as e:
+            self.logger.warning(f"请求失败，正在重试: {url}, 错误: {e}")
+            # 如果Selenium失败，尝试requests作为备用
+            if use_selenium:
+                try:
+                    self.logger.info("Selenium失败，尝试使用requests")
+                    return self._get_with_requests(url)
+                except Exception as requests_error:
+                    self.logger.warning(f"requests也失败: {requests_error}")
             
-        Returns:
-            str: 网页HTML内容
-        """
-        # 随机选择User-Agent
-        import random
-        user_agent = random.choice(self._user_agents)
-        headers = {'User-Agent': user_agent}
-        
-        # 随机延时
-        delay = random.uniform(self.config.DELAY_MIN, self.config.DELAY_MAX)
-        time.sleep(delay)
-        
-        response = self.session.get(url, headers=headers, timeout=10)
+            self._random_delay()
+            raise e
+    
+    def _get_with_requests(self, url):
+        """使用requests获取页面"""
+        response = self.session.get(url, timeout=15)
         response.raise_for_status()
-        
-        return response.text
+        return response
     
-    def _get_page_selenium(self, url, wait_element=None, timeout=10):
-        """
-        使用Selenium获取网页
-        
-        Args:
-            url: 目标URL
-            wait_element: 等待的元素选择器
-            timeout: 超时时间
-            
-        Returns:
-            str: 网页HTML内容
-        """
+    def _get_with_selenium(self, url):
+        """使用Selenium获取页面（IMDB主要使用这种方式）"""
         if not self.driver:
-            self._init_driver()
+            self._init_chrome_driver()
         
         self.driver.get(url)
         
-        # 等待特定元素加载
-        if wait_element:
-            wait = WebDriverWait(self.driver, timeout)
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, wait_element)))
+        # 等待页面加载完成
+        time.sleep(3)
         
-        # 随机滚动页面，模拟真实用户行为
-        self._random_scroll()
+        # 检查是否需要接受cookies
+        try:
+            accept_button = self.driver.find_elements("css selector", "[data-testid='accept-button']")
+            if accept_button:
+                accept_button[0].click()
+                time.sleep(2)
+        except Exception:
+            pass
         
-        return self.driver.page_source
+        # 创建伪response对象
+        class SeleniumResponse:
+            def __init__(self, driver):
+                self.content = driver.page_source.encode('utf-8')
+                self.text = driver.page_source
+                self.status_code = 200
+                self.url = driver.current_url
+        
+        return SeleniumResponse(self.driver)
     
-    def _init_driver(self):
-        """初始化Chrome WebDriver"""
+    def _init_chrome_driver(self):
+        """初始化Chrome浏览器驱动"""
         try:
             chrome_options = Options()
-            for option in self.config.CHROME_OPTIONS:
+            
+            # 添加配置选项
+            for option in IMDBConfig.CHROME_OPTIONS:
                 chrome_options.add_argument(option)
             
-            # 禁用图片加载以提高速度
-            prefs = {
-                "profile.managed_default_content_settings.images": 2,
-                "profile.default_content_setting_values.notifications": 2
-            }
-            chrome_options.add_experimental_option("prefs", prefs)
+            # 禁用自动化检测
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            chrome_options.add_experimental_option('useAutomationExtension', False)
             
+            # 添加更多稳定性配置
+            chrome_options.add_argument('--no-first-run')
+            chrome_options.add_argument('--disable-default-apps')
+            chrome_options.add_argument('--disable-background-timer-throttling')
+            chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+            chrome_options.add_argument('--disable-renderer-backgrounding')
+            
+            # 使用webdriver-manager自动管理驱动
             service = Service(ChromeDriverManager().install())
+            
+            # 设置更长的超时时间
+            service.start_error_message = "Chrome driver failed to start"
+            
             self.driver = webdriver.Chrome(service=service, options=chrome_options)
             
-            self.logger.info("Chrome WebDriver 初始化成功")
+            # 设置页面加载超时
+            self.driver.set_page_load_timeout(30)
+            self.driver.implicitly_wait(10)
+            
+            # 执行脚本隐藏自动化特征
+            self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            
+            self.logger.info("IMDB Chrome驱动初始化成功")
             
         except Exception as e:
-            self.logger.error(f"Chrome WebDriver 初始化失败: {e}")
-            raise
+            self.logger.error(f"IMDB Chrome驱动初始化失败: {e}")
+            # 如果Chrome驱动失败，尝试降级到requests
+            self.logger.info("尝试使用requests作为备用方案")
+            self.driver = None
+            raise e
     
-    def _random_scroll(self):
-        """随机滚动页面"""
-        if not self.driver:
-            return
-        
-        try:
-            # 获取页面高度
-            height = self.driver.execute_script("return document.body.scrollHeight")
-            
-            # 随机滚动几次
-            for _ in range(random.randint(1, 3)):
-                scroll_position = random.randint(0, height)
-                self.driver.execute_script(f"window.scrollTo(0, {scroll_position});")
-                time.sleep(random.uniform(0.5, 1.5))
-                
-        except Exception as e:
-            self.logger.warning(f"页面滚动失败: {e}")
+    def _random_delay(self):
+        """随机延时"""
+        delay = random.uniform(IMDBConfig.DELAY_MIN, IMDBConfig.DELAY_MAX)
+        time.sleep(delay)
     
-    def download_image(self, url, filepath):
-        """
-        下载图片
-        
-        Args:
-            url: 图片URL
-            filepath: 保存路径
-            
-        Returns:
-            bool: 是否成功下载
-        """
-        try:
-            # 设置图片下载的请求头
-            headers = self.config.DEFAULT_HEADERS.copy()
-            headers.update({
-                'Referer': 'https://www.imdb.com/',
-                'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
-            })
-            
-            response = self.session.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            
-            with open(filepath, 'wb') as f:
-                f.write(response.content)
-            
-            self.logger.info(f"成功下载图片: {filepath}")
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"图片下载失败 {url}: {e}")
-            return False
-    
-    def close_driver(self):
-        """关闭WebDriver"""
+    def close(self):
+        """关闭连接"""
         if self.driver:
             try:
                 self.driver.quit()
-                self.logger.info("WebDriver 已关闭")
+                self.logger.info("Chrome驱动已关闭")
             except Exception as e:
-                self.logger.error(f"关闭 WebDriver 失败: {e}")
-            finally:
-                self.driver = None
+                self.logger.warning(f"关闭Chrome驱动时出错: {e}")
+        
+        if self.session:
+            try:
+                self.session.close()
+            except Exception as e:
+                self.logger.warning(f"关闭session时出错: {e}")
     
     def __del__(self):
-        """析构函数，确保WebDriver被正确关闭"""
-        self.close_driver()
+        """析构函数"""
+        self.close()

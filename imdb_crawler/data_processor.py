@@ -2,328 +2,290 @@
 # -*- coding: utf-8 -*-
 """
 IMDB数据处理模块
-负责清洗、转换和保存IMDB电影数据
+负责清洗和格式化电影数据
 """
 
-import os
-import json
 import pandas as pd
-import numpy as np
+import json
+import os
 import logging
 from datetime import datetime
-from urllib.parse import urlparse
-from .config import IMDBConfig
-from .network import IMDBNetwork
+import re
 
 
 class IMDBDataProcessor:
     """IMDB数据处理器"""
     
-    def __init__(self, config=None):
-        """
-        初始化数据处理器
-        
-        Args:
-            config: 配置对象，默认使用IMDBConfig
-        """
-        self.config = config or IMDBConfig()
-        self.network = IMDBNetwork(config)
+    def __init__(self):
         self.logger = logging.getLogger(__name__)
-        
-        # 确保输出目录存在
-        os.makedirs(self.config.OUTPUT_DIR, exist_ok=True)
-        os.makedirs(self.config.POSTER_DIR, exist_ok=True)
     
-    def process_movies(self, movies_data):
-        """
-        处理电影数据
-        
-        Args:
-            movies_data: 原始电影数据列表
-            
-        Returns:
-            dict: 包含处理后数据和文件路径的字典
-        """
-        if not movies_data:
-            self.logger.warning("没有电影数据需要处理")
-            return {'cleaned_data': [], 'file_paths': {}}
-        
-        # 清洗数据
-        cleaned_movies = self._clean_data(movies_data)
-        
-        if not cleaned_movies:
-            self.logger.warning("数据清洗后没有有效数据")
-            return {'cleaned_data': [], 'file_paths': {}}
-        
-        self.logger.info(f"数据清洗完成，有效数据: {len(cleaned_movies)} 条")
-        
-        # 根据要求，只保留豆瓣海报下载，禁用IMDB海报下载
-        # self._download_posters(cleaned_movies)
-        self.logger.info("已禁用IMDB海报下载，只保留豆瓣海报下载")
-        
-        # 保存数据
-        file_paths = self._save_data(cleaned_movies)
-        
-        return {
-            'cleaned_data': cleaned_movies,
-            'file_paths': file_paths
-        }
-    
-    def _clean_data(self, movies_data):
+    def clean_movie_data(self, raw_data):
         """
         清洗电影数据
         
         Args:
-            movies_data: 原始电影数据列表
+            raw_data: 原始电影数据列表
             
         Returns:
-            list: 清洗后的电影数据
+            list: 清洗后的电影数据列表
         """
-        cleaned_movies = []
+        cleaned_data = []
         
-        for movie in movies_data:
+        for movie in raw_data:
             if not movie:
                 continue
-            
-            # 验证必需字段
-            if not self._validate_movie_data(movie):
+                
+            try:
+                cleaned_movie = self._clean_single_movie(movie)
+                if cleaned_movie:
+                    cleaned_data.append(cleaned_movie)
+            except Exception as e:
+                self.logger.warning(f"清洗电影数据失败: {e}")
                 continue
-            
-            # 清洗和标准化数据
-            cleaned_movie = self._standardize_movie_data(movie)
-            
-            if cleaned_movie:
-                cleaned_movies.append(cleaned_movie)
         
-        return cleaned_movies
+        self.logger.info(f"数据清洗完成，有效电影数据: {len(cleaned_data)} 部")
+        return cleaned_data
     
-    def _validate_movie_data(self, movie):
-        """
-        验证电影数据的有效性
+    def _clean_single_movie(self, movie):
+        """清洗单个电影数据"""
+        cleaned = {
+            'platform': movie.get('platform', 'IMDB'),
+            'imdb_id': self._clean_string(movie.get('imdb_id', '')),
+            'url': self._clean_string(movie.get('url', '')),
+            'title': self._clean_string(movie.get('title', '')),
+            'original_title': self._clean_string(movie.get('original_title', '')),
+            'year': self._clean_year(movie.get('year')),
+            'rating': self._clean_rating(movie.get('rating')),
+            'rating_count': self._clean_number(movie.get('rating_count')),
+            'genres': self._clean_list(movie.get('genres', [])),
+            'duration': self._clean_number(movie.get('duration')),
+            'directors': self._clean_list(movie.get('directors', [])),
+            'actors': self._clean_list(movie.get('actors', [])),
+            'plot': self._clean_text(movie.get('plot', '')),
+            'poster_url': self._clean_string(movie.get('poster_url', '')),
+            'countries': self._clean_list(movie.get('countries', [])),
+            'languages': self._clean_list(movie.get('languages', [])),
+            'release_date': self._clean_string(movie.get('release_date', '')),
+            'budget': self._clean_string(movie.get('budget', '')),
+            'box_office': self._clean_string(movie.get('box_office', '')),
+            'awards': self._clean_list(movie.get('awards', [])),
+            'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
         
-        Args:
-            movie: 电影数据字典
+        # 验证必要字段
+        if not cleaned['title'] or not cleaned['imdb_id']:
+            return None
             
-        Returns:
-            bool: 数据是否有效
-        """
-        # 检查必需字段
-        required_fields = ['imdb_id', 'title']
-        
-        for field in required_fields:
-            if not movie.get(field):
-                self.logger.debug(f"电影数据缺少必需字段 {field}: {movie}")
-                return False
-        
-        return True
+        return cleaned
     
-    def _standardize_movie_data(self, movie):
-        """
-        标准化电影数据
+    def _clean_string(self, value):
+        """清洗字符串"""
+        if not value:
+            return ''
+        return str(value).strip()
+    
+    def _clean_text(self, value):
+        """清洗文本内容"""
+        if not value:
+            return ''
         
-        Args:
-            movie: 原始电影数据
-            
-        Returns:
-            dict: 标准化后的电影数据
-        """
+        # 清理多余的空白字符
+        text = re.sub(r'\s+', ' ', str(value))
+        return text.strip()
+    
+    def _clean_year(self, value):
+        """清洗年份"""
+        if not value:
+            return None
+        
         try:
-            standardized = {
-                'imdb_id': str(movie.get('imdb_id', '')),
-                'title': self._clean_text(movie.get('title')),
-                'original_title': self._clean_text(movie.get('original_title')),
-                'url': movie.get('url', ''),
-                'year': self._parse_int(movie.get('year')),
-                'rating': self._parse_float(movie.get('rating')),
-                'rating_count': self._parse_int(movie.get('rating_count')),
-                'metascore': self._parse_int(movie.get('metascore')),
-                'directors': self._clean_list(movie.get('directors')),
-                'writers': self._clean_list(movie.get('writers')),
-                'actors': self._clean_list(movie.get('actors')),
-                'genres': self._clean_list(movie.get('genres')),
-                'countries': self._clean_list(movie.get('countries')),
-                'languages': self._clean_list(movie.get('languages')),
-                'release_date': self._clean_text(movie.get('release_date')),
-                'runtime_minutes': self._parse_int(movie.get('runtime_minutes')),
-                'budget': self._clean_text(movie.get('budget')),
-                'box_office': self._clean_text(movie.get('box_office')),
-                'summary': self._clean_text(movie.get('summary')),
-                'poster_url': movie.get('poster_url'),
-                'trailer_url': movie.get('trailer_url'),
-                'aspect_ratio': self._clean_text(movie.get('aspect_ratio')),
-                'sound_mix': self._clean_text(movie.get('sound_mix')),
-                'color': self._clean_text(movie.get('color'))
-            }
-            
-            # 添加派生字段
-            standardized.update(self._add_derived_fields(standardized))
-            
-            return standardized
-            
-        except Exception as e:
-            self.logger.error(f"标准化电影数据失败: {e}")
-            return None
-    
-    def _clean_text(self, text):
-        """清洗文本数据"""
-        if not text:
-            return None
-        
-        if isinstance(text, str):
-            # 移除多余的空白字符
-            cleaned = ' '.join(text.split())
-            return cleaned if cleaned else None
-        
-        return str(text)
-    
-    def _clean_list(self, items):
-        """清洗列表数据"""
-        if not items:
-            return None
-        
-        if isinstance(items, str):
-            # 如果是字符串，尝试按逗号分割
-            items = [item.strip() for item in items.split(',')]
-        
-        if isinstance(items, list):
-            # 清洗每个元素
-            cleaned_items = []
-            for item in items:
-                if item and str(item).strip():
-                    cleaned_items.append(str(item).strip())
-            
-            return cleaned_items if cleaned_items else None
+            year = int(value)
+            if 1880 <= year <= datetime.now().year + 2:
+                return year
+        except (ValueError, TypeError):
+            pass
         
         return None
     
-    def _parse_int(self, value):
-        """解析整数"""
-        if value is None:
+    def _clean_rating(self, value):
+        """清洗评分"""
+        if not value:
             return None
         
         try:
-            return int(float(str(value)))
+            rating = float(value)
+            if 0 <= rating <= 10:
+                return round(rating, 1)
         except (ValueError, TypeError):
-            return None
+            pass
+        
+        return None
     
-    def _parse_float(self, value):
-        """解析浮点数"""
-        if value is None:
+    def _clean_number(self, value):
+        """清洗数字"""
+        if not value:
             return None
         
         try:
-            return float(str(value))
+            return int(value)
         except (ValueError, TypeError):
-            return None
+            pass
+        
+        return None
     
-    def _add_derived_fields(self, movie):
-        """添加派生字段"""
-        derived_fields = {}
+    def _clean_list(self, value):
+        """清洗列表"""
+        if not value:
+            return []
         
-        # 评分标准化 (0-1)
-        if movie.get('rating'):
-            derived_fields['rating_normalized'] = movie['rating'] / 10.0
+        if isinstance(value, list):
+            return [self._clean_string(item) for item in value if item]
+        elif isinstance(value, str):
+            # 如果是字符串，尝试按逗号分割
+            return [self._clean_string(item) for item in value.split(',') if item.strip()]
         
-        # 评分人数对数化
-        if movie.get('rating_count'):
-            derived_fields['rating_count_log'] = np.log10(movie['rating_count'])
-        
-        # 时长标准化 (0-1, 假设最长电影4小时)
-        if movie.get('runtime_minutes'):
-            derived_fields['runtime_normalized'] = min(movie['runtime_minutes'] / 240.0, 1.0)
-        
-        # 统计字段
-        derived_fields['genre_count'] = len(movie.get('genres', []) or [])
-        derived_fields['actor_count'] = len(movie.get('actors', []) or [])
-        derived_fields['director_count'] = len(movie.get('directors', []) or [])
-        derived_fields['country_count'] = len(movie.get('countries', []) or [])
-        
-        return derived_fields
+        return []
     
-    def _download_posters(self, movies):
-        """
-        下载电影海报
-        
-        Args:
-            movies: 电影数据列表
-        """
-        for movie in movies:
-            poster_url = movie.get('poster_url')
-            if not poster_url:
-                continue
-            
-            # 生成文件名
-            imdb_id = movie.get('imdb_id', 'unknown')
-            filename = f"{imdb_id}.jpg"
-            filepath = os.path.join(self.config.POSTER_DIR, filename)
-            
-            # 下载图片
-            if self.network.download_image(poster_url, filepath):
-                # 将绝对路径添加到数据中
-                movie['poster_path'] = os.path.abspath(filepath)
-                self.logger.info(f"成功下载IMDB海报: {filename}")
-            else:
-                movie['poster_path'] = None
-    
-
-    
-    def _save_data(self, movies):
+    def save_processed_data(self, data, output_dir):
         """
         保存处理后的数据
         
         Args:
-            movies: 清洗后的电影数据
+            data: 处理后的数据列表
+            output_dir: 输出目录
             
         Returns:
-            dict: 文件路径字典
+            dict: 保存的文件路径信息
         """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_paths = {}
+        if not data:
+            self.logger.warning("没有数据需要保存")
+            return {}
+        
+        # 确保输出目录存在
+        os.makedirs(output_dir, exist_ok=True)
+        
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        saved_files = {}
         
         try:
-            # 保存JSON格式
-            if 'json' in self.config.OUTPUT_FORMATS:
-                json_path = os.path.join(self.config.OUTPUT_DIR, f"imdb_movies_{timestamp}.json")
-                with open(json_path, 'w', encoding='utf-8') as f:
-                    json.dump(movies, f, ensure_ascii=False, indent=2, default=str)
-                file_paths['json'] = json_path
+            # 保存为JSON格式
+            json_filename = f"imdb_movies_{timestamp}.json"
+            json_path = os.path.join(output_dir, json_filename)
             
-            # 保存Excel和CSV格式
-            df = pd.DataFrame(movies)
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
             
-            if 'xlsx' in self.config.OUTPUT_FORMATS:
-                xlsx_path = os.path.join(self.config.OUTPUT_DIR, f"imdb_movies_{timestamp}.xlsx")
-                df.to_excel(xlsx_path, index=False)
-                file_paths['xlsx'] = xlsx_path
+            saved_files['json'] = json_path
+            self.logger.info(f"JSON数据已保存: {json_path}")
             
-            if 'csv' in self.config.OUTPUT_FORMATS:
-                csv_path = os.path.join(self.config.OUTPUT_DIR, f"imdb_movies_{timestamp}.csv")
-                df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-                file_paths['csv'] = csv_path
+            # 保存为CSV格式
+            csv_filename = f"imdb_movies_{timestamp}.csv"
+            csv_path = os.path.join(output_dir, csv_filename)
             
-            # 保存数据信息
-            data_info = {
-                'sample_count': len(movies),
-                'timestamp': timestamp,
-                'description': 'IMDB电影原始数据'
-            }
+            # 转换为DataFrame并保存
+            df = pd.DataFrame(data)
             
-            info_path = os.path.join(self.config.OUTPUT_DIR, f"imdb_data_info_{timestamp}.json")
-            with open(info_path, 'w', encoding='utf-8') as f:
-                json.dump(data_info, f, ensure_ascii=False, indent=2)
-            file_paths['info'] = info_path
+            # 处理列表类型的列
+            list_columns = ['genres', 'directors', 'actors', 'countries', 'languages', 'awards']
+            for col in list_columns:
+                if col in df.columns:
+                    df[col] = df[col].apply(lambda x: '; '.join(x) if isinstance(x, list) else x)
             
-            self.logger.info("处理后的数据已保存:")
-            for format_type, path in file_paths.items():
-                self.logger.info(f"- {format_type.upper()}: {path}")
+            df.to_csv(csv_path, index=False, encoding='utf-8-sig')
+            saved_files['csv'] = csv_path
+            self.logger.info(f"CSV数据已保存: {csv_path}")
             
-            return file_paths
+            # 保存统计信息
+            stats_filename = f"imdb_stats_{timestamp}.json"
+            stats_path = os.path.join(output_dir, stats_filename)
+            
+            stats = self._generate_statistics(data)
+            with open(stats_path, 'w', encoding='utf-8') as f:
+                json.dump(stats, f, ensure_ascii=False, indent=2)
+            
+            saved_files['stats'] = stats_path
+            self.logger.info(f"统计信息已保存: {stats_path}")
             
         except Exception as e:
-            self.logger.error(f"保存数据失败: {e}")
-            return {}
+            self.logger.error(f"保存数据时发生错误: {e}")
+            
+        return saved_files
     
-    def __del__(self):
-        """析构函数"""
-        if hasattr(self, 'network'):
-            self.network.close_driver()
+    def _generate_statistics(self, data):
+        """生成数据统计信息"""
+        if not data:
+            return {}
+        
+        df = pd.DataFrame(data)
+        
+        stats = {
+            'total_movies': len(data),
+            'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'platform': 'IMDB',
+            'data_quality': {
+                'movies_with_rating': len(df[df['rating'].notna()]),
+                'movies_with_plot': len(df[df['plot'].str.len() > 0]),
+                'movies_with_poster': len(df[df['poster_url'].str.len() > 0]),
+                'average_rating': float(df['rating'].mean()) if 'rating' in df.columns else None,
+                'year_range': {
+                    'min': int(df['year'].min()) if 'year' in df.columns and df['year'].notna().any() else None,
+                    'max': int(df['year'].max()) if 'year' in df.columns and df['year'].notna().any() else None
+                }
+            }
+        }
+        
+        # 类型统计
+        if 'genres' in df.columns:
+            all_genres = []
+            for genres in df['genres']:
+                if isinstance(genres, list):
+                    all_genres.extend(genres)
+            
+            genre_counts = pd.Series(all_genres).value_counts().head(10).to_dict()
+            stats['top_genres'] = genre_counts
+        
+        # 年份分布
+        if 'year' in df.columns:
+            year_counts = df['year'].value_counts().head(10).to_dict()
+            stats['year_distribution'] = {str(k): int(v) for k, v in year_counts.items()}
+        
+        return stats
+    
+    def merge_with_douban_data(self, imdb_data, douban_data):
+        """
+        将IMDB数据与豆瓣数据合并（基于电影标题和年份）
+        
+        Args:
+            imdb_data: IMDB电影数据列表
+            douban_data: 豆瓣电影数据列表
+            
+        Returns:
+            list: 合并后的数据列表
+        """
+        merged_data = []
+        
+        # 创建豆瓣数据的查找字典
+        douban_dict = {}
+        for movie in douban_data:
+            key = f"{movie.get('title', '').lower()}_{movie.get('year', '')}"
+            douban_dict[key] = movie
+        
+        for imdb_movie in imdb_data:
+            # 尝试匹配豆瓣数据
+            key = f"{imdb_movie.get('title', '').lower()}_{imdb_movie.get('year', '')}"
+            douban_movie = douban_dict.get(key)
+            
+            merged_movie = imdb_movie.copy()
+            if douban_movie:
+                # 添加豆瓣数据
+                merged_movie.update({
+                    'douban_id': douban_movie.get('movie_id'),
+                    'douban_rating': douban_movie.get('rating'),
+                    'douban_rating_count': douban_movie.get('rating_count'),
+                    'douban_url': douban_movie.get('url')
+                })
+            
+            merged_data.append(merged_movie)
+        
+        self.logger.info(f"合并完成，共 {len(merged_data)} 部电影")
+        return merged_data

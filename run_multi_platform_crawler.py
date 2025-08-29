@@ -1,396 +1,344 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-多平台电影数据爬虫系统
-集成豆瓣、IMDB和烂番茄三大平台的电影数据爬取功能
+多平台电影爬虫系统
+整合豆瓣和IMDB爬虫，提供统一接口
 """
 
 import os
-import sys
 import logging
-import time
+import json
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# 添加项目根目录到Python路径
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from douban_crawler import DoubanCrawler
-from imdb_crawler import IMDBCrawler
-from rotten_tomatoes_crawler import RTCrawler
+from douban_crawler import DoubanMovieCrawler
+from imdb_crawler import IMDBMovieCrawler
 
 
 class MultiPlatformCrawler:
-    """多平台电影爬虫主控制器"""
+    """多平台电影爬虫管理器"""
     
-    def __init__(self):
-        """初始化多平台爬虫"""
-        self.platforms = {
-            'douban': {
-                'name': '豆瓣电影',
-                'crawler_class': DoubanCrawler,
-                'enabled': True
-            },
-            'imdb': {
-                'name': 'IMDB',
-                'crawler_class': IMDBCrawler,
-                'enabled': True
-            },
-            'rotten_tomatoes': {
-                'name': '烂番茄',
-                'crawler_class': RTCrawler,
-                'enabled': True
-            }
-        }
+    def __init__(self, output_dir="data"):
+        """
+        初始化多平台爬虫
         
-        self.logger = self._setup_logging()
+        Args:
+            output_dir: 数据输出目录
+        """
+        self.output_dir = output_dir
+        self.douban_crawler = None
+        self.imdb_crawler = None
+        
+        # 确保输出目录存在
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 设置日志
+        self._setup_logging()
+        
         self.logger.info("多平台电影爬虫系统初始化完成")
     
     def _setup_logging(self):
-        """设置日志配置"""
+        """设置日志记录"""
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.StreamHandler(),
-                logging.FileHandler('multi_platform_crawler.log', encoding='utf-8')
+                logging.FileHandler('multi_platform_crawler.log', encoding='utf-8'),
+                logging.StreamHandler()
             ]
         )
-        return logging.getLogger(__name__)
+        self.logger = logging.getLogger(__name__)
     
-    def show_menu(self):
-        """显示主菜单"""
-        print("\n🎬 多平台电影数据爬虫系统 v1.0")
-        print("=" * 60)
-        print("支持平台：豆瓣电影 | IMDB | 烂番茄")
-        print("适用于：大数据真值推荐系统项目")
-        print("功能：从多个平台爬取电影数据，为推荐算法提供数据支持")
-        print("=" * 60)
-        print("\n📋 功能菜单:")
-        print("1. 🔥 单平台爬取")
-        print("2. 🌍 多平台并行爬取")
-        print("3. 📊 平台支持测试")
-        print("4. 📈 数据统计分析")
-        print("5. 🚪 退出程序")
-    
-    def run(self):
-        """运行主程序"""
-        while True:
-            self.show_menu()
+    def crawl_all_platforms(self, max_movies_per_platform=100, douban_categories=None, imdb_categories=None):
+        """
+        同时爬取所有平台数据
+        
+        Args:
+            max_movies_per_platform: 每个平台最大爬取数量
+            douban_categories: 豆瓣爬取分类
+            imdb_categories: IMDB爬取分类
             
-            try:
-                choice = input("\n请选择功能 (1-5): ").strip()
-                
-                if choice == '1':
-                    self.single_platform_crawl()
-                elif choice == '2':
-                    self.multi_platform_crawl()
-                elif choice == '3':
-                    self.test_platforms()
-                elif choice == '4':
-                    self.analyze_data()
-                elif choice == '5':
-                    print("感谢使用多平台电影爬虫系统！")
-                    break
-                else:
-                    print("❌ 无效选择，请输入1-5之间的数字")
-                    
-            except KeyboardInterrupt:
-                print("\n👋 程序被用户中断，退出系统")
-                break
-            except Exception as e:
-                print(f"❌ 程序执行出错: {e}")
-                self.logger.error(f"程序执行出错: {e}")
-    
-    def single_platform_crawl(self):
-        """单平台爬取"""
-        print("\n🔥 单平台爬取模式")
-        print("-" * 30)
+        Returns:
+            dict: 包含所有平台爬取结果的字典
+        """
+        douban_categories = douban_categories or ['hot', 'top250']
+        imdb_categories = imdb_categories or ['top250', 'popular']
         
-        # 显示平台选择
-        platforms = list(self.platforms.keys())
-        for i, platform_key in enumerate(platforms, 1):
-            platform = self.platforms[platform_key]
-            status = "✅" if platform['enabled'] else "❌"
-            print(f"{i}. {status} {platform['name']}")
-        
-        try:
-            choice = int(input(f"\n请选择平台 (1-{len(platforms)}): "))
-            if 1 <= choice <= len(platforms):
-                platform_key = platforms[choice - 1]
-                self._crawl_platform(platform_key)
-            else:
-                print("❌ 无效选择")
-        except ValueError:
-            print("❌ 请输入有效数字")
-    
-    def multi_platform_crawl(self):
-        """多平台并行爬取"""
-        print("\n🌍 多平台并行爬取模式")
-        print("-" * 30)
-        
-        # 显示启用的平台
-        enabled_platforms = [k for k, v in self.platforms.items() if v['enabled']]
-        
-        if not enabled_platforms:
-            print("❌ 没有启用的平台，请检查配置")
-            return
-        
-        print(f"将从以下 {len(enabled_platforms)} 个平台爬取数据：")
-        for platform_key in enabled_platforms:
-            print(f"• {self.platforms[platform_key]['name']}")
-        
-        max_movies = self._get_movie_count()
-        if max_movies is None:
-            return
-        
-        print(f"\n🚀 开始多平台爬取，每个平台最多 {max_movies} 部电影")
-        
+        self.logger.info("开始多平台电影数据爬取")
         results = {}
-        total_movies = 0
         
-        for platform_key in enabled_platforms:
-            print(f"\n{'='*50}")
-            print(f"🎯 正在爬取 {self.platforms[platform_key]['name']} 数据")
-            print(f"{'='*50}")
+        # 使用线程池并行爬取
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            # 提交任务
+            futures = {}
             
-            result = self._crawl_platform(platform_key, max_movies, show_details=False)
-            results[platform_key] = result
+            # 豆瓣爬虫任务
+            douban_future = executor.submit(
+                self._crawl_douban_safe, 
+                douban_categories, 
+                max_movies_per_platform
+            )
+            futures['douban'] = douban_future
             
-            if result and result.get('success'):
-                movie_count = len(result.get('data', []))
-                total_movies += movie_count
-                print(f"✅ {self.platforms[platform_key]['name']} 完成: {movie_count} 部电影")
-            else:
-                print(f"❌ {self.platforms[platform_key]['name']} 爬取失败")
+            # IMDB爬虫任务
+            imdb_future = executor.submit(
+                self._crawl_imdb_safe, 
+                imdb_categories, 
+                max_movies_per_platform
+            )
+            futures['imdb'] = imdb_future
+            
+            # 收集结果
+            for platform, future in futures.items():
+                try:
+                    result = future.result(timeout=3600)  # 1小时超时
+                    results[platform] = result
+                    self.logger.info(f"{platform}爬虫完成: {result.get('message', 'Unknown')}")
+                except Exception as e:
+                    self.logger.error(f"{platform}爬虫失败: {e}")
+                    results[platform] = {
+                        'success': False,
+                        'data_count': 0,
+                        'file_paths': {},
+                        'message': f'爬取失败: {str(e)}'
+                    }
         
-        # 显示总结
-        print(f"\n🎉 多平台爬取完成!")
-        print(f"📊 总计获取 {total_movies} 部电影信息")
+        # 保存综合结果
+        summary = self._save_crawl_summary(results)
+        results['summary'] = summary
         
-        for platform_key, result in results.items():
-            if result and result.get('success'):
-                count = len(result.get('data', []))
-                print(f"  - {self.platforms[platform_key]['name']}: {count} 部")
+        self.logger.info("多平台爬取任务完成")
+        return results
     
-    def _crawl_platform(self, platform_key, max_movies=None, show_details=True):
-        """爬取指定平台数据"""
-        platform = self.platforms.get(platform_key)
-        if not platform or not platform['enabled']:
-            print(f"❌ 平台 {platform_key} 未启用或不存在")
-            return None
+    def _crawl_douban_safe(self, categories, max_movies):
+        """安全的豆瓣爬取方法"""
+        try:
+            with DoubanMovieCrawler() as crawler:
+                self.douban_crawler = crawler
+                return crawler.crawl_movies(
+                    categories=categories, 
+                    max_movies=max_movies
+                )
+        except Exception as e:
+            self.logger.error(f"豆瓣爬虫异常: {e}")
+            return {
+                'success': False,
+                'data_count': 0,
+                'file_paths': {},
+                'message': f'豆瓣爬取失败: {str(e)}'
+            }
+        finally:
+            self.douban_crawler = None
+    
+    def _crawl_imdb_safe(self, categories, max_movies):
+        """安全的IMDB爬取方法"""
+        try:
+            with IMDBMovieCrawler() as crawler:
+                self.imdb_crawler = crawler
+                return crawler.crawl_movies(
+                    categories=categories, 
+                    max_movies=max_movies
+                )
+        except Exception as e:
+            self.logger.error(f"IMDB爬虫异常: {e}")
+            return {
+                'success': False,
+                'data_count': 0,
+                'file_paths': {},
+                'message': f'IMDB爬取失败: {str(e)}'
+            }
+        finally:
+            self.imdb_crawler = None
+    
+    def crawl_douban_only(self, categories=None, max_movies=100):
+        """只爬取豆瓣数据"""
+        categories = categories or ['hot', 'top250']
         
-        if max_movies is None:
-            max_movies = self._get_movie_count()
-            if max_movies is None:
-                return None
+        self.logger.info("开始爬取豆瓣电影数据")
         
         try:
-            # 初始化爬虫
-            crawler = platform['crawler_class']()
-            
-            # 获取支持的分类
-            categories = list(crawler.get_supported_categories().keys())
-            
-            # 选择默认分类
-            if platform_key == 'douban':
-                default_categories = ['hot']
-            elif platform_key == 'imdb':
-                default_categories = ['popular']
-            else:  # rotten_tomatoes
-                default_categories = ['most_popular']
-            
-            print(f"\n🎯 开始爬取 {platform['name']} 数据")
-            print(f"📋 分类: {default_categories}")
-            print(f"🔢 数量: {max_movies} 部电影")
-            
-            # 开始爬取
-            start_time = time.time()
-            result = crawler.crawl_movies(categories=default_categories, max_movies=max_movies)
-            end_time = time.time()
-            
-            if result.get('success'):
-                movie_count = len(result.get('data', []))
-                elapsed_time = end_time - start_time
+            with DoubanMovieCrawler() as crawler:
+                result = crawler.crawl_movies(
+                    categories=categories, 
+                    max_movies=max_movies
+                )
                 
-                if show_details:
-                    print(f"\n🎉 爬取完成!")
-                    print(f"📊 成功获取 {movie_count} 部电影信息")
-                    print(f"⏱️  耗时: {elapsed_time:.1f} 秒")
-                    
-                    # 显示文件路径
-                    file_paths = result.get('file_paths', {})
-                    if file_paths:
-                        print(f"\n📁 数据文件保存位置:")
-                        for format_type, path in file_paths.items():
-                            print(f"  - {format_type.upper()}: {path}")
-                    
-                    # 显示数据预览
-                    self._show_data_preview(result.get('data', []), platform_key)
-                
-                return result
-            else:
-                error_msg = result.get('error', '未知错误')
-                print(f"❌ 爬取失败: {error_msg}")
+                self.logger.info(f"豆瓣爬取完成: {result.get('message', 'Unknown')}")
                 return result
                 
         except Exception as e:
-            print(f"❌ 爬取过程中发生异常: {e}")
-            self.logger.error(f"爬取 {platform_key} 时发生异常: {e}")
-            return None
+            self.logger.error(f"豆瓣爬取失败: {e}")
+            return {
+                'success': False,
+                'data_count': 0,
+                'file_paths': {},
+                'message': f'豆瓣爬取失败: {str(e)}'
+            }
     
-    def _get_movie_count(self):
-        """获取用户输入的电影数量"""
+    def crawl_imdb_only(self, categories=None, max_movies=100):
+        """只爬取IMDB数据"""
+        categories = categories or ['top250', 'popular']
+        
+        self.logger.info("开始爬取IMDB电影数据")
+        
         try:
-            count = int(input("请输入要爬取的电影数量 (建议10-50): "))
-            if count <= 0:
-                print("❌ 数量必须大于0")
-                return None
-            elif count > 200:
-                print("⚠️  数量较大，可能需要很长时间")
-                confirm = input("是否继续? (y/n): ")
-                if confirm.lower() != 'y':
-                    return None
-            return count
-        except ValueError:
-            print("❌ 请输入有效数字")
-            return None
+            with IMDBMovieCrawler() as crawler:
+                result = crawler.crawl_movies(
+                    categories=categories, 
+                    max_movies=max_movies
+                )
+                
+                self.logger.info(f"IMDB爬取完成: {result.get('message', 'Unknown')}")
+                return result
+                
+        except Exception as e:
+            self.logger.error(f"IMDB爬取失败: {e}")
+            return {
+                'success': False,
+                'data_count': 0,
+                'file_paths': {},
+                'message': f'IMDB爬取失败: {str(e)}'
+            }
     
-    def _show_data_preview(self, data, platform_key):
-        """显示数据预览"""
-        if not data:
-            return
+    def merge_platform_data(self, douban_file=None, imdb_file=None):
+        """
+        合并不同平台的数据
         
-        print(f"\n🎬 {self.platforms[platform_key]['name']} 数据预览 (前3部电影):")
-        print()
-        
-        for i, movie in enumerate(data[:3], 1):
-            if platform_key == 'douban':
-                title = movie.get('title', 'Unknown')
-                year = movie.get('year', 'N/A')
-                rating = movie.get('rating', 'N/A')
-                genres = movie.get('genres', [])
-                directors = movie.get('directors', [])
-                actors = movie.get('actors', [])
-                
-                print(f"{i}. {title}")
-                print(f"   📅 年份: {year}")
-                print(f"   ⭐ 评分: {rating}")
-                print(f"   🎭 类型: {', '.join(genres[:3]) if genres else 'N/A'}")
-                print(f"   🎬 导演: {', '.join(directors[:2]) if directors else 'N/A'}")
-                print(f"   🎪 主演: {', '.join(actors[:3]) if actors else 'N/A'}")
-                
-            elif platform_key == 'imdb':
-                title = movie.get('title', 'Unknown')
-                year = movie.get('year', 'N/A')
-                rating = movie.get('rating', 'N/A')
-                genres = movie.get('genres', [])
-                directors = movie.get('directors', [])
-                
-                print(f"{i}. {title}")
-                print(f"   📅 年份: {year}")
-                print(f"   ⭐ IMDB评分: {rating}")
-                print(f"   🎭 类型: {', '.join(genres[:3]) if genres else 'N/A'}")
-                print(f"   🎬 导演: {', '.join(directors[:2]) if directors else 'N/A'}")
-                
-            else:  # rotten_tomatoes
-                title = movie.get('title', 'Unknown')
-                year = movie.get('year', 'N/A')
-                tomatometer = movie.get('tomatometer_score', 'N/A')
-                audience = movie.get('audience_score', 'N/A')
-                genres = movie.get('genres', [])
-                
-                print(f"{i}. {title}")
-                print(f"   📅 年份: {year}")
-                print(f"   🍅 新鲜度: {tomatometer}%")
-                print(f"   🍿 观众评分: {audience}%")
-                print(f"   🎭 类型: {', '.join(genres[:3]) if genres else 'N/A'}")
+        Args:
+            douban_file: 豆瓣数据文件路径
+            imdb_file: IMDB数据文件路径
             
-            print()
-        
-        if len(data) > 3:
-            print(f"   ... 还有 {len(data) - 3} 部电影")
-    
-    def test_platforms(self):
-        """测试平台连接"""
-        print("\n📊 平台支持测试")
-        print("-" * 30)
-        
-        for platform_key, platform in self.platforms.items():
-            print(f"🔍 测试 {platform['name']} 连接...", end=' ')
+        Returns:
+            str: 合并后文件路径
+        """
+        try:
+            merged_data = []
             
-            try:
-                if platform['enabled']:
-                    crawler = platform['crawler_class']()
-                    if crawler.test_connection():
-                        print("✅ 连接正常")
-                    else:
-                        print("❌ 连接失败")
-                else:
-                    print("⚠️  平台未启用")
-            except Exception as e:
-                print(f"❌ 测试异常: {e}")
+            # 读取豆瓣数据
+            if douban_file and os.path.exists(douban_file):
+                with open(douban_file, 'r', encoding='utf-8') as f:
+                    douban_data = json.load(f)
+                    merged_data.extend(douban_data)
+                    self.logger.info(f"加载豆瓣数据: {len(douban_data)} 部电影")
+            
+            # 读取IMDB数据
+            if imdb_file and os.path.exists(imdb_file):
+                with open(imdb_file, 'r', encoding='utf-8') as f:
+                    imdb_data = json.load(f)
+                    merged_data.extend(imdb_data)
+                    self.logger.info(f"加载IMDB数据: {len(imdb_data)} 部电影")
+            
+            # 保存合并数据
+            if merged_data:
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                merged_file = os.path.join(self.output_dir, f"merged_movies_{timestamp}.json")
+                
+                with open(merged_file, 'w', encoding='utf-8') as f:
+                    json.dump(merged_data, f, ensure_ascii=False, indent=2)
+                
+                self.logger.info(f"数据合并完成: {merged_file}, 总计 {len(merged_data)} 部电影")
+                return merged_file
+            
+        except Exception as e:
+            self.logger.error(f"数据合并失败: {e}")
+            
+        return None
     
-    def analyze_data(self):
-        """分析已爬取的数据"""
-        print("\n📈 数据统计分析")
-        print("-" * 30)
+    def _save_crawl_summary(self, results):
+        """保存爬取汇总信息"""
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
-        data_dir = "data"
-        if not os.path.exists(data_dir):
-            print("❌ 数据目录不存在，请先运行爬虫")
-            return
-        
-        # 统计文件数量
-        file_stats = {
-            'douban': 0,
-            'imdb': 0,
-            'rt': 0,
-            'total': 0
+        summary = {
+            'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'total_platforms': len(results),
+            'successful_platforms': sum(1 for r in results.values() if r.get('success', False)),
+            'total_movies': sum(r.get('data_count', 0) for r in results.values()),
+            'platform_details': results
         }
         
+        summary_file = os.path.join(self.output_dir, f"crawl_summary_{timestamp}.json")
+        
         try:
-            files = os.listdir(data_dir)
-            for file in files:
-                if file.endswith('.json'):
-                    file_stats['total'] += 1
-                    if 'douban' in file or 'cleaned_movies' in file:
-                        file_stats['douban'] += 1
-                    elif 'imdb' in file:
-                        file_stats['imdb'] += 1
-                    elif 'rt' in file:
-                        file_stats['rt'] += 1
+            with open(summary_file, 'w', encoding='utf-8') as f:
+                json.dump(summary, f, ensure_ascii=False, indent=2)
             
-            print(f"📊 数据文件统计:")
-            print(f"  - 总文件数: {file_stats['total']}")
-            print(f"  - 豆瓣数据: {file_stats['douban']} 个文件")
-            print(f"  - IMDB数据: {file_stats['imdb']} 个文件")
-            print(f"  - 烂番茄数据: {file_stats['rt']} 个文件")
-            
-            # 检查海报图片
-            poster_dirs = ['posters', 'imdb_posters', 'rt_posters']
-            total_images = 0
-            
-            for poster_dir in poster_dirs:
-                poster_path = os.path.join(data_dir, poster_dir)
-                if os.path.exists(poster_path):
-                    images = [f for f in os.listdir(poster_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
-                    total_images += len(images)
-                    print(f"  - {poster_dir}: {len(images)} 张图片")
-            
-            print(f"🖼️  海报图片总计: {total_images} 张")
+            self.logger.info(f"爬取汇总已保存: {summary_file}")
+            summary['summary_file'] = summary_file
             
         except Exception as e:
-            print(f"❌ 统计数据时出错: {e}")
+            self.logger.error(f"保存爬取汇总失败: {e}")
+        
+        return summary
+    
+    def get_supported_platforms(self):
+        """获取支持的平台列表"""
+        return {
+            'douban': {
+                'name': '豆瓣电影',
+                'categories': ['hot', 'top250', 'new_movies', 'weekly_best', 'classic']
+            },
+            'imdb': {
+                'name': 'IMDB',
+                'categories': ['top250', 'popular', 'upcoming', 'in_theaters']
+            }
+        }
+    
+    def test_all_connections(self):
+        """测试所有平台连接"""
+        results = {}
+        
+        # 测试豆瓣连接
+        try:
+            with DoubanMovieCrawler() as crawler:
+                results['douban'] = crawler.test_connection()
+        except Exception as e:
+            self.logger.error(f"豆瓣连接测试失败: {e}")
+            results['douban'] = False
+        
+        # 测试IMDB连接
+        try:
+            with IMDBMovieCrawler() as crawler:
+                results['imdb'] = crawler.test_connection()
+        except Exception as e:
+            self.logger.error(f"IMDB连接测试失败: {e}")
+            results['imdb'] = False
+        
+        return results
 
 
 def main():
-    """主函数"""
-    try:
-        crawler = MultiPlatformCrawler()
-        crawler.run()
-    except Exception as e:
-        print(f"❌ 程序启动失败: {e}")
-        logging.error(f"程序启动失败: {e}")
+    """主函数 - 演示多平台爬虫使用"""
+    # 创建多平台爬虫
+    crawler = MultiPlatformCrawler()
+    
+    # 测试连接
+    print("测试平台连接...")
+    connections = crawler.test_all_connections()
+    for platform, status in connections.items():
+        print(f"{platform}: {'连接成功' if status else '连接失败'}")
+    
+    if not any(connections.values()):
+        print("所有平台连接失败，请检查网络连接")
+        return
+    
+    # 开始爬取
+    print("\n开始多平台数据爬取...")
+    results = crawler.crawl_all_platforms(
+        max_movies_per_platform=50,  # 每个平台爬取50部电影用于演示
+        douban_categories=['hot'],
+        imdb_categories=['top250']
+    )
+    
+    # 显示结果
+    print(f"\n爬取结果汇总:")
+    print(f"总爬取电影数: {results.get('summary', {}).get('total_movies', 0)}")
+    print(f"成功平台数: {results.get('summary', {}).get('successful_platforms', 0)}")
+    
+    for platform, result in results.items():
+        if platform != 'summary':
+            status = "成功" if result.get('success', False) else "失败"
+            count = result.get('data_count', 0)
+            print(f"{platform}: {status} (获取 {count} 部电影)")
 
 
 if __name__ == "__main__":

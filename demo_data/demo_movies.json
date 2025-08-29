@@ -1,0 +1,68 @@
+[
+  {
+    "platform": "豆瓣",
+    "title": "肖申克的救赎",
+    "original_title": "The Shawshank Redemption",
+    "year": 1994,
+    "rating": 9.7,
+    "rating_count": 2800000,
+    "genres": [
+      "剧情",
+      "犯罪"
+    ],
+    "directors": [
+      "弗兰克·德拉邦特"
+    ],
+    "actors": [
+      "蒂姆·罗宾斯",
+      "摩根·弗里曼",
+      "鲍勃·冈顿"
+    ],
+    "duration": 142,
+    "countries": [
+      "美国"
+    ],
+    "languages": [
+      "英语"
+    ],
+    "plot": "银行家安迪被指控谋杀妻子及其情人，被判终身监禁，在肖申克监狱服刑。在狱中，他与囚犯瑞德成为朋友，并逐渐受到监狱长的赏识...",
+    "poster_url": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p480747492.jpg",
+    "url": "https://movie.douban.com/subject/1292052/",
+    "douban_id": "1292052",
+    "crawl_time": "2025-08-29 14:35:00"
+  },
+  {
+    "platform": "IMDB",
+    "title": "The Godfather",
+    "original_title": "The Godfather",
+    "year": 1972,
+    "rating": 9.2,
+    "rating_count": 1900000,
+    "genres": [
+      "Crime",
+      "Drama"
+    ],
+    "directors": [
+      "Francis Ford Coppola"
+    ],
+    "actors": [
+      "Marlon Brando",
+      "Al Pacino",
+      "James Caan"
+    ],
+    "duration": 175,
+    "countries": [
+      "United States"
+    ],
+    "languages": [
+      "English",
+      "Italian",
+      "Latin"
+    ],
+    "plot": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "poster_url": "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+    "url": "https://www.imdb.com/title/tt0068646/",
+    "imdb_id": "tt0068646",
+    "crawl_time": "2025-08-29 14:35:00"
+  }
+]

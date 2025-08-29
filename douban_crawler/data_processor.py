@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 数据处理模块
-负责数据清洗和为神经网络准备特征
+负责豆瓣数据清洗和文件输出
 """
 
 import pandas as pd
-import numpy as np
 import json
 import re
 import os
@@ -14,6 +13,7 @@ import requests
 import urllib.parse
 from datetime import datetime
 import logging
+import numpy as np
 
 from .config import Config
 
@@ -24,38 +24,9 @@ class DataProcessor:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         # 创建图片存储目录
-        self.poster_dir = "data/posters"
+        self.poster_dir = "data/douban_posters"
         if not os.path.exists(self.poster_dir):
             os.makedirs(self.poster_dir)
-    
-    def process_movies(self, movies_data):
-        """
-        统一的电影数据处理接口，与其他爬虫保持一致
-        
-        Args:
-            movies_data: 原始电影数据列表
-            
-        Returns:
-            dict: 包含处理后数据和文件路径的字典
-        """
-        if not movies_data:
-            self.logger.warning("没有电影数据需要处理")
-            return {'cleaned_data': [], 'file_paths': {}}
-        
-        # 清洗数据
-        cleaned_data = self.clean_movie_data(movies_data)
-        
-        if not cleaned_data:
-            self.logger.warning("数据清洗后没有有效数据")
-            return {'cleaned_data': [], 'file_paths': {}}
-        
-        # 保存数据
-        file_paths = self.save_processed_data(cleaned_data, "data")
-        
-        return {
-            'cleaned_data': cleaned_data,
-            'file_paths': file_paths
-        }
     
     def clean_movie_data(self, raw_data):
         """清洗电影数据"""
@@ -151,7 +122,7 @@ class DataProcessor:
         summary = re.sub(r'\s+', ' ', str(summary)).strip()
         
         # 限制长度
-        max_length = Config.FEATURE_CONFIG['summary_max_length']
+        max_length = 500  # 简介最大长度
         if len(summary) > max_length:
             summary = summary[:max_length] + "..."
         
@@ -260,10 +231,6 @@ class DataProcessor:
         # 保存为DataFrame格式
         df = pd.DataFrame(cleaned_data)
         
-        # 保存Excel文件
-        excel_file = f"{output_dir}/cleaned_movies_{timestamp}.xlsx"
-        df.to_excel(excel_file, index=False, engine='openpyxl')
-        
         # 保存CSV文件
         csv_file = f"{output_dir}/cleaned_movies_{timestamp}.csv"
         df.to_csv(csv_file, index=False, encoding='utf-8-sig')
@@ -281,13 +248,11 @@ class DataProcessor:
         
         self.logger.info(f"处理后的数据已保存:")
         self.logger.info(f"- JSON: {json_file}")
-        self.logger.info(f"- Excel: {excel_file}")
         self.logger.info(f"- CSV: {csv_file}")
         self.logger.info(f"- 数据信息: {info_file}")
         
         return {
             'json': json_file,
-            'excel': excel_file,
             'csv': csv_file,
             'info': info_file
         }

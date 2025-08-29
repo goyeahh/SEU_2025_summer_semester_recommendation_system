@@ -9,25 +9,32 @@
 class Config:
     """配置类，包含所有系统配置"""
     
-    # 基本配置 - 优化延时
-    MAX_MOVIES = 100  # 最大爬取电影数量
-    DELAY_MIN = 0.5   # 最小延时（秒）- 优化速度
-    DELAY_MAX = 1.5   # 最大延时（秒）- 优化速度
+    # 基本配置
+    MAX_MOVIES = 200  # 最大爬取电影数量
+    DELAY_MIN = 2     # 最小延时（秒）
+    DELAY_MAX = 5     # 最大延时（秒）
     
     # 豆瓣网站配置
     BASE_URL = "https://movie.douban.com"
     
     # 爬取分类配置
     CRAWL_CATEGORIES = {
-        'hot': '热门电影',
+        'hot': '豆瓣电影热门榜',
+        'top250': '豆瓣电影Top250',
         'new_movies': '新片榜',
-        'classic': '经典电影'
+        'weekly_best': '一周口碑榜',
+        'north_america': '北美票房榜',
+        'classic': '经典电影',
+        'comedy': '喜剧片',
+        'action': '动作片',
+        'romance': '爱情片',
+        'sci_fi': '科幻片'
     }
     
     # 输出配置
     OUTPUT_DIR = "data"
-    POSTER_DIR = "data/posters"  # 封面图片存储目录
-    OUTPUT_FORMATS = ['json', 'xlsx', 'csv']
+    POSTER_DIR = "data/douban_posters"  # 封面图片存储目录
+    OUTPUT_FORMATS = ['json', 'csv']
     
     # 请求头配置
     DEFAULT_HEADERS = {
@@ -44,12 +51,20 @@ class Config:
         '--no-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
-        '--window-size=1920,1080'
+        '--disable-software-rasterizer',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-logging',
+        '--log-level=3',
+        '--window-size=1920,1080',
+        '--disable-extensions',
+        '--disable-plugins',
+        '--disable-images'
     ]
     
     # 重试配置
     MAX_RETRY_TIMES = 3
-    RETRY_DELAY = 1000  # 毫秒 - 减少重试延时
+    RETRY_DELAY = 2000  # 毫秒
     
     # 电影类型标准化列表（用于神经网络特征工程）
     STANDARD_GENRES = [
@@ -59,14 +74,6 @@ class Config:
         '战争', '犯罪', '西部', '奇幻', '冒险', '灾难', 
         '武侠', '古装', '运动', '黑色电影'
     ]
-    
-    # 特征工程配置
-    FEATURE_CONFIG = {
-        'rating_max': 10.0,      # 评分最大值
-        'runtime_max': 300.0,    # 电影时长最大值（分钟）
-        'rating_count_log': True, # 是否对评分人数取对数
-        'summary_max_length': 500 # 简介最大长度
-    }
     
     # 日志配置
     LOG_CONFIG = {
@@ -86,13 +93,46 @@ class Config:
                 for start in range(0, min(max_pages * 25, 250), 25):
                     urls.append(f"{cls.BASE_URL}/chart?start={start}&type=11")
             
+            elif category == 'top250':
+                # 豆瓣Top250
+                for start in range(0, min(max_pages * 25, 250), 25):
+                    urls.append(f"{cls.BASE_URL}/top250?start={start}")
+            
             elif category == 'new_movies':
                 # 新片榜
                 urls.append(f"{cls.BASE_URL}/chart?type=5")
+            
+            elif category == 'weekly_best':
+                # 一周口碑榜
+                urls.append(f"{cls.BASE_URL}/chart?type=12")
+            
+            elif category == 'north_america':
+                # 北美票房榜
+                urls.append(f"{cls.BASE_URL}/chart?type=2")
             
             elif category == 'classic':
                 # 经典电影
                 for start in range(0, min(max_pages * 25, 100), 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=剧情&type=11&interval_id=100:90&action=&start={start}")
+            
+            elif category == 'comedy':
+                # 喜剧片
+                for start in range(0, min(max_pages * 25, 100), 25):
+                    urls.append(f"{cls.BASE_URL}/typerank?type_name=喜剧&type=11&interval_id=100:90&action=&start={start}")
+            
+            elif category == 'action':
+                # 动作片
+                for start in range(0, min(max_pages * 25, 100), 25):
+                    urls.append(f"{cls.BASE_URL}/typerank?type_name=动作&type=11&interval_id=100:90&action=&start={start}")
+            
+            elif category == 'romance':
+                # 爱情片
+                for start in range(0, min(max_pages * 25, 100), 25):
+                    urls.append(f"{cls.BASE_URL}/typerank?type_name=爱情&type=11&interval_id=100:90&action=&start={start}")
+            
+            elif category == 'sci_fi':
+                # 科幻片
+                for start in range(0, min(max_pages * 25, 100), 25):
+                    urls.append(f"{cls.BASE_URL}/typerank?type_name=科幻&type=11&interval_id=100:90&action=&start={start}")
         
         return urls

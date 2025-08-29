@@ -1,0 +1,42 @@
+[
+  {
+    "douban_id": "1292052",
+    "title": "肖申克的救赎",
+    "url": "https://movie.douban.com/subject/1292052/",
+    "year": 1994,
+    "rating": 9.7,
+    "rating_count": 2800000,
+    "directors": [
+      "弗兰克·德拉邦特"
+    ],
+    "actors": [
+      "蒂姆·罗宾斯",
+      "摩根·弗里曼"
+    ],
+    "genres": [
+      "剧情",
+      "犯罪"
+    ],
+    "countries": [],
+    "languages": [],
+    "release_dates": [],
+    "runtime_minutes": null,
+    "imdb_id": null,
+    "summary": "",
+    "tags": [],
+    "star_5": 0.0,
+    "star_4": 0.0,
+    "star_3": 0.0,
+    "star_2": 0.0,
+    "star_1": 0.0,
+    "poster_path": null,
+    "rating_normalized": 0.97,
+    "rating_count_log": 14.845130332288226,
+    "runtime_normalized": 0.0,
+    "rating_variance": 0.0,
+    "genre_count": 2,
+    "actor_count": 2,
+    "director_count": 1,
+    "country_count": 0
+  }
+]

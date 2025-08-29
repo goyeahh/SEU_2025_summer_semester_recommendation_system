@@ -17,7 +17,7 @@ from .parser import PageParser
 from .data_processor import DataProcessor
 
 
-class DoubanCrawler:
+class DoubanMovieCrawler:
     """豆瓣电影爬虫主类"""
     
     def __init__(self, config=None):
@@ -83,26 +83,32 @@ class DoubanCrawler:
             # 第三步：爬取电影详情
             raw_movie_data = self._crawl_movie_details(movie_links)
             
-            # 第四步：统一数据处理接口
-            result = self.data_processor.process_movies(raw_movie_data)
+            # 第四步：数据清洗和处理
+            cleaned_data = self.data_processor.clean_movie_data(raw_movie_data)
             
-            self.logger.info(f"爬虫任务完成！成功获取 {len(result.get('cleaned_data', []))} 部电影信息")
+            # 第五步：保存数据
+            saved_files = self.data_processor.save_processed_data(
+                cleaned_data, 
+                self.config.OUTPUT_DIR
+            )
             
+            self.logger.info(f"爬虫任务完成！成功获取 {len(cleaned_data)} 部电影信息")
+            
+            # 返回格式与其他爬虫保持一致
             return {
                 'success': True,
-                'data': result.get('cleaned_data', []),
-                'file_paths': result.get('file_paths', {}),
-                'total_crawled': len(raw_movie_data),
-                'total_cleaned': len(result.get('cleaned_data', []))
+                'data_count': len(cleaned_data),
+                'file_paths': saved_files,
+                'message': f'成功爬取 {len(cleaned_data)} 部电影'
             }
             
         except Exception as e:
             self.logger.error(f"爬虫运行出错: {e}")
             return {
                 'success': False,
-                'data': [],
+                'data_count': 0,
                 'file_paths': {},
-                'error': str(e)
+                'message': f'爬取失败: {str(e)}'
             }
         finally:
             self.network_manager.close()
@@ -194,6 +200,29 @@ class DoubanCrawler:
         except Exception as e:
             self.logger.error(f"搜索电影失败: {e}")
             return []
+    
+    def get_supported_categories(self):
+        """
+        获取支持的分类列表
+        
+        Returns:
+            dict: 分类字典，键为分类代码，值为分类名称
+        """
+        return self.config.CRAWL_CATEGORIES.copy()
+    
+    def test_connection(self):
+        """
+        测试网络连接
+        
+        Returns:
+            bool: 连接是否成功
+        """
+        try:
+            response = self.network_manager.get_page(self.config.BASE_URL)
+            return response is not None
+        except Exception as e:
+            self.logger.error(f"连接测试失败: {e}")
+            return False
     
     def __enter__(self):
         """上下文管理器进入"""
