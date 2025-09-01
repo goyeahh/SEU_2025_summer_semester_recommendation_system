@@ -574,3 +574,10 @@
 2025-09-01 14:52:38,785 - douban_crawler.parser - INFO - 成功解析电影: 
 2025-09-01 14:52:43,509 - douban_crawler.parser - INFO - 成功解析电影: 
 2025-09-01 14:52:48,885 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:09,245 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:16,420 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:30,019 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:40,328 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:48,398 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:53:53,312 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:54:07,761 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1292434/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
