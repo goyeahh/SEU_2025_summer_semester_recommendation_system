@@ -581,3 +581,379 @@
 2025-09-01 14:53:48,398 - douban_crawler.parser - INFO - 成功解析电影: 
 2025-09-01 14:53:53,312 - douban_crawler.parser - INFO - 成功解析电影: 
 2025-09-01 14:54:07,761 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1292434/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:03:16,385 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1292434/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:03:27,888 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1292434/, 错误: HTTPSConnectionPool(host='movie.douban.com', port=443): Max retries exceeded with url: /subject/1292434/ (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+2025-09-01 18:03:32,854 - douban_crawler.crawler - WARNING - 爬取电影详情失败: https://movie.douban.com/subject/1292434/, 错误: HTTPSConnectionPool(host='movie.douban.com', port=443): Max retries exceeded with url: /subject/1292434/ (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+2025-09-01 18:03:42,989 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:03:51,031 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:03:58,435 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:04,593 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:12,079 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:21,195 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:28,982 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:34,402 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:40,175 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:46,425 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:51,453 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:04:56,516 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:05,776 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:14,385 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:23,163 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:36,525 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:42,003 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:48,962 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:05:55,514 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:06:01,458 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:06:08,833 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:06:15,582 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:06:30,547 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1292208/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:06:46,770 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:06:54,294 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:07,812 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:14,182 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:20,309 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:25,931 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:38,763 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:45,153 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:51,123 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:07:57,584 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:01,669 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:08,609 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:13,971 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:22,406 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:30,146 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:34,247 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:41,373 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:47,233 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:08:54,102 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:00,043 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:10,497 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:16,440 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:21,963 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:28,062 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:37,736 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:44,482 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:49,714 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:09:56,983 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:02,515 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:11,928 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:16,739 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:23,641 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:32,794 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:37,740 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:44,088 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:10:50,873 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:01,804 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:07,642 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:12,143 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:19,733 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:26,893 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:35,160 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:41,086 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:48,410 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:11:54,955 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:00,691 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:06,491 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:12,772 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:17,516 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:30,659 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/25958717/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:12:47,383 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:53,318 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:12:58,860 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:04,384 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:10,235 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:19,036 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:23,541 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:27,929 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:33,444 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:40,219 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:45,545 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:50,641 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:13:57,637 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:03,779 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:12,017 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:20,154 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:27,947 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:34,981 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:41,462 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:49,642 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:14:57,325 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:01,937 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:09,051 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:17,507 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:26,007 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:31,847 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:38,183 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:47,794 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:53,226 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:15:59,701 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:16:05,688 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:16:18,671 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/25895901/, 错误: HTTPSConnectionPool(host='movie.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:16:31,846 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:16:38,945 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:16:47,617 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:16:53,974 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:01,553 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:09,132 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:16,086 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:22,025 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:29,609 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:36,573 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:42,724 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:50,740 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:17:56,170 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:01,762 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:17,555 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/subject/1302467/, 错误: HTTPSConnectionPool(host='m.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:18:27,526 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:32,302 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:37,300 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:44,381 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:52,963 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:18:59,103 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:05,249 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:10,589 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:16,512 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:23,268 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:29,252 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 18:19:31,819 - douban_crawler.crawler - INFO - 成功爬取 249 部电影详情
+2025-09-01 18:19:31,819 - douban_crawler.data_processor - INFO - 数据清洗完成，有效数据: 0 条
+2025-09-01 18:19:31,836 - douban_crawler.data_processor - INFO - 处理后的数据已保存:
+2025-09-01 18:19:31,837 - douban_crawler.data_processor - INFO - - JSON: data/cleaned_movies_20250901_181931.json
+2025-09-01 18:19:31,837 - douban_crawler.data_processor - INFO - - CSV: data/cleaned_movies_20250901_181931.csv
+2025-09-01 18:19:31,837 - douban_crawler.data_processor - INFO - - 数据信息: data/data_info_20250901_181931.json
+2025-09-01 18:19:31,838 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 0 部电影信息
+2025-09-01 18:19:34,092 - run_multi_platform_crawler - INFO - 豆瓣爬取完成: 成功爬取 0 部电影
+2025-09-01 18:36:54,847 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:36:54,848 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:36:54,965 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:36:54,965 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:36:54,965 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:37:10,392 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: HTTPSConnectionPool(host='movie.douban.com', port=443): Read timed out. (read timeout=10)
+2025-09-01 18:37:17,705 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:37:22,889 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:37:26,925 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:37:47,023 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:37:47,024 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:37:47,111 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:37:47,111 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:37:47,111 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:37:50,724 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:37:57,362 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:38:03,978 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:38:08,739 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:38:23,851 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:40:39,761 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:40:39,762 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:40:39,850 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:40:39,850 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:40:39,851 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:40:50,543 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 重定向到验证页面
+2025-09-01 18:41:03,170 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 重定向到验证页面
+2025-09-01 18:41:13,407 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 重定向到验证页面
+2025-09-01 18:43:49,048 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:43:49,049 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:43:49,142 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:43:49,142 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:43:49,142 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:43:55,200 - douban_crawler.network - INFO - 使用requests获取页面: https://movie.douban.com/chart?start=0&type=11
+2025-09-01 18:43:58,295 - douban_crawler.network - WARNING - 请求失败: https://movie.douban.com/chart?start=0&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:44:05,588 - douban_crawler.network - INFO - 使用Selenium获取页面 (重试次数: 1): https://movie.douban.com/chart?start=0&type=11
+2025-09-01 18:44:05,690 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 18:44:07,292 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:44:08,039 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:44:08,794 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 18:44:11,275 - douban_crawler.network - INFO - Chrome驱动初始化成功
+2025-09-01 18:44:11,280 - douban_crawler.network - INFO - 首次使用Selenium，先访问豆瓣首页建立会话...
+2025-09-01 18:44:20,756 - douban_crawler.network - WARNING - Selenium也被重定向到验证页面: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:44:20,756 - douban_crawler.network - WARNING - Selenium获取页面失败: Selenium被重定向到验证页面
+2025-09-01 18:44:23,615 - douban_crawler.network - WARNING - 遇到反爬虫限制，切换到Selenium: https://movie.douban.com/chart?start=0&type=11
+2025-09-01 18:44:23,615 - douban_crawler.network - INFO - 等待 46.3 秒后重试...
+2025-09-01 18:45:05,501 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:45:05,502 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:45:05,589 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:45:05,590 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:45:05,590 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:45:11,825 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:45:17,393 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:45:22,884 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:45:25,801 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:45:41,722 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:45:41,723 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:45:41,821 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:45:41,821 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies'], 最大数量: 25
+2025-09-01 18:45:41,822 - douban_crawler.crawler - INFO - 生成了 21 个列表页面URL
+2025-09-01 18:45:48,386 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:45:54,219 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:46:01,229 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:46:03,457 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:46:30,211 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:46:30,213 - run_multi_platform_crawler - INFO - 开始爬取IMDB电影数据
+2025-09-01 18:46:30,305 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 18:46:30,305 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['top250', 'popular', 'most_popular_movies', 'top_rated_movies'], 最大数量: 250
+2025-09-01 18:46:30,305 - imdb_crawler.crawler - INFO - 生成了 12 个列表页面URL
+2025-09-01 18:46:31,083 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:46:31,083 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/chart/top/
+2025-09-01 18:46:31,084 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 18:46:32,646 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:46:33,368 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:46:34,043 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 18:46:35,453 - imdb_crawler.network - INFO - IMDB Chrome驱动快速初始化成功
+2025-09-01 18:46:42,449 - imdb_crawler.parser - INFO - 从页面解析到 175 个电影链接
+2025-09-01 18:46:43,399 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:46:43,399 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/chart/moviemeter/
+2025-09-01 18:46:46,696 - imdb_crawler.parser - INFO - 从页面解析到 100 个电影链接
+2025-09-01 18:46:47,643 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:46:47,643 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/search/title/?title_type=feature&sort=moviemeter,asc&start=1&ref_=adv_nxt
+2025-09-01 18:46:52,605 - imdb_crawler.parser - INFO - 从页面解析到 50 个电影链接
+2025-09-01 18:46:53,385 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:46:53,385 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/search/title/?title_type=feature&sort=moviemeter,asc&start=51&ref_=adv_nxt
+2025-09-01 18:46:55,923 - imdb_crawler.parser - INFO - 从页面解析到 50 个电影链接
+2025-09-01 18:46:56,999 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:46:56,999 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/search/title/?title_type=feature&sort=moviemeter,asc&start=101&ref_=adv_nxt
+2025-09-01 18:47:00,002 - imdb_crawler.parser - INFO - 从页面解析到 50 个电影链接
+2025-09-01 18:47:00,622 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 18:47:00,622 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/search/title/?title_type=feature&sort=moviemeter,asc&start=151&ref_=adv_nxt
+2025-09-01 18:56:33,415 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:56:33,416 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:56:33,514 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:56:33,514 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:56:33,514 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:56:39,009 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:56:46,430 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:56:54,614 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:56:59,425 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:57:16,131 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:57:20,587 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:57:25,698 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:57:30,313 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:57:47,898 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 18:57:49,540 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:57:50,266 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:57:50,992 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 18:57:52,313 - douban_crawler.network - INFO - Chrome驱动初始化成功
+2025-09-01 18:58:23,404 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 18:58:23,405 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 18:58:23,493 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 18:58:23,493 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 25
+2025-09-01 18:58:23,494 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 18:58:28,936 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:58:34,418 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:58:39,341 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:58:42,056 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=0&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D0%26type%3D11
+2025-09-01 18:59:01,563 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:59:07,301 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D25%26type%3D11
+2025-09-01 18:59:14,629 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=25&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:59:17,808 - douban_crawler.crawler - WARNING - 解析列表页面失败: https://movie.douban.com/chart?start=25&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:59:38,031 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 18:59:39,583 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:59:40,219 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 18:59:40,936 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 18:59:42,320 - douban_crawler.network - INFO - Chrome驱动初始化成功
+2025-09-01 18:59:42,783 - douban_crawler.network - WARNING - Selenium获取页面失败: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=139.0.7258.155)
+Stacktrace:
+	GetHandleVerifier [0x0xefa8a3+63283]
+	GetHandleVerifier [0x0xefa8e4+63348]
+	(No symbol) [0x0xd33e43]
+	(No symbol) [0x0xd3156b]
+	(No symbol) [0x0xd24d32]
+	(No symbol) [0x0xd26768]
+	(No symbol) [0x0xd24fc8]
+	(No symbol) [0x0xd24b03]
+	(No symbol) [0x0xd24811]
+	(No symbol) [0x0xd227b4]
+	(No symbol) [0x0xd2315b]
+	(No symbol) [0x0xd3785e]
+	(No symbol) [0x0xdc32e7]
+	(No symbol) [0x0xda141c]
+	(No symbol) [0x0xdc271a]
+	(No symbol) [0x0xda1216]
+	(No symbol) [0x0xd70855]
+	(No symbol) [0x0xd716f4]
+	GetHandleVerifier [0x0x116bb43+2623955]
+	GetHandleVerifier [0x0x1166daa+2604090]
+	GetHandleVerifier [0x0xf2069a+218410]
+	GetHandleVerifier [0x0xf10ed8+154984]
+	GetHandleVerifier [0x0xf1742d+180925]
+	GetHandleVerifier [0x0xf022b8+94536]
+	GetHandleVerifier [0x0xf02442+94930]
+	GetHandleVerifier [0x0xeed5ea+9338]
+	BaseThreadInitThunk [0x0x76705d49+25]
+	RtlInitializeExceptionChain [0x0x77bfd2fb+107]
+	RtlGetAppContainerNamedObjectPath [0x0x77bfd281+561]
+
+2025-09-01 18:59:43,340 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=50&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 18:59:49,598 - douban_crawler.network - WARNING - Selenium获取页面失败: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=139.0.7258.155)
+Stacktrace:
+	GetHandleVerifier [0x0xefa8a3+63283]
+	GetHandleVerifier [0x0xefa8e4+63348]
+	(No symbol) [0x0xd33e43]
+	(No symbol) [0x0xd3156b]
+	(No symbol) [0x0xd24d32]
+	(No symbol) [0x0xd26768]
+	(No symbol) [0x0xd24fc8]
+	(No symbol) [0x0xd24b03]
+	(No symbol) [0x0xd24811]
+	(No symbol) [0x0xd227b4]
+	(No symbol) [0x0xd2315b]
+	(No symbol) [0x0xd3785e]
+	(No symbol) [0x0xdc32e7]
+	(No symbol) [0x0xda141c]
+	(No symbol) [0x0xdc271a]
+	(No symbol) [0x0xda1216]
+	(No symbol) [0x0xd70855]
+	(No symbol) [0x0xd716f4]
+	GetHandleVerifier [0x0x116bb43+2623955]
+	GetHandleVerifier [0x0x1166daa+2604090]
+	GetHandleVerifier [0x0xf2069a+218410]
+	GetHandleVerifier [0x0xf10ed8+154984]
+	GetHandleVerifier [0x0xf1742d+180925]
+	GetHandleVerifier [0x0xf022b8+94536]
+	GetHandleVerifier [0x0xf02442+94930]
+	GetHandleVerifier [0x0xeed5ea+9338]
+	BaseThreadInitThunk [0x0x76705d49+25]
+	RtlInitializeExceptionChain [0x0x77bfd2fb+107]
+	RtlGetAppContainerNamedObjectPath [0x0x77bfd281+561]
+
+2025-09-01 18:59:50,275 - douban_crawler.network - WARNING - 请求失败，正在重试: https://movie.douban.com/chart?start=50&type=11, 错误: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+2025-09-01 19:05:27,208 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 19:05:27,209 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 19:05:27,210 - douban_crawler.network_enhanced - INFO - 初始化了 3 个session
+2025-09-01 19:05:27,211 - douban_crawler.crawler - INFO - 豆瓣电影爬虫（增强版）初始化完成
+2025-09-01 19:05:27,211 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot'], 最大数量: 5
+2025-09-01 19:05:27,211 - douban_crawler.crawler - INFO - 生成了 10 个列表页面URL
+2025-09-01 19:05:27,211 - douban_crawler.crawler - INFO - 开始收集电影链接，共 10 个列表页面
+2025-09-01 19:05:40,481 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 19:05:42,030 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 19:06:03,825 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 19:06:25,602 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 19:06:38,236 - douban_crawler.network_enhanced - ERROR - Chrome驱动初始化失败: Message: session not created: probably user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#sessionnotcreatedexception
+Stacktrace:
+	GetHandleVerifier [0x0xefa8a3+63283]
+	GetHandleVerifier [0x0xefa8e4+63348]
+	(No symbol) [0x0xd33e43]
+	(No symbol) [0x0xd67938]
+	(No symbol) [0x0xd63229]
+	(No symbol) [0x0xdace69]
+	(No symbol) [0x0xdac77a]
+	(No symbol) [0x0xda1216]
+	(No symbol) [0x0xd70855]
+	(No symbol) [0x0xd716f4]
+	GetHandleVerifier [0x0x116bb43+2623955]
+	GetHandleVerifier [0x0x1166daa+2604090]
+	GetHandleVerifier [0x0xf2069a+218410]
+	GetHandleVerifier [0x0xf10ed8+154984]
+	GetHandleVerifier [0x0xf1742d+180925]
+	GetHandleVerifier [0x0xf022b8+94536]
+	GetHandleVerifier [0x0xf02442+94930]
+	GetHandleVerifier [0x0xeed5ea+9338]
+	BaseThreadInitThunk [0x0x76705d49+25]
+	RtlInitializeExceptionChain [0x0x77bfd2fb+107]
+	RtlGetAppContainerNamedObjectPath [0x0x77bfd281+561]
+
+2025-09-01 19:06:38,238 - douban_crawler.network_enhanced - WARNING - Chrome驱动不可用，回退到requests
+2025-09-01 19:06:39,720 - douban_crawler.network_enhanced - ERROR - 请求失败: https://movie.douban.com/chart?start=75&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D75%26type%3D11
+2025-09-01 19:06:44,896 - douban_crawler.crawler - WARNING - 页面请求失败: https://movie.douban.com/chart?start=75&type=11, 错误: 403 Client Error: Forbidden for url: https://sec.douban.com/b?r=https%3A%2F%2Fmovie.douban.com%2Fchart%3Fstart%3D75%26type%3D11
+2025-09-01 19:07:01,163 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 19:07:02,798 - WDM - INFO - Get LATEST chromedriver version for google-chrome

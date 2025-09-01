@@ -39,17 +39,18 @@ class NetworkManager:
     def get_page(self, url, use_selenium=False, force_selenium=False):
         """获取网页内容 - 智能策略"""
         try:
+            # 每次请求前轮换User-Agent并设置Referer，模拟浏览器行为
+            self._rotate_user_agent()
+            self.session.headers['Referer'] = Config.BASE_URL
             # 智能选择请求方式
             if force_selenium or self._should_use_selenium(url):
                 return self._get_with_selenium(url)
             else:
                 response = self._get_with_requests(url)
-                
                 # 检查响应是否被反爬虫拦截
                 if self._is_blocked_response(response):
                     self.logger.warning(f"检测到反爬虫拦截，切换到Selenium: {url}")
                     return self._get_with_selenium(url)
-                
                 return response
         except Exception as e:
             self.logger.warning(f"请求失败，正在重试: {url}, 错误: {e}")

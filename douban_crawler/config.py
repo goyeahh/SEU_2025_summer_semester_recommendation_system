@@ -47,7 +47,7 @@ class Config:
     
     # Chrome浏览器配置
     CHROME_OPTIONS = [
-        '--headless',  # 无头模式
+        # '--headless',  # 取消无头模式，模拟真实用户浏览器
         '--no-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
