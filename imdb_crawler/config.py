@@ -9,10 +9,10 @@ IMDB配置文件模块
 class IMDBConfig:
     """IMDB配置类，包含所有系统配置"""
     
-    # 基本配置
+    # 基本配置（极速优化）
     MAX_MOVIES = 200  # 最大爬取电影数量
-    DELAY_MIN = 2     # 最小延时（秒）
-    DELAY_MAX = 5     # 最大延时（秒）
+    DELAY_MIN = 0.5   # 最小延时（秒）- 极速模式
+    DELAY_MAX = 1.5   # 最大延时（秒）- 极速模式
     
     # IMDB网站配置
     BASE_URL = "https://www.imdb.com"
@@ -43,7 +43,7 @@ class IMDBConfig:
         'Cache-Control': 'max-age=0'
     }
     
-    # Chrome浏览器配置
+    # Chrome浏览器配置（极速优化版本）
     CHROME_OPTIONS = [
         '--headless',  # 无头模式
         '--no-sandbox',
@@ -54,17 +54,36 @@ class IMDBConfig:
         '--disable-features=VizDisplayCompositor',
         '--disable-logging',
         '--log-level=3',
-        '--window-size=1920,1080',
+        '--window-size=1024,600',  # 更小的窗口
         '--disable-blink-features=AutomationControlled',
         '--disable-extensions',
         '--disable-plugins',
-        '--disable-images',
-        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        '--disable-images',  # 禁用图片加载，大幅提速
+        '--disable-javascript',  # 禁用JS（谨慎使用）
+        '--no-first-run',
+        '--disable-default-apps',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-sync',  # 禁用同步
+        '--disable-translate',  # 禁用翻译
+        '--disable-popup-blocking',
+        '--disable-prompt-on-repost',
+        '--disable-hang-monitor',
+        '--disable-client-side-phishing-detection',
+        '--disable-component-update',
+        '--disable-domain-reliability',
+        '--disable-features=TranslateUI',
+        '--disable-ipc-flooding-protection',
+        '--aggressive-cache-discard',  # 激进的缓存清理
+        '--memory-pressure-off',  # 关闭内存压力检测
+        '--max_old_space_size=4096',  # 限制内存使用
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     ]
     
-    # 重试配置
-    MAX_RETRY_TIMES = 3
-    RETRY_DELAY = 3000  # 毫秒
+    # 重试配置（优化版本）
+    MAX_RETRY_TIMES = 2  # 减少重试次数
+    RETRY_DELAY = 2000   # 减少重试延迟（毫秒）
     
     # 电影类型标准化列表
     STANDARD_GENRES = [

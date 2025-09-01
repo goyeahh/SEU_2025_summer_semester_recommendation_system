@@ -114,32 +114,66 @@ class DoubanMovieCrawler:
             self.network_manager.close()
     
     def _collect_movie_links(self, list_urls):
-        """收集电影详情页链接"""
+        """收集电影详情页链接 - 增强版"""
         all_movie_links = []
+        failed_pages = 0
+        max_consecutive_fails = 3  # 最大连续失败次数
+        consecutive_fails = 0
         
-        for url in tqdm(list_urls, desc="解析电影列表页面"):
+        for i, url in enumerate(tqdm(list_urls, desc="解析电影列表页面")):
             try:
-                response = self.network_manager.get_page(url)
+                # 动态调整延时
+                if consecutive_fails > 0:
+                    delay = random.uniform(
+                        self.config.DELAY_MIN * (1 + consecutive_fails), 
+                        self.config.DELAY_MAX * (1 + consecutive_fails)
+                    )
+                    time.sleep(delay)
+                else:
+                    time.sleep(random.uniform(
+                        self.config.DELAY_MIN, 
+                        self.config.DELAY_MAX
+                    ))
+                
+                # 智能请求策略
+                use_selenium = consecutive_fails >= 2  # 连续失败2次后使用Selenium
+                response = self.network_manager.get_page(url, force_selenium=use_selenium)
                 
                 # 确定URL类型
                 url_type = 'typerank' if 'typerank' in url else 'chart'
                 
                 movie_links = self.parser.parse_movie_list(response, url_type)
-                all_movie_links.extend(movie_links)
                 
-                # 随机延时
-                time.sleep(random.uniform(
-                    self.config.DELAY_MIN, 
-                    self.config.DELAY_MAX
-                ))
+                if len(movie_links) == 0:
+                    consecutive_fails += 1
+                    failed_pages += 1
+                    self.logger.warning(f"页面 {i+1}/{len(list_urls)} 解析失败: {url}")
+                    
+                    # 如果连续失败次数过多，可能遇到了反爬虫
+                    if consecutive_fails >= max_consecutive_fails:
+                        self.logger.error(f"连续{max_consecutive_fails}页解析失败，可能遇到反爬虫限制")
+                        # 增加更长的延时
+                        time.sleep(random.uniform(10, 20))
+                        consecutive_fails = 0  # 重置计数器
+                else:
+                    all_movie_links.extend(movie_links)
+                    consecutive_fails = 0  # 成功后重置失败计数
+                    self.logger.info(f"页面 {i+1}/{len(list_urls)} 成功获取 {len(movie_links)} 个链接")
                 
             except Exception as e:
+                failed_pages += 1
+                consecutive_fails += 1
                 self.logger.warning(f"解析列表页面失败: {url}, 错误: {e}")
+                
+                # 失败时增加延时
+                time.sleep(random.uniform(5, 10))
                 continue
         
         # 去重
         unique_links = list(set(all_movie_links))
-        self.logger.info(f"收集到 {len(unique_links)} 个唯一电影链接")
+        success_rate = (len(list_urls) - failed_pages) / len(list_urls) * 100
+        
+        self.logger.info(f"收集完成 - 成功率: {success_rate:.1f}%, 总链接数: {len(unique_links)}, 失败页面: {failed_pages}")
         
         return unique_links
     

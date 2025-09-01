@@ -114,12 +114,13 @@ class IMDBMovieCrawler:
             self.network_manager.close()
     
     def _collect_movie_links(self, list_urls):
-        """收集电影详情页链接"""
+        """收集电影详情页链接（极速优化版本）"""
         all_movie_links = []
         
         for url in tqdm(list_urls, desc="解析IMDB电影列表页面"):
             try:
-                response = self.network_manager.get_page(url, use_selenium=True)
+                # 列表页面优先使用requests，速度快10倍
+                response = self.network_manager.get_page(url, use_selenium=False)
                 
                 # 确定URL类型
                 if 'chart' in url:
@@ -130,13 +131,17 @@ class IMDBMovieCrawler:
                     url_type = 'chart'
                 
                 movie_links = self.parser.parse_movie_list(response, url_type)
+                
+                # 只有在requests完全失败时才使用Selenium
+                if len(movie_links) == 0:
+                    self.logger.info(f"requests未获取到链接，尝试Selenium: {url}")
+                    response = self.network_manager.get_page(url, use_selenium=True)
+                    movie_links = self.parser.parse_movie_list(response, url_type)
+                
                 all_movie_links.extend(movie_links)
                 
-                # 随机延时
-                time.sleep(random.uniform(
-                    self.config.DELAY_MIN, 
-                    self.config.DELAY_MAX
-                ))
+                # 列表页面使用最小延时
+                time.sleep(random.uniform(0.5, 1.2))
                 
             except Exception as e:
                 self.logger.warning(f"解析IMDB列表页面失败: {url}, 错误: {e}")
@@ -149,22 +154,40 @@ class IMDBMovieCrawler:
         return unique_links
     
     def _crawl_movie_details(self, movie_links):
-        """爬取电影详情"""
+        """爬取电影详情（高度优化版本）"""
         movie_data = []
+        selenium_failures = 0
         
-        for link in tqdm(movie_links, desc="爬取IMDB电影详情"):
+        for i, link in enumerate(tqdm(movie_links, desc="爬取IMDB电影详情")):
             try:
-                response = self.network_manager.get_page(link, use_selenium=True)
+                # 首先尝试requests（速度快）
+                response = self.network_manager.get_page(link, use_selenium=False)
                 movie_info = self.parser.parse_movie_detail(response, link)
+                
+                # 如果requests解析失败或数据不完整，再尝试Selenium
+                if not movie_info or not self._is_movie_info_complete(movie_info):
+                    self.logger.info(f"requests数据不完整，使用Selenium重试: {link}")
+                    response = self.network_manager.get_page(link, use_selenium=True)
+                    movie_info = self.parser.parse_movie_detail(response, link)
+                    
+                    if not movie_info:
+                        selenium_failures += 1
+                        
+                        # 如果Selenium失败率过高，后续优先使用requests
+                        if selenium_failures > 3 and i > 10:
+                            self.logger.warning("Selenium失败率高，后续优先使用requests")
                 
                 if movie_info:
                     movie_data.append(movie_info)
                 
-                # 随机延时避免被封
-                time.sleep(random.uniform(
-                    self.config.DELAY_MIN, 
-                    self.config.DELAY_MAX
-                ))
+                # 动态调整延时：成功率高时减少延时
+                success_rate = len(movie_data) / (i + 1) if i > 0 else 1.0
+                if success_rate > 0.8:
+                    delay = random.uniform(0.5, 1.5)  # 高成功率时快速处理
+                else:
+                    delay = random.uniform(1.5, 2.5)  # 成功率低时谨慎处理
+                
+                time.sleep(delay)
                 
             except Exception as e:
                 self.logger.warning(f"爬取IMDB电影详情失败: {link}, 错误: {e}")
@@ -172,6 +195,22 @@ class IMDBMovieCrawler:
         
         self.logger.info(f"成功爬取 {len(movie_data)} 部IMDB电影详情")
         return movie_data
+    
+    def _is_movie_info_complete(self, movie_info):
+        """检查电影信息是否完整 - 放宽标准"""
+        if not movie_info:
+            return False
+        
+        # 至少需要有标题或ID之一
+        has_title = bool(movie_info.get('title', '').strip())
+        has_id = bool(movie_info.get('imdb_id', '').strip())
+        
+        if not has_title and not has_id:
+            return False
+        
+        # 如果有基本信息，就认为是完整的
+        # 评分可能为None或0，这是正常的
+        return True
     
     def get_movie_by_id(self, imdb_id):
         """根据IMDB ID获取单个电影信息"""

@@ -126,3 +126,239 @@
 2025-08-29 15:13:16,500 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000028BBAA968E0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/4feb081067b27375ff0cd9554e10d70c
 2025-08-29 15:13:20,600 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000028BBAA96A60>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/4feb081067b27375ff0cd9554e10d70c
 2025-08-29 15:13:24,700 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 13:48:21,146 - __main__ - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 13:48:21,229 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 13:48:23,360 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 13:48:23,360 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 13:48:24,819 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:00:22,325 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:00:22,410 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 14:00:24,281 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 14:00:24,282 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 14:00:25,660 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:00:46,862 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:00:46,862 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 14:00:46,951 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 14:00:46,952 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250'], 最大数量: 3
+2025-09-01 14:00:46,952 - douban_crawler.crawler - INFO - 生成了 20 个列表页面URL
+2025-09-01 14:00:48,051 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:00:53,362 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:00:57,725 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:02,783 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:07,697 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:08,450 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:01:11,082 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:14,492 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:17,924 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:21,926 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:25,286 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:01:30,422 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:33,290 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:37,607 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:39,834 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:43,960 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:47,224 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:51,334 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:51,359 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:01:53,796 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:01:56,571 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:02:01,191 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:02:04,506 - douban_crawler.crawler - INFO - 收集到 10 个唯一电影链接
+2025-09-01 14:02:04,507 - douban_crawler.crawler - INFO - 将爬取 3 部电影的详情
+2025-09-01 14:02:05,596 - douban_crawler.parser - INFO - 成功解析电影: 凶器 Weapons
+2025-09-01 14:02:11,024 - douban_crawler.parser - INFO - 成功解析电影: 关于约会的一切 Follemente
+2025-09-01 14:02:17,005 - douban_crawler.parser - INFO - 成功解析电影: 同甘共苦 Together
+2025-09-01 14:02:21,857 - douban_crawler.crawler - INFO - 成功爬取 3 部电影详情
+2025-09-01 14:02:21,859 - douban_crawler.data_processor - INFO - 数据清洗完成，有效数据: 3 条
+2025-09-01 14:02:21,890 - douban_crawler.data_processor - INFO - 处理后的数据已保存:
+2025-09-01 14:02:21,890 - douban_crawler.data_processor - INFO - - JSON: data/cleaned_movies_20250901_140221.json
+2025-09-01 14:02:21,890 - douban_crawler.data_processor - INFO - - CSV: data/cleaned_movies_20250901_140221.csv
+2025-09-01 14:02:21,890 - douban_crawler.data_processor - INFO - - 数据信息: data/data_info_20250901_140221.json
+2025-09-01 14:02:21,890 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 3 部电影信息
+2025-09-01 14:02:21,892 - run_multi_platform_crawler - INFO - 豆瓣爬取完成: 成功爬取 3 部电影
+2025-09-01 14:03:17,235 - WDM - INFO - WebDriver version 139.0.7258.154 selected
+2025-09-01 14:03:17,242 - WDM - INFO - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-09-01 14:03:17,243 - WDM - INFO - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-09-01 14:04:05,540 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:04:05,541 - run_multi_platform_crawler - INFO - 开始爬取IMDB电影数据
+2025-09-01 14:04:05,638 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 14:04:05,638 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['top250', 'popular'], 最大数量: 3
+2025-09-01 14:04:05,638 - imdb_crawler.crawler - INFO - 生成了 2 个列表页面URL
+2025-09-01 14:04:06,272 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 14:04:06,273 - imdb_crawler.crawler - INFO - requests获取链接较少(0)，尝试Selenium
+2025-09-01 14:04:06,273 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 14:04:07,618 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:04:21,344 - WDM - INFO - Driver downloading response is 200
+2025-09-01 14:04:23,804 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:04:55,802 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:05:07,596 - WDM - INFO - Driver has been saved in cache [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154]
+2025-09-01 14:05:09,953 - imdb_crawler.network - INFO - IMDB Chrome驱动初始化成功
+2025-09-01 14:05:28,795 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:05:32,870 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D2231DD1C0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/ea4b8107d2840bfb7480d38cbb5a7a68
+2025-09-01 14:05:36,957 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D2231DD670>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/ea4b8107d2840bfb7480d38cbb5a7a68
+2025-09-01 14:05:38,643 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:05:41,031 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D2231DD280>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/ea4b8107d2840bfb7480d38cbb5a7a68
+2025-09-01 14:05:45,120 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:07:04,716 - WDM - INFO - WebDriver version 139.0.7258.154 selected
+2025-09-01 14:07:04,725 - WDM - INFO - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-09-01 14:07:04,726 - WDM - INFO - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.154/win32/chromedriver-win32.zip
+2025-09-01 14:07:06,322 - WDM - INFO - Driver downloading response is 200
+2025-09-01 14:07:10,169 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:07:54,371 - WDM - INFO - Driver has been saved in cache [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154]
+2025-09-01 14:07:55,383 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:07:55,384 - run_multi_platform_crawler - INFO - 开始爬取IMDB电影数据
+2025-09-01 14:07:55,485 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 14:07:55,486 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['top250', 'popular'], 最大数量: 3
+2025-09-01 14:07:55,486 - imdb_crawler.crawler - INFO - 生成了 2 个列表页面URL
+2025-09-01 14:07:56,220 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 14:07:56,221 - imdb_crawler.crawler - INFO - requests未获取到链接，尝试Selenium: https://www.imdb.com/chart/top/
+2025-09-01 14:07:56,221 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 14:07:57,682 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:08:08,125 - imdb_crawler.network - INFO - 浏览器预热完成
+2025-09-01 14:08:08,125 - imdb_crawler.network - INFO - IMDB Chrome驱动初始化并预热成功
+2025-09-01 14:08:13,930 - imdb_crawler.parser - INFO - 从页面解析到 250 个电影链接
+2025-09-01 14:08:16,071 - imdb_crawler.parser - INFO - 从页面解析到 0 个电影链接
+2025-09-01 14:08:16,071 - imdb_crawler.crawler - INFO - requests获取链接较少(0)，尝试Selenium
+2025-09-01 14:08:19,999 - imdb_crawler.parser - INFO - 从页面解析到 100 个电影链接
+2025-09-01 14:08:21,480 - imdb_crawler.crawler - INFO - 收集到 339 个唯一IMDB电影链接
+2025-09-01 14:08:21,481 - imdb_crawler.crawler - INFO - 将爬取 3 部电影的详情
+2025-09-01 14:08:40,576 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:08:41,645 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 14:08:42,911 - imdb_crawler.network - INFO - IMDB Chrome驱动快速初始化成功
+2025-09-01 14:08:44,628 - imdb_crawler.crawler - INFO - 成功爬取 3 部IMDB电影详情
+2025-09-01 14:08:44,629 - imdb_crawler.data_processor - INFO - 数据清洗完成，有效电影数据: 0 部
+2025-09-01 14:08:44,630 - imdb_crawler.data_processor - WARNING - 没有数据需要保存
+2025-09-01 14:08:44,630 - imdb_crawler.crawler - INFO - IMDB爬虫任务完成！成功获取 0 部电影信息
+2025-09-01 14:08:46,847 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:08:46,852 - run_multi_platform_crawler - INFO - IMDB爬取完成: 成功爬取 0 部IMDB电影
+2025-09-01 14:08:50,950 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000202C9340FD0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:08:52,545 - imdb_crawler.parser - INFO - 从页面解析到 250 个电影链接
+2025-09-01 14:08:55,057 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000202C93405B0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:08:57,182 - imdb_crawler.parser - INFO - 从页面解析到 25 个电影链接
+2025-09-01 14:08:57,816 - imdb_crawler.crawler - INFO - 收集到 275 个唯一IMDB电影链接
+2025-09-01 14:08:57,816 - imdb_crawler.crawler - INFO - 将爬取 3 部电影的详情
+2025-09-01 14:08:59,131 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000202C9340580>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:09:00,836 - imdb_crawler.crawler - INFO - requests数据不完整，使用Selenium重试: https://www.imdb.com/title/tt0047296/
+2025-09-01 14:09:03,174 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:09:07,301 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020294A860D0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:09:09,020 - imdb_crawler.crawler - INFO - requests数据不完整，使用Selenium重试: https://www.imdb.com/title/tt2096673/
+2025-09-01 14:09:11,377 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020294A868B0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:09:15,456 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020294A86A30>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/f5590952ce35f58b8caaf70d940865d5
+2025-09-01 14:09:17,217 - imdb_crawler.crawler - INFO - requests数据不完整，使用Selenium重试: https://www.imdb.com/title/tt0093058/
+2025-09-01 14:09:19,532 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:09:22,577 - imdb_crawler.crawler - INFO - 成功爬取 3 部IMDB电影详情
+2025-09-01 14:09:22,577 - imdb_crawler.data_processor - INFO - 数据清洗完成，有效电影数据: 0 部
+2025-09-01 14:09:22,577 - imdb_crawler.data_processor - WARNING - 没有数据需要保存
+2025-09-01 14:09:22,578 - imdb_crawler.crawler - INFO - IMDB爬虫任务完成！成功获取 0 部电影信息
+2025-09-01 14:09:24,789 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:09:24,793 - run_multi_platform_crawler - INFO - IMDB爬取完成: 成功爬取 0 部IMDB电影
+2025-09-01 14:09:28,866 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7A56837F0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:32,966 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7A6CBDAC0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:37,036 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7A6CBDBB0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:41,109 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:09:45,236 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7F0D850D0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:49,331 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7F0D858B0>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:53,424 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001F7F0D85A30>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。')': /session/725e5ffb0902e99ac12fec5977547e7f
+2025-09-01 14:09:57,496 - imdb_crawler.network - INFO - Chrome驱动已关闭
+2025-09-01 14:12:19,461 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:12:19,462 - run_multi_platform_crawler - INFO - 开始爬取IMDB电影数据
+2025-09-01 14:12:19,543 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 14:12:19,543 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['top250', 'popular'], 最大数量: 2
+2025-09-01 14:12:19,544 - imdb_crawler.crawler - INFO - 生成了 2 个列表页面URL
+2025-09-01 14:12:21,800 - imdb_crawler.parser - INFO - 从页面解析到 25 个电影链接
+2025-09-01 14:12:23,607 - imdb_crawler.parser - INFO - 从页面解析到 25 个电影链接
+2025-09-01 14:12:24,335 - imdb_crawler.crawler - INFO - 收集到 50 个唯一IMDB电影链接
+2025-09-01 14:12:24,335 - imdb_crawler.crawler - INFO - 将爬取 2 部电影的详情
+2025-09-01 14:12:26,770 - imdb_crawler.parser - INFO - 解析结果: ID=tt0060196, 标题='The Good, the Bad and the Ugly', 评分=8.8
+2025-09-01 14:12:30,204 - imdb_crawler.parser - INFO - 解析结果: ID=tt0099685, 标题='Goodfellas', 评分=8.7
+2025-09-01 14:12:30,977 - imdb_crawler.crawler - INFO - 成功爬取 2 部IMDB电影详情
+2025-09-01 14:12:30,977 - imdb_crawler.data_processor - INFO - 数据清洗完成，有效电影数据: 2 部
+2025-09-01 14:12:30,978 - imdb_crawler.data_processor - INFO - JSON数据已保存: data\imdb_movies_20250901_141230.json
+2025-09-01 14:12:30,988 - imdb_crawler.data_processor - INFO - CSV数据已保存: data\imdb_movies_20250901_141230.csv
+2025-09-01 14:12:30,993 - imdb_crawler.data_processor - INFO - 统计信息已保存: data\imdb_stats_20250901_141230.json
+2025-09-01 14:12:30,994 - imdb_crawler.crawler - INFO - IMDB爬虫任务完成！成功获取 2 部电影信息
+2025-09-01 14:12:30,995 - run_multi_platform_crawler - INFO - IMDB爬取完成: 成功爬取 2 部IMDB电影
+2025-09-01 14:18:48,450 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:18:48,451 - run_multi_platform_crawler - INFO - 开始爬取IMDB电影数据
+2025-09-01 14:18:48,533 - imdb_crawler.crawler - INFO - IMDB电影爬虫初始化完成
+2025-09-01 14:18:48,533 - imdb_crawler.crawler - INFO - 开始爬取IMDB电影数据 - 分类: ['top250', 'popular'], 最大数量: 2
+2025-09-01 14:18:48,533 - imdb_crawler.crawler - INFO - 生成了 2 个列表页面URL
+2025-09-01 14:18:52,306 - imdb_crawler.parser - INFO - 从页面解析到 25 个电影链接
+2025-09-01 14:18:55,739 - imdb_crawler.parser - INFO - 从页面解析到 25 个电影链接
+2025-09-01 14:18:56,337 - imdb_crawler.crawler - INFO - 收集到 50 个唯一IMDB电影链接
+2025-09-01 14:18:56,337 - imdb_crawler.crawler - INFO - 将爬取 2 部电影的详情
+2025-09-01 14:18:59,074 - imdb_crawler.parser - INFO - 解析结果: ID=tt5950044, 标题='Superman', 评分=7.3
+2025-09-01 14:19:03,270 - imdb_crawler.parser - INFO - 解析结果: ID=tt12300742, 标题='Bugonia', 评分=7.1
+2025-09-01 14:19:03,881 - imdb_crawler.crawler - INFO - 成功爬取 2 部IMDB电影详情
+2025-09-01 14:19:04,516 - imdb_crawler.data_processor - INFO - 成功下载IMDB封面图片: tt5950044.jpg
+2025-09-01 14:19:05,182 - imdb_crawler.data_processor - INFO - 成功下载IMDB封面图片: tt12300742.jpg
+2025-09-01 14:19:05,184 - imdb_crawler.data_processor - INFO - 数据清洗完成，有效电影数据: 2 部
+2025-09-01 14:19:05,195 - imdb_crawler.data_processor - INFO - JSON数据已保存: data\imdb_movies_20250901_141905.json
+2025-09-01 14:19:05,208 - imdb_crawler.data_processor - INFO - CSV数据已保存: data\imdb_movies_20250901_141905.csv
+2025-09-01 14:19:05,213 - imdb_crawler.data_processor - INFO - 统计信息已保存: data\imdb_stats_20250901_141905.json
+2025-09-01 14:19:05,214 - imdb_crawler.crawler - INFO - IMDB爬虫任务完成！成功获取 2 部电影信息
+2025-09-01 14:19:05,217 - run_multi_platform_crawler - INFO - IMDB爬取完成: 成功爬取 2 部IMDB电影
+2025-09-01 14:31:02,794 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:32:41,126 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:32:41,126 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 14:32:41,208 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 14:32:41,208 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 250
+2025-09-01 14:32:41,208 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 14:32:43,038 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:32:48,610 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:32:52,870 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:32:58,572 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:03,130 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:09,685 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:12,647 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:18,996 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:24,368 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:29,764 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:33:34,577 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:39,794 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:45,000 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:47,783 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:50,958 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:55,056 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:33:59,956 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:03,244 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:07,105 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:12,495 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:17,270 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:34:20,653 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:34:24,936 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:28,671 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:31,883 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:37,164 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:42,139 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:45,716 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:48,487 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:51,310 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:34:56,473 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:03,239 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:07,221 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:10,511 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:15,442 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:20,333 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:24,295 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:28,576 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:35:32,820 - douban_crawler.crawler - INFO - 收集到 10 个唯一电影链接
+2025-09-01 14:35:32,820 - douban_crawler.crawler - INFO - 将爬取 10 部电影的详情
+2025-09-01 14:35:40,846 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:35:45,400 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:35:52,762 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:35:56,778 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:02,504 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:07,566 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:13,890 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:21,074 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:28,239 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:34,024 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:36:38,756 - douban_crawler.crawler - INFO - 成功爬取 10 部电影详情
+2025-09-01 14:36:38,756 - douban_crawler.data_processor - INFO - 数据清洗完成，有效数据: 0 条
+2025-09-01 14:36:38,764 - douban_crawler.data_processor - INFO - 处理后的数据已保存:
+2025-09-01 14:36:38,767 - douban_crawler.data_processor - INFO - - JSON: data/cleaned_movies_20250901_143638.json
+2025-09-01 14:36:38,767 - douban_crawler.data_processor - INFO - - CSV: data/cleaned_movies_20250901_143638.csv
+2025-09-01 14:36:38,767 - douban_crawler.data_processor - INFO - - 数据信息: data/data_info_20250901_143638.json
+2025-09-01 14:36:38,767 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 0 部电影信息
+2025-09-01 14:36:38,769 - run_multi_platform_crawler - INFO - 豆瓣爬取完成: 成功爬取 0 部电影

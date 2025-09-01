@@ -188,7 +188,9 @@ class IMDBPageParser:
                 'awards': self._extract_awards(soup)
             }
             
-            self.logger.debug(f"成功解析电影: {movie_info.get('title', 'Unknown')}")
+            # 调试日志
+            self.logger.info(f"解析结果: ID={movie_id}, 标题='{movie_info['title']}', 评分={movie_info['rating']}")
+            
             return movie_info
             
         except Exception as e:
@@ -201,18 +203,35 @@ class IMDBPageParser:
         return match.group(1) if match else ''
     
     def _extract_title(self, soup):
-        """提取电影标题"""
+        """提取电影标题 - 更新版本"""
         selectors = [
+            # 新版IMDB结构
             'h1[data-testid="hero-title-block__title"]',
+            'span.hero__primary-text',
+            '.sc-afe43def-1.fDTGTb',
+            # 旧版结构
             'h1.sc-b73cd867-0',
             'h1[class*="title"]',
-            '.title_wrapper h1'
+            '.title_wrapper h1',
+            # 通用匹配
+            'h1'
         ]
         
         for selector in selectors:
             element = soup.select_one(selector)
             if element:
-                return element.get_text(strip=True)
+                title = element.get_text(strip=True)
+                if title and len(title) > 1:  # 确保不是空白或单字符
+                    return title
+        
+        # 如果都失败，尝试从页面标题提取
+        page_title = soup.find('title')
+        if page_title:
+            title_text = page_title.get_text()
+            # 移除" - IMDb"后缀
+            title = title_text.replace(' - IMDb', '').strip()
+            if title:
+                return title
         
         return ''
     
@@ -245,20 +264,43 @@ class IMDBPageParser:
         return None
     
     def _extract_rating(self, soup):
-        """提取评分"""
+        """提取评分 - 增强版本"""
         selectors = [
+            # 新版IMDB结构
+            'span[class*="AggregateRatingButton__RatingScore"]',
+            '.hero-rating-bar__aggregate-rating__score span',
             '[data-testid="hero-rating-bar__aggregate-rating__score"] span',
+            # 其他可能的选择器
             '.sc-7ab21ed2-1',
-            '.ratingValue span'
+            '.ratingValue span',
+            'span.ipc-rating-star--rating',
+            # JSON-LD 数据提取
+            'script[type="application/ld+json"]'
         ]
         
-        for selector in selectors:
-            element = soup.select_one(selector)
-            if element:
+        # 首先尝试常规选择器
+        for selector in selectors[:-1]:  # 排除script标签
+            elements = soup.select(selector)
+            for element in elements:
                 text = element.get_text(strip=True)
                 rating_match = re.search(r'(\d+\.?\d*)', text)
                 if rating_match:
-                    return float(rating_match.group(1))
+                    rating = float(rating_match.group(1))
+                    # 合理的评分范围检查
+                    if 0 <= rating <= 10:
+                        return rating
+        
+        # 尝试从JSON-LD数据提取
+        json_scripts = soup.find_all('script', {'type': 'application/ld+json'})
+        for script in json_scripts:
+            try:
+                data = json.loads(script.string)
+                if isinstance(data, dict) and 'aggregateRating' in data:
+                    rating = data['aggregateRating'].get('ratingValue')
+                    if rating:
+                        return float(rating)
+            except:
+                continue
         
         return None
     

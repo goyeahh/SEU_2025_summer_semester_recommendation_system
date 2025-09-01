@@ -36,17 +36,52 @@ class NetworkManager:
         self.session.headers.update(headers)
     
     @retry(stop_max_attempt_number=Config.MAX_RETRY_TIMES, wait_fixed=Config.RETRY_DELAY)
-    def get_page(self, url, use_selenium=False):
-        """获取网页内容"""
+    def get_page(self, url, use_selenium=False, force_selenium=False):
+        """获取网页内容 - 智能策略"""
         try:
-            if use_selenium:
+            # 智能选择请求方式
+            if force_selenium or self._should_use_selenium(url):
                 return self._get_with_selenium(url)
             else:
-                return self._get_with_requests(url)
+                response = self._get_with_requests(url)
+                
+                # 检查响应是否被反爬虫拦截
+                if self._is_blocked_response(response):
+                    self.logger.warning(f"检测到反爬虫拦截，切换到Selenium: {url}")
+                    return self._get_with_selenium(url)
+                
+                return response
         except Exception as e:
             self.logger.warning(f"请求失败，正在重试: {url}, 错误: {e}")
             self._random_delay()
             raise e
+    
+    def _should_use_selenium(self, url):
+        """判断是否应该使用Selenium"""
+        # 对于某些特定页面或高页数使用Selenium
+        if 'typerank' in url and ('start=75' in url or 'start=100' in url):
+            return True
+        if 'chart' in url and any(x in url for x in ['start=200', 'start=225']):
+            return True
+        return False
+    
+    def _is_blocked_response(self, response):
+        """检查响应是否被反爬虫拦截"""
+        # 检查状态码
+        if response.status_code in [403, 429, 503]:
+            return True
+        
+        # 检查内容长度
+        if len(response.content) < 1000:  # 页面内容太短可能是被拦截
+            return True
+        
+        # 检查页面内容
+        content_text = response.text.lower()
+        blocked_keywords = ['验证', '安全验证', 'captcha', 'blocked', '拒绝访问', '访问被限制']
+        if any(keyword in content_text for keyword in blocked_keywords):
+            return True
+        
+        return False
     
     def _get_with_requests(self, url):
         """使用requests获取页面"""

@@ -11,6 +11,8 @@ import os
 import logging
 from datetime import datetime
 import re
+import requests
+import urllib.parse
 
 
 class IMDBDataProcessor:
@@ -18,6 +20,10 @@ class IMDBDataProcessor:
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # 创建IMDB海报存储目录
+        self.poster_dir = "data/imdb_posters"
+        if not os.path.exists(self.poster_dir):
+            os.makedirs(self.poster_dir)
     
     def clean_movie_data(self, raw_data):
         """
@@ -63,6 +69,7 @@ class IMDBDataProcessor:
             'actors': self._clean_list(movie.get('actors', [])),
             'plot': self._clean_text(movie.get('plot', '')),
             'poster_url': self._clean_string(movie.get('poster_url', '')),
+            'poster_path': self._download_poster(movie.get('poster_url'), self._clean_string(movie.get('imdb_id', ''))),  # 修复引用问题
             'countries': self._clean_list(movie.get('countries', [])),
             'languages': self._clean_list(movie.get('languages', [])),
             'release_date': self._clean_string(movie.get('release_date', '')),
@@ -72,11 +79,16 @@ class IMDBDataProcessor:
             'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         
-        # 验证必要字段
-        if not cleaned['title'] or not cleaned['imdb_id']:
+        # 验证必要字段 - 放宽验证条件
+        if not cleaned['title'] and not cleaned['imdb_id']:
+            self.logger.warning(f"电影缺少基本信息: title='{cleaned['title']}', imdb_id='{cleaned['imdb_id']}'")
             return None
+        
+        # 如果有基本信息，就保留
+        if cleaned['title'] or cleaned['imdb_id']:
+            return cleaned
             
-        return cleaned
+        return None
     
     def _clean_string(self, value):
         """清洗字符串"""
@@ -145,6 +157,53 @@ class IMDBDataProcessor:
             return [self._clean_string(item) for item in value.split(',') if item.strip()]
         
         return []
+    
+    def _download_poster(self, poster_url, imdb_id):
+        """下载电影封面图片"""
+        if not poster_url or not imdb_id:
+            return None
+            
+        try:
+            # 清理URL，确保是有效的图片链接
+            if not poster_url.startswith('http'):
+                if poster_url.startswith('//'):
+                    poster_url = 'https:' + poster_url
+                else:
+                    return None
+            
+            # 获取文件扩展名
+            parsed_url = urllib.parse.urlparse(poster_url)
+            file_ext = os.path.splitext(parsed_url.path)[1]
+            if not file_ext or file_ext.lower() not in ['.jpg', '.jpeg', '.png', '.webp']:
+                file_ext = '.jpg'  # 默认扩展名
+            
+            # 生成本地文件名 (使用IMDB ID)
+            filename = f"{imdb_id}{file_ext}"
+            local_path = os.path.join(self.poster_dir, filename)
+            
+            # 如果文件已存在，直接返回路径
+            if os.path.exists(local_path):
+                return os.path.abspath(local_path)
+            
+            # 下载图片
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://www.imdb.com/'
+            }
+            
+            response = requests.get(poster_url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            # 保存图片
+            with open(local_path, 'wb') as f:
+                f.write(response.content)
+            
+            self.logger.info(f"成功下载IMDB封面图片: {filename}")
+            return os.path.abspath(local_path)
+            
+        except Exception as e:
+            self.logger.warning(f"下载IMDB封面图片失败 (ID: {imdb_id}): {e}")
+            return None
     
     def save_processed_data(self, data, output_dir):
         """
@@ -225,7 +284,8 @@ class IMDBDataProcessor:
             'data_quality': {
                 'movies_with_rating': len(df[df['rating'].notna()]),
                 'movies_with_plot': len(df[df['plot'].str.len() > 0]),
-                'movies_with_poster': len(df[df['poster_url'].str.len() > 0]),
+                'movies_with_poster_url': len(df[df['poster_url'].str.len() > 0]),
+                'movies_with_poster_downloaded': len(df[df['poster_path'].notna()]) if 'poster_path' in df.columns else 0,
                 'average_rating': float(df['rating'].mean()) if 'rating' in df.columns else None,
                 'year_range': {
                     'min': int(df['year'].min()) if 'year' in df.columns and df['year'].notna().any() else None,

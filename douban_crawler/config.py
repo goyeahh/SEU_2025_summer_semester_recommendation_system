@@ -84,55 +84,60 @@ class Config:
     
     @classmethod
     def get_movie_list_urls(cls, categories=['hot'], max_pages=10):
-        """生成电影列表URL"""
+        """生成电影列表URL - 优化版"""
         urls = []
         
         for category in categories:
             if category == 'hot':
-                # 热门电影榜单
+                # 热门电影榜单 - 最多10页
                 for start in range(0, min(max_pages * 25, 250), 25):
                     urls.append(f"{cls.BASE_URL}/chart?start={start}&type=11")
             
             elif category == 'top250':
-                # 豆瓣Top250
+                # 豆瓣Top250 - 固定10页
                 for start in range(0, min(max_pages * 25, 250), 25):
                     urls.append(f"{cls.BASE_URL}/top250?start={start}")
             
             elif category == 'new_movies':
-                # 新片榜
+                # 新片榜 - 单页
                 urls.append(f"{cls.BASE_URL}/chart?type=5")
             
             elif category == 'weekly_best':
-                # 一周口碑榜
+                # 一周口碑榜 - 单页
                 urls.append(f"{cls.BASE_URL}/chart?type=12")
             
             elif category == 'north_america':
-                # 北美票房榜
+                # 北美票房榜 - 单页
                 urls.append(f"{cls.BASE_URL}/chart?type=2")
             
             elif category == 'classic':
-                # 经典电影
-                for start in range(0, min(max_pages * 25, 100), 25):
+                # 经典电影 - 限制页数，避免过度请求
+                max_classic_pages = min(max_pages, 4)  # 最多4页
+                for start in range(0, max_classic_pages * 25, 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=剧情&type=11&interval_id=100:90&action=&start={start}")
             
             elif category == 'comedy':
-                # 喜剧片
-                for start in range(0, min(max_pages * 25, 100), 25):
+                # 喜剧片 - 限制页数
+                max_comedy_pages = min(max_pages, 4)  # 最多4页
+                for start in range(0, max_comedy_pages * 25, 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=喜剧&type=11&interval_id=100:90&action=&start={start}")
             
             elif category == 'action':
-                # 动作片
-                for start in range(0, min(max_pages * 25, 100), 25):
+                # 动作片 - 限制页数
+                max_action_pages = min(max_pages, 4)  # 最多4页
+                for start in range(0, max_action_pages * 25, 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=动作&type=11&interval_id=100:90&action=&start={start}")
             
             elif category == 'romance':
-                # 爱情片
-                for start in range(0, min(max_pages * 25, 100), 25):
+                # 爱情片 - 限制页数
+                max_romance_pages = min(max_pages, 4)  # 最多4页
+                for start in range(0, max_romance_pages * 25, 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=爱情&type=11&interval_id=100:90&action=&start={start}")
             
             elif category == 'sci_fi':
-                # 科幻片
-                for start in range(0, min(max_pages * 25, 100), 25):
+                # 科幻片 - 限制页数
+                max_scifi_pages = min(max_pages, 4)  # 最多4页
+                for start in range(0, max_scifi_pages * 25, 25):
                     urls.append(f"{cls.BASE_URL}/typerank?type_name=科幻&type=11&interval_id=100:90&action=&start={start}")
         
         return urls
