@@ -362,3 +362,215 @@
 2025-09-01 14:36:38,767 - douban_crawler.data_processor - INFO - - 数据信息: data/data_info_20250901_143638.json
 2025-09-01 14:36:38,767 - douban_crawler.crawler - INFO - 爬虫任务完成！成功获取 0 部电影信息
 2025-09-01 14:36:38,769 - run_multi_platform_crawler - INFO - 豆瓣爬取完成: 成功爬取 0 部电影
+2025-09-01 14:40:32,415 - run_multi_platform_crawler - INFO - 多平台电影爬虫系统初始化完成
+2025-09-01 14:40:32,415 - run_multi_platform_crawler - INFO - 开始爬取豆瓣电影数据
+2025-09-01 14:40:32,505 - douban_crawler.crawler - INFO - 豆瓣电影爬虫初始化完成
+2025-09-01 14:40:32,505 - douban_crawler.crawler - INFO - 开始爬取电影数据 - 分类: ['hot', 'top250', 'new_movies', 'weekly_best', 'classic', 'comedy', 'action', 'romance'], 最大数量: 250
+2025-09-01 14:40:32,505 - douban_crawler.crawler - INFO - 生成了 38 个列表页面URL
+2025-09-01 14:40:36,388 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:36,388 - douban_crawler.crawler - INFO - 页面 1/38 成功获取 10 个链接
+2025-09-01 14:40:41,578 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:41,578 - douban_crawler.crawler - INFO - 页面 2/38 成功获取 10 个链接
+2025-09-01 14:40:45,093 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:45,093 - douban_crawler.crawler - INFO - 页面 3/38 成功获取 10 个链接
+2025-09-01 14:40:47,531 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:47,533 - douban_crawler.crawler - INFO - 页面 4/38 成功获取 10 个链接
+2025-09-01 14:40:52,141 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:52,141 - douban_crawler.crawler - INFO - 页面 5/38 成功获取 10 个链接
+2025-09-01 14:40:56,570 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:40:56,570 - douban_crawler.crawler - INFO - 页面 6/38 成功获取 10 个链接
+2025-09-01 14:41:00,541 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:41:00,541 - douban_crawler.crawler - INFO - 页面 7/38 成功获取 10 个链接
+2025-09-01 14:41:03,796 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:41:03,796 - douban_crawler.crawler - INFO - 页面 8/38 成功获取 10 个链接
+2025-09-01 14:41:06,952 - WDM - INFO - ====== WebDriver manager ======
+2025-09-01 14:41:08,346 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:41:10,343 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-09-01 14:41:12,958 - WDM - INFO - Driver [C:\Users\姜晨\.wdm\drivers\chromedriver\win64\139.0.7258.154\chromedriver-win32/chromedriver.exe] found in cache
+2025-09-01 14:41:14,349 - douban_crawler.network - INFO - Chrome驱动初始化成功
+2025-09-01 14:41:17,086 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:41:17,086 - douban_crawler.crawler - INFO - 页面 9/38 成功获取 10 个链接
+2025-09-01 14:41:22,670 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:41:22,670 - douban_crawler.crawler - INFO - 页面 10/38 成功获取 10 个链接
+2025-09-01 14:41:25,325 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:25,327 - douban_crawler.crawler - INFO - 页面 11/38 成功获取 25 个链接
+2025-09-01 14:41:29,839 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:29,839 - douban_crawler.crawler - INFO - 页面 12/38 成功获取 25 个链接
+2025-09-01 14:41:32,278 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:32,278 - douban_crawler.crawler - INFO - 页面 13/38 成功获取 25 个链接
+2025-09-01 14:41:35,832 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:35,832 - douban_crawler.crawler - INFO - 页面 14/38 成功获取 25 个链接
+2025-09-01 14:41:39,528 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:39,528 - douban_crawler.crawler - INFO - 页面 15/38 成功获取 25 个链接
+2025-09-01 14:41:44,458 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:44,458 - douban_crawler.crawler - INFO - 页面 16/38 成功获取 25 个链接
+2025-09-01 14:41:47,182 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:47,182 - douban_crawler.crawler - INFO - 页面 17/38 成功获取 25 个链接
+2025-09-01 14:41:51,739 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:51,739 - douban_crawler.crawler - INFO - 页面 18/38 成功获取 25 个链接
+2025-09-01 14:41:56,809 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:56,809 - douban_crawler.crawler - INFO - 页面 19/38 成功获取 25 个链接
+2025-09-01 14:41:59,166 - douban_crawler.parser - INFO - 从列表页面解析到 25 个电影链接
+2025-09-01 14:41:59,166 - douban_crawler.crawler - INFO - 页面 20/38 成功获取 25 个链接
+2025-09-01 14:42:02,801 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:42:02,801 - douban_crawler.crawler - INFO - 页面 21/38 成功获取 10 个链接
+2025-09-01 14:42:06,620 - douban_crawler.parser - INFO - 从列表页面解析到 10 个电影链接
+2025-09-01 14:42:06,620 - douban_crawler.crawler - INFO - 页面 22/38 成功获取 10 个链接
+2025-09-01 14:42:10,900 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 剧情片
+2025-09-01 14:42:10,902 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:42:10,902 - douban_crawler.crawler - WARNING - 页面 23/38 解析失败: https://movie.douban.com/typerank?type_name=剧情&type=11&interval_id=100:90&action=&start=0
+2025-09-01 14:42:20,445 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 剧情片
+2025-09-01 14:42:20,447 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:42:20,447 - douban_crawler.crawler - WARNING - 页面 24/38 解析失败: https://movie.douban.com/typerank?type_name=剧情&type=11&interval_id=100:90&action=&start=25
+2025-09-01 14:42:35,600 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:42:35,600 - douban_crawler.crawler - INFO - 页面 25/38 成功获取 20 个链接
+2025-09-01 14:42:42,550 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:42:42,550 - douban_crawler.crawler - INFO - 页面 26/38 成功获取 20 个链接
+2025-09-01 14:42:45,892 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 喜剧片
+2025-09-01 14:42:45,892 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:42:45,892 - douban_crawler.crawler - WARNING - 页面 27/38 解析失败: https://movie.douban.com/typerank?type_name=喜剧&type=11&interval_id=100:90&action=&start=0
+2025-09-01 14:42:52,331 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 喜剧片
+2025-09-01 14:42:52,331 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:42:52,331 - douban_crawler.crawler - WARNING - 页面 28/38 解析失败: https://movie.douban.com/typerank?type_name=喜剧&type=11&interval_id=100:90&action=&start=25
+2025-09-01 14:43:07,565 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:43:07,565 - douban_crawler.crawler - INFO - 页面 29/38 成功获取 20 个链接
+2025-09-01 14:43:12,474 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:43:12,474 - douban_crawler.crawler - INFO - 页面 30/38 成功获取 20 个链接
+2025-09-01 14:43:16,222 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 动作片
+2025-09-01 14:43:16,222 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:43:16,222 - douban_crawler.crawler - WARNING - 页面 31/38 解析失败: https://movie.douban.com/typerank?type_name=动作&type=11&interval_id=100:90&action=&start=0
+2025-09-01 14:43:25,141 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 动作片
+2025-09-01 14:43:25,141 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:43:25,141 - douban_crawler.crawler - WARNING - 页面 32/38 解析失败: https://movie.douban.com/typerank?type_name=动作&type=11&interval_id=100:90&action=&start=25
+2025-09-01 14:43:40,161 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:43:40,161 - douban_crawler.crawler - INFO - 页面 33/38 成功获取 20 个链接
+2025-09-01 14:43:46,034 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:43:46,034 - douban_crawler.crawler - INFO - 页面 34/38 成功获取 20 个链接
+2025-09-01 14:43:48,671 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 爱情片
+2025-09-01 14:43:48,671 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:43:48,671 - douban_crawler.crawler - WARNING - 页面 35/38 解析失败: https://movie.douban.com/typerank?type_name=爱情&type=11&interval_id=100:90&action=&start=0
+2025-09-01 14:43:53,946 - douban_crawler.parser - WARNING - 页面解析结果为空，页面标题: 豆瓣电影分类排行榜 - 爱情片
+2025-09-01 14:43:53,946 - douban_crawler.parser - INFO - 从列表页面解析到 0 个电影链接
+2025-09-01 14:43:53,946 - douban_crawler.crawler - WARNING - 页面 36/38 解析失败: https://movie.douban.com/typerank?type_name=爱情&type=11&interval_id=100:90&action=&start=25
+2025-09-01 14:44:03,625 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:44:03,625 - douban_crawler.crawler - INFO - 页面 37/38 成功获取 20 个链接
+2025-09-01 14:44:09,833 - douban_crawler.parser - INFO - 从列表页面解析到 20 个电影链接
+2025-09-01 14:44:09,833 - douban_crawler.crawler - INFO - 页面 38/38 成功获取 20 个链接
+2025-09-01 14:44:09,833 - douban_crawler.crawler - INFO - 收集完成 - 成功率: 78.9%, 总链接数: 260, 失败页面: 8
+2025-09-01 14:44:09,833 - douban_crawler.crawler - INFO - 将爬取 250 部电影的详情
+2025-09-01 14:44:11,402 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:15,235 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:20,336 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:25,962 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:30,557 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:34,338 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:37,559 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:40,833 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:45,178 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:49,677 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:53,724 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:44:57,500 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:01,551 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:06,346 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:11,296 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:16,602 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:22,066 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:27,553 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:32,207 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:38,047 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:41,450 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:46,417 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:50,416 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:45:55,997 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:00,297 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:03,655 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:09,485 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:13,467 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:16,547 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:20,071 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:24,301 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:29,584 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:34,146 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:38,985 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:44,419 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:49,832 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:54,816 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:46:58,868 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:02,677 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:05,825 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:09,511 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:14,633 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:18,655 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:24,028 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:27,770 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:31,126 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:35,685 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:41,030 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:44,932 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:48,522 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:54,138 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:47:57,169 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:01,359 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:04,889 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:09,398 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:12,647 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:17,294 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:22,107 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:26,168 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:31,266 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:36,385 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:39,460 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:43,639 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:48,079 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:52,154 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:48:55,284 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:00,032 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:04,182 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:09,709 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:15,555 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:21,297 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:25,750 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:31,016 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:34,830 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:40,120 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:44,958 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:49,055 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:52,818 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:49:57,851 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:03,018 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:06,457 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:12,709 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:16,503 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:22,536 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:27,038 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:30,419 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:34,945 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:40,248 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:44,023 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:48,630 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:52,024 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:50:55,612 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:00,176 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:05,650 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:11,018 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:14,046 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:19,066 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:24,889 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:29,150 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:33,698 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:37,838 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:41,801 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:45,968 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:49,581 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:51:55,311 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:01,240 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:06,174 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:10,769 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:15,987 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:19,503 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:25,272 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:29,140 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:34,345 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:38,785 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:43,509 - douban_crawler.parser - INFO - 成功解析电影: 
+2025-09-01 14:52:48,885 - douban_crawler.parser - INFO - 成功解析电影: 
