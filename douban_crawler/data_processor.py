@@ -44,10 +44,20 @@ class DataProcessor:
         return cleaned_data
     
     def _is_valid_movie(self, movie):
-        """验证电影数据是否有效"""
-        return (movie.get('title') and 
-                movie.get('douban_id') and
-                movie.get('rating') is not None)
+        """验证电影数据是否有效 - 放宽验证条件"""
+        # 只要有豆瓣ID和标题之一即可，评分可以为空
+        return (movie.get('douban_id') or 
+                (movie.get('title') and movie.get('title').strip()))
+    
+    def save_raw_data(self, raw_data, file_path):
+        """保存原始数据 - 用于进度保存"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(raw_data, f, ensure_ascii=False, indent=2)
+            return file_path
+        except Exception as e:
+            self.logger.error(f"保存原始数据失败: {e}")
+            return None
     
     def _clean_single_movie(self, movie):
         """清洗单个电影数据"""
@@ -256,6 +266,16 @@ class DataProcessor:
             'csv': csv_file,
             'info': info_file
         }
+    
+    def save_raw_data(self, raw_data, file_path):
+        """保存原始数据 - 用于进度保存"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(raw_data, f, ensure_ascii=False, indent=2)
+            return file_path
+        except Exception as e:
+            self.logger.error(f"保存原始数据失败: {e}")
+            return None
     
     def _create_data_summary(self, data):
         """创建数据摘要"""

@@ -51,7 +51,7 @@ class IMDBMovieCrawler:
     
     def crawl_movies(self, categories=None, max_movies=None, max_pages=5):
         """
-        爬取电影数据
+        分批爬取IMDB电影数据 - 收集一批链接，解析完毕后再收集下一批
         
         Args:
             categories: 要爬取的分类列表，默认['top250']
@@ -64,43 +64,77 @@ class IMDBMovieCrawler:
         categories = categories or ['top250']
         max_movies = max_movies or self.config.MAX_MOVIES
         
-        self.logger.info(f"开始爬取IMDB电影数据 - 分类: {categories}, 最大数量: {max_movies}")
+        self.logger.info(f"开始分批爬取IMDB电影数据 - 分类: {categories}, 目标数量: {max_movies}")
         
         try:
-            # 第一步：获取电影列表URLs
-            list_urls = self.config.get_movie_list_urls(categories, max_pages)
-            self.logger.info(f"生成了 {len(list_urls)} 个列表页面URL")
+            all_movie_data = []
+            collected_links = set()  # 避免重复链接
+            batch_size = 50  # 每批收集50个链接
+            batch_count = 0
             
-            # 第二步：解析电影列表，获取详情页链接
-            movie_links = self._collect_movie_links(list_urls)
+            while len(all_movie_data) < max_movies:
+                batch_count += 1
+                remaining = max_movies - len(all_movie_data)
+                target_batch_links = min(batch_size, remaining * 2)  # 每批收集的链接数
+                
+                self.logger.info(f"=== 第 {batch_count} 批IMDB爬取 ===")
+                self.logger.info(f"已获取: {len(all_movie_data)} 部电影，还需: {remaining} 部")
+                
+                # 阶段1：收集一批新的电影链接（不重复）
+                self.logger.info(f"阶段1: 收集 {target_batch_links} 个IMDB电影链接...")
+                new_links = self._collect_batch_links(categories, target_batch_links, collected_links, max_pages)
+                
+                if not new_links:
+                    self.logger.warning("无法收集到更多IMDB电影链接，爬取结束")
+                    break
+                
+                collected_links.update(new_links)
+                self.logger.info(f"✓ 链接收集完成！本批收集 {len(new_links)} 个新链接")
+                
+                # 阶段2：完全解析这批电影（直到完成或失败）
+                self.logger.info(f"阶段2: 开始解析本批 {len(new_links)} 个IMDB电影...")
+                batch_movies = self._parse_batch_movies(list(new_links), remaining)
+                
+                if batch_movies:
+                    all_movie_data.extend(batch_movies)
+                    self.logger.info(f"✓ 本批解析完成！获取 {len(batch_movies)} 部电影，总计: {len(all_movie_data)}/{max_movies}")
+                else:
+                    self.logger.warning(f"✗ 本批链接解析失败，跳过继续下一批")
+                
+                # 如果已达到目标，停止
+                if len(all_movie_data) >= max_movies:
+                    self.logger.info(f"🎉 已达到目标数量 {max_movies}，爬取任务完成！")
+                    break
+                
+                # 批次间休息
+                self.logger.info("批次间休息 5-10 秒...")
+                time.sleep(random.uniform(5, 10))
             
-            # 限制电影数量
-            if len(movie_links) > max_movies:
-                movie_links = random.sample(movie_links, max_movies)
-            
-            self.logger.info(f"将爬取 {len(movie_links)} 部电影的详情")
-            
-            # 第三步：爬取电影详情
-            raw_movie_data = self._crawl_movie_details(movie_links)
-            
-            # 第四步：数据清洗和处理
-            cleaned_data = self.data_processor.clean_movie_data(raw_movie_data)
-            
-            # 第五步：保存数据
-            saved_files = self.data_processor.save_processed_data(
-                cleaned_data, 
-                self.config.OUTPUT_DIR
-            )
-            
-            self.logger.info(f"IMDB爬虫任务完成！成功获取 {len(cleaned_data)} 部电影信息")
-            
-            # 返回格式与豆瓣爬虫保持一致
-            return {
-                'success': True,
-                'data_count': len(cleaned_data),
-                'file_paths': saved_files,
-                'message': f'成功爬取 {len(cleaned_data)} 部IMDB电影'
-            }
+            # 数据清洗和最终保存
+            if all_movie_data:
+                # 限制到目标数量
+                final_movies = all_movie_data[:max_movies]
+                cleaned_data = self.data_processor.clean_movie_data(final_movies)
+                saved_files = self.data_processor.save_processed_data(
+                    cleaned_data, 
+                    self.config.OUTPUT_DIR
+                )
+                
+                self.logger.info(f"IMDB爬虫任务完成！最终获取 {len(cleaned_data)} 部电影信息")
+                
+                return {
+                    'success': True,
+                    'data_count': len(cleaned_data),
+                    'file_paths': saved_files,
+                    'message': f'成功爬取 {len(cleaned_data)} 部IMDB电影'
+                }
+            else:
+                return {
+                    'success': False,
+                    'data_count': 0,
+                    'file_paths': {},
+                    'message': '未获取到任何有效IMDB电影数据'
+                }
             
         except Exception as e:
             self.logger.error(f"IMDB爬虫运行出错: {e}")
@@ -113,89 +147,181 @@ class IMDBMovieCrawler:
         finally:
             self.network_manager.close()
     
-    def _collect_movie_links(self, list_urls):
-        """收集电影详情页链接（极速优化版本）"""
-        all_movie_links = []
+    def _collect_batch_links(self, categories, target_count, exclude_links, max_pages):
+        """收集一批新的IMDB电影链接（避免重复）"""
+        new_links = []
         
-        for url in tqdm(list_urls, desc="解析IMDB电影列表页面"):
-            try:
-                # 列表页面优先使用requests，速度快10倍
-                response = self.network_manager.get_page(url, use_selenium=False)
+        for category in categories:
+            if len(new_links) >= target_count:
+                break
+            
+            self.logger.info(f"从IMDB分类 '{category}' 收集链接...")
+            category_urls = self.config.get_movie_list_urls([category], max_pages)
+            
+            for i, url in enumerate(tqdm(category_urls, desc=f"解析IMDB{category}列表页", leave=False)):
+                if len(new_links) >= target_count:
+                    self.logger.info(f"已收集足够IMDB链接 ({len(new_links)}个)，停止此分类")
+                    break
                 
-                # 确定URL类型
-                if 'chart' in url:
-                    url_type = 'chart'
-                elif 'search' in url:
-                    url_type = 'search'
-                else:
-                    url_type = 'chart'
-                
-                movie_links = self.parser.parse_movie_list(response, url_type)
-                
-                # 只有在requests完全失败时才使用Selenium
-                if len(movie_links) == 0:
-                    self.logger.info(f"requests未获取到链接，尝试Selenium: {url}")
+                try:
+                    # 延时
+                    if i > 0:
+                        time.sleep(random.uniform(2, 4))
+                    
+                    # IMDB完全使用Selenium，requests总是被拦截
                     response = self.network_manager.get_page(url, use_selenium=True)
+                    
+                    # 确定URL类型
+                    if 'chart' in url:
+                        url_type = 'chart'
+                    elif 'search' in url:
+                        url_type = 'search'
+                    else:
+                        url_type = 'chart'
+                    
+                    # 解析电影链接
                     movie_links = self.parser.parse_movie_list(response, url_type)
+                    
+                    # 过滤已收集的链接
+                    filtered_links = [link for link in movie_links if link not in exclude_links]
+                    new_links.extend(filtered_links)
+                    
+                    if filtered_links:
+                        self.logger.info(f"从IMDB页面获取 {len(filtered_links)} 个新链接，累计: {len(new_links)}")
+                    else:
+                        self.logger.warning(f"IMDB页面无新链接: {url}")
+                    
+                except Exception as e:
+                    self.logger.warning(f"解析IMDB列表页面失败: {url}, 错误: {e}")
+                    continue
+        
+        # 去重并返回需要的数量
+        unique_links = list(set(new_links))[:target_count]
+        self.logger.info(f"IMDB批次链接收集完成 - 获得 {len(unique_links)} 个新链接")
+        return unique_links
+    
+    def _parse_batch_movies(self, movie_links, max_count):
+        """解析一批IMDB电影详情"""
+        self.logger.info(f"开始解析 {len(movie_links)} 个IMDB电影详情（最多 {max_count} 部）")
+        movie_data = []
+        
+        for i, link in enumerate(tqdm(movie_links, desc="解析IMDB电影详情", leave=False)):
+            if len(movie_data) >= max_count:
+                self.logger.info(f"已达到批次目标 {max_count}，停止解析")
+                break
+            
+            try:
+                # 延时
+                time.sleep(random.uniform(
+                    self.config.DELAY_MIN,
+                    self.config.DELAY_MAX
+                ))
                 
-                all_movie_links.extend(movie_links)
+                # IMDB完全使用Selenium，requests被拦截
+                response = self.network_manager.get_page(link, use_selenium=True)
+                movie_info = self.parser.parse_movie_detail(response, link)
                 
-                # 列表页面使用最小延时
-                time.sleep(random.uniform(0.5, 1.2))
+                if movie_info and movie_info.get('title'):
+                    movie_data.append(movie_info)
+                    self.logger.info(f"✓ IMDB解析成功: {movie_info.get('title')} ({len(movie_data)}/{max_count})")
+                else:
+                    self.logger.warning(f"✗ IMDB电影信息不完整: {link}")
                 
             except Exception as e:
-                self.logger.warning(f"解析IMDB列表页面失败: {url}, 错误: {e}")
+                self.logger.warning(f"✗ 解析IMDB电影详情失败: {link}, 错误: {e}")
                 continue
+        
+        self.logger.info(f"IMDB批次解析完成 - 成功获取 {len(movie_data)} 部电影")
+        return movie_data
+
+    def _collect_sufficient_links(self, categories, target_count, max_pages):
+        """收集足够数量的IMDB电影链接"""
+        all_movie_links = []
+        
+        for category in categories:
+            if len(all_movie_links) >= target_count * 2:  # 收集足够的链接后停止
+                self.logger.info(f"已收集足够IMDB链接 ({len(all_movie_links)}个)，停止解析列表页面")
+                break
+            
+            self.logger.info(f"开始收集IMDB分类 '{category}' 的电影链接")
+            category_urls = self.config.get_movie_list_urls([category], max_pages)
+            
+            for i, url in enumerate(tqdm(category_urls, desc=f"解析IMDB{category}列表页")):
+                if len(all_movie_links) >= target_count * 2:  # 达到目标后立即停止
+                    self.logger.info(f"已收集到 {len(all_movie_links)} 个IMDB链接，停止解析更多列表页")
+                    break
+                
+                try:
+                    # 列表页面延时
+                    if i > 0:
+                        time.sleep(random.uniform(1, 3))
+                    
+                    # IMDB完全使用Selenium
+                    response = self.network_manager.get_page(url, use_selenium=True)
+                    
+                    # 确定URL类型
+                    if 'chart' in url:
+                        url_type = 'chart'
+                    elif 'search' in url:
+                        url_type = 'search'
+                    else:
+                        url_type = 'chart'
+                    
+                    # 解析电影链接
+                    movie_links = self.parser.parse_movie_list(response, url_type)
+                    
+                    if len(movie_links) > 0:
+                        all_movie_links.extend(movie_links)
+                        self.logger.info(f"从IMDB页面获取 {len(movie_links)} 个链接，总计: {len(all_movie_links)}")
+                    else:
+                        self.logger.warning(f"IMDB页面无链接，可能被反爬虫拦截: {url}")
+                        # 连续失败时增加延时
+                        time.sleep(random.uniform(5, 10))
+                
+                except Exception as e:
+                    self.logger.warning(f"解析IMDB列表页面失败: {url}, 错误: {e}")
+                    continue
         
         # 去重
         unique_links = list(set(all_movie_links))
-        self.logger.info(f"收集到 {len(unique_links)} 个唯一IMDB电影链接")
+        self.logger.info(f"IMDB链接收集阶段完成 - 总链接数: {len(unique_links)}")
         
         return unique_links
     
-    def _crawl_movie_details(self, movie_links):
-        """爬取电影详情（高度优化版本）"""
+    def _crawl_movie_details_with_limit(self, movie_links, max_movies):
+        """爬取IMDB电影详情（带数量限制）"""
         movie_data = []
         selenium_failures = 0
         
         for i, link in enumerate(tqdm(movie_links, desc="爬取IMDB电影详情")):
+            if len(movie_data) >= max_movies:
+                self.logger.info(f"已达到IMDB目标数量 {max_movies}，停止爬取详情")
+                break
+            
             try:
-                # 首先尝试requests（速度快）
-                response = self.network_manager.get_page(link, use_selenium=False)
+                # 详情页延时
+                time.sleep(random.uniform(
+                    self.config.DELAY_MIN,
+                    self.config.DELAY_MAX
+                ))
+                
+                # IMDB完全使用Selenium，requests被拦截
+                response = self.network_manager.get_page(link, use_selenium=True)
                 movie_info = self.parser.parse_movie_detail(response, link)
                 
-                # 如果requests解析失败或数据不完整，再尝试Selenium
-                if not movie_info or not self._is_movie_info_complete(movie_info):
-                    self.logger.info(f"requests数据不完整，使用Selenium重试: {link}")
-                    response = self.network_manager.get_page(link, use_selenium=True)
-                    movie_info = self.parser.parse_movie_detail(response, link)
-                    
-                    if not movie_info:
-                        selenium_failures += 1
-                        
-                        # 如果Selenium失败率过高，后续优先使用requests
-                        if selenium_failures > 3 and i > 10:
-                            self.logger.warning("Selenium失败率高，后续优先使用requests")
-                
-                if movie_info:
+                if movie_info and movie_info.get('title'):
                     movie_data.append(movie_info)
-                
-                # 动态调整延时：成功率高时减少延时
-                success_rate = len(movie_data) / (i + 1) if i > 0 else 1.0
-                if success_rate > 0.8:
-                    delay = random.uniform(0.5, 1.5)  # 高成功率时快速处理
+                    self.logger.info(f"成功爬取IMDB: {movie_info.get('title')} ({len(movie_data)}/{max_movies})")
                 else:
-                    delay = random.uniform(1.5, 2.5)  # 成功率低时谨慎处理
-                
-                time.sleep(delay)
+                    self.logger.warning(f"IMDB电影信息解析失败: {link}")
                 
             except Exception as e:
                 self.logger.warning(f"爬取IMDB电影详情失败: {link}, 错误: {e}")
                 continue
         
-        self.logger.info(f"成功爬取 {len(movie_data)} 部IMDB电影详情")
+        self.logger.info(f"IMDB详情爬取完成 - 成功获取 {len(movie_data)} 部电影")
         return movie_data
-    
+
     def _is_movie_info_complete(self, movie_info):
         """检查电影信息是否完整 - 放宽标准"""
         if not movie_info:
@@ -263,12 +389,13 @@ class IMDBMovieCrawler:
         """根据类型获取电影"""
         try:
             urls = self.config.get_genre_url(genre)
-            movie_links = self._collect_movie_links(urls)
+            # 使用新的两阶段方法
+            movie_links = self._collect_sufficient_links([genre], max_movies, max_pages=3)
             
             if len(movie_links) > max_movies:
                 movie_links = random.sample(movie_links, max_movies)
             
-            raw_data = self._crawl_movie_details(movie_links)
+            raw_data = self._crawl_movie_details_with_limit(movie_links, max_movies)
             return self.data_processor.clean_movie_data(raw_data)
             
         except Exception as e:

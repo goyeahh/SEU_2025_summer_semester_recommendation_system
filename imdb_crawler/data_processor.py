@@ -349,3 +349,13 @@ class IMDBDataProcessor:
         
         self.logger.info(f"合并完成，共 {len(merged_data)} 部电影")
         return merged_data
+    
+    def save_raw_data(self, raw_data, file_path):
+        """保存原始数据 - 用于进度保存"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(raw_data, f, ensure_ascii=False, indent=2)
+            return file_path
+        except Exception as e:
+            self.logger.error(f"保存IMDB原始数据失败: {e}")
+            return None

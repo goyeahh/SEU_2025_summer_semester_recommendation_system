@@ -280,4 +280,4 @@ if __name__ == "__main__":
 # 豆瓣 - 250部，8个不同分类
 # D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform douban --max-movies 25 --categories hot top250 new_movies weekly_best classic comedy action romance
 # IMDB - 250部，4个不同分类
-# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform imdb --max-movies 25 --categories top250 popular most_popular_movies top_rated_movies
+# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform imdb --max-movies 25 --categories top250

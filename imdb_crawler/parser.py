@@ -21,10 +21,10 @@ class IMDBPageParser:
     
     def parse_movie_list(self, response, url_type='chart'):
         """
-        解析电影列表页面，获取电影详情页链接
+        解析电影列表页面，获取电影详情页链接 - 增强反爬虫检测
         
         Args:
-            response: HTTP响应对象
+            response: HTTP响应对象或HTML字符串
             url_type: URL类型 ('chart', 'search', 'top250')
             
         Returns:
@@ -33,17 +33,41 @@ class IMDBPageParser:
         movie_links = []
         
         try:
-            soup = BeautifulSoup(response.text, 'html.parser')
+            # 处理不同类型的响应
+            if hasattr(response, 'text'):
+                html_content = response.text
+                response_url = getattr(response, 'url', '')
+            elif isinstance(response, str):
+                html_content = response
+                response_url = ''
+            else:
+                self.logger.error("无效的响应对象类型")
+                return []
             
-            if url_type == 'chart' or 'chart' in response.url:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # 检查页面是否被反爬虫拦截
+            page_title = soup.find('title')
+            if page_title:
+                title_text = page_title.get_text().lower()
+                if any(keyword in title_text for keyword in ['blocked', 'forbidden', 'access denied', 'error']):
+                    self.logger.warning("IMDB页面被反爬虫拦截")
+                    return []
+            
+            # 检查页面内容长度
+            if len(html_content) < 1000:
+                self.logger.warning("IMDB页面内容过短，可能被拦截")
+                return []
+            
+            if url_type == 'chart' or 'chart' in response_url:
                 # 处理榜单页面
                 movie_links.extend(self._parse_chart_page(soup))
             
-            elif url_type == 'search' or 'search' in response.url:
+            elif url_type == 'search' or 'search' in response_url:
                 # 处理搜索结果页面
                 movie_links.extend(self._parse_search_page(soup))
             
-            elif 'top' in response.url:
+            elif 'top' in response_url:
                 # 处理Top250等页面
                 movie_links.extend(self._parse_top_page(soup))
             
@@ -55,11 +79,17 @@ class IMDBPageParser:
             unique_links = list(set(movie_links))
             full_links = [urljoin(self.base_url, link) for link in unique_links if link]
             
-            self.logger.info(f"从页面解析到 {len(full_links)} 个电影链接")
+            # 调试信息
+            if len(full_links) == 0:
+                self.logger.warning(f"IMDB页面解析结果为空，页面标题: {page_title.get_text()[:100] if page_title else 'None'}")
+                debug_content = soup.get_text()[:500]
+                self.logger.debug(f"页面内容片段: {debug_content}")
+            
+            self.logger.info(f"从IMDB页面解析到 {len(full_links)} 个电影链接")
             return full_links
             
         except Exception as e:
-            self.logger.error(f"解析电影列表页面失败: {e}")
+            self.logger.error(f"解析IMDB电影列表页面失败: {e}")
             return []
     
     def _parse_chart_page(self, soup):
@@ -152,14 +182,23 @@ class IMDBPageParser:
         解析电影详情页面
         
         Args:
-            response: HTTP响应对象
+            response: HTTP响应对象或HTML字符串
             movie_url: 电影详情页URL
             
         Returns:
             dict: 电影信息字典
         """
         try:
-            soup = BeautifulSoup(response.text, 'html.parser')
+            # 处理不同类型的响应
+            if hasattr(response, 'text'):
+                html_content = response.text
+            elif isinstance(response, str):
+                html_content = response
+            else:
+                self.logger.error(f"无效的响应对象类型: {type(response)}")
+                return None
+            
+            soup = BeautifulSoup(html_content, 'html.parser')
             
             # 提取电影ID
             movie_id = self._extract_movie_id(movie_url)

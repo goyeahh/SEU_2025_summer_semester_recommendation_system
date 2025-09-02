@@ -90,20 +90,47 @@ class IMDBNetworkManager:
         
         return any(keyword in content for keyword in blocked_keywords)
     
-    @retry(stop_max_attempt_number=3, wait_fixed=2000)
+    @retry(stop_max_attempt_number=IMDBConfig.MAX_RETRY_TIMES, wait_fixed=IMDBConfig.RETRY_DELAY)
     def get_page(self, url, use_selenium=None):
-        """获取网页内容 - IMDB强制使用Selenium"""
-        # IMDB对requests拦截严格，完全使用Selenium
+        """获取网页内容 - 智能选择请求方式"""
+        # 智能判断是否需要使用Selenium
+        if use_selenium is None:
+            use_selenium = self._should_use_selenium(url)
+        
         try:
-            return self._get_with_selenium(url)
+            if use_selenium:
+                return self._get_with_selenium(url)
+            else:
+                return self._get_with_requests(url)
         except Exception as e:
-            self.logger.warning(f"IMDB请求失败: {url}, 错误: {e}")
+            self.logger.warning(f"请求失败，正在重试: {url}, 错误: {e}")
+            # 如果第一种方式失败，尝试另一种
+            if use_selenium:
+                try:
+                    self.logger.info("Selenium失败，尝试使用requests")
+                    return self._get_with_requests(url)
+                except Exception as requests_error:
+                    self.logger.warning(f"requests也失败: {requests_error}")
+            else:
+                try:
+                    self.logger.info("requests失败，尝试使用Selenium")
+                    return self._get_with_selenium(url)
+                except Exception as selenium_error:
+                    self.logger.warning(f"Selenium也失败: {selenium_error}")
+            
+            self._random_delay()
             raise e
     
     def _should_use_selenium(self, url):
-        """IMDB强制使用Selenium，requests总是被拦截"""
-        # IMDB对requests的拦截非常严格，直接使用Selenium
-        return True
+        """智能判断是否需要使用Selenium"""
+        # 对于列表页面，优先使用requests（速度快10倍）
+        if any(keyword in url for keyword in ['chart', 'top', 'list', 'search']):
+            return False
+        # 对于详情页面，只在必要时使用Selenium
+        elif '/title/' in url:
+            return False  # 先尝试requests
+        else:
+            return False
     
     def _get_with_requests(self, url):
         """使用requests获取页面 - 增强反爬虫"""

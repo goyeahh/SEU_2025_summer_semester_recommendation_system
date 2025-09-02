@@ -85,8 +85,26 @@ class NetworkManager:
         return False
     
     def _get_with_requests(self, url):
-        """使用requests获取页面"""
-        response = self.session.get(url, timeout=10)
+        """使用requests获取页面 - 增强反爬虫"""
+        # 添加更多随机性
+        headers = self.session.headers.copy()
+        
+        # 随机添加额外的浏览器头
+        extra_headers = {
+            'Accept-Language': random.choice([
+                'zh-CN,zh;q=0.9,en;q=0.8',
+                'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+                'zh,zh-CN;q=0.9,en;q=0.8'
+            ]),
+            'Cache-Control': random.choice(['no-cache', 'max-age=0', '']),
+            'Pragma': random.choice(['no-cache', '']),
+        }
+        
+        for k, v in extra_headers.items():
+            if v:  # 只添加非空值
+                headers[k] = v
+        
+        response = self.session.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         return response
     

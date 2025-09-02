@@ -9,10 +9,12 @@ IMDB配置文件模块
 class IMDBConfig:
     """IMDB配置类，包含所有系统配置"""
     
-    # 基本配置（极速优化）
+    # 基本配置（优化反爬虫）
     MAX_MOVIES = 200  # 最大爬取电影数量
-    DELAY_MIN = 0.5   # 最小延时（秒）- 极速模式
-    DELAY_MAX = 1.5   # 最大延时（秒）- 极速模式
+    DELAY_MIN = 2     # 最小延时（秒）- 增加延时避免被检测
+    DELAY_MAX = 5     # 最大延时（秒）- 增加延时避免被检测
+    REQUEST_TIMEOUT = 30  # 请求超时时间（秒）
+    MAX_RETRIES = 3   # 最大重试次数
     
     # IMDB网站配置
     BASE_URL = "https://www.imdb.com"
@@ -43,42 +45,28 @@ class IMDBConfig:
         'Cache-Control': 'max-age=0'
     }
     
-    # Chrome浏览器配置（极速优化版本）
+    # Chrome浏览器配置（反爬虫优化版本）
     CHROME_OPTIONS = [
-        '--headless',  # 无头模式
+        # '--headless',  # 暂时取消无头模式，模拟真实用户
         '--no-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-software-rasterizer',
-        '--disable-web-security',
+        '--disable-blink-features=AutomationControlled',  # 隐藏自动化特征
+        '--exclude-switches=enable-automation',
+        '--disable-extensions-file-access-check',
+        '--disable-extensions-http-throttling',
+        '--disable-ipc-flooding-protection',
+        '--window-size=1366,768',  # 常见屏幕分辨率
+        '--start-maximized',
         '--disable-features=VizDisplayCompositor',
         '--disable-logging',
         '--log-level=3',
-        '--window-size=1024,600',  # 更小的窗口
-        '--disable-blink-features=AutomationControlled',
-        '--disable-extensions',
-        '--disable-plugins',
-        '--disable-images',  # 禁用图片加载，大幅提速
-        '--disable-javascript',  # 禁用JS（谨慎使用）
-        '--no-first-run',
-        '--disable-default-apps',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-renderer-backgrounding',
-        '--disable-sync',  # 禁用同步
-        '--disable-translate',  # 禁用翻译
         '--disable-popup-blocking',
         '--disable-prompt-on-repost',
         '--disable-hang-monitor',
         '--disable-client-side-phishing-detection',
         '--disable-component-update',
         '--disable-domain-reliability',
-        '--disable-features=TranslateUI',
-        '--disable-ipc-flooding-protection',
-        '--aggressive-cache-discard',  # 激进的缓存清理
-        '--memory-pressure-off',  # 关闭内存压力检测
-        '--max_old_space_size=4096',  # 限制内存使用
-        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
     ]
     
     # 重试配置（优化版本）

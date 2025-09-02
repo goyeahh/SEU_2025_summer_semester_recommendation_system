@@ -10,9 +10,9 @@ class Config:
     """配置类，包含所有系统配置"""
     
     # 基本配置
-    MAX_MOVIES = 200  # 最大爬取电影数量
-    DELAY_MIN = 2     # 最小延时（秒）
-    DELAY_MAX = 5     # 最大延时（秒）
+    MAX_MOVIES = 500  # 最大爬取电影数量
+    DELAY_MIN = 3     # 最小延时（秒）- 增加延时
+    DELAY_MAX = 8     # 最大延时（秒）- 增加延时
     
     # 豆瓣网站配置
     BASE_URL = "https://movie.douban.com"
@@ -50,16 +50,17 @@ class Config:
         # '--headless',  # 取消无头模式，模拟真实用户浏览器
         '--no-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-software-rasterizer',
-        '--disable-web-security',
+        '--disable-blink-features=AutomationControlled',  # 隐藏自动化特征
+        '--exclude-switches=enable-automation',
+        '--disable-extensions-file-access-check',
+        '--disable-extensions-http-throttling',
+        '--disable-ipc-flooding-protection',
+        '--window-size=1366,768',  # 常见屏幕分辨率
+        '--start-maximized',
         '--disable-features=VizDisplayCompositor',
         '--disable-logging',
         '--log-level=3',
-        '--window-size=1920,1080',
-        '--disable-extensions',
-        '--disable-plugins',
-        '--disable-images'
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
     ]
     
     # 重试配置
