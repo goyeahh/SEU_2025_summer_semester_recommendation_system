@@ -1,0 +1,33 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}用户登录 - 电影推荐系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4 text-white">用户登录</h2>
+        <div class="card bg-dark text-white">
+            <div class="card-body">
+                <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100">立即登录</button>
+                </form>
+                <p class="mt-3 text-center">
+                    还没有账户？ <a href="{% url 'register' %}" class="text-danger">立即注册</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

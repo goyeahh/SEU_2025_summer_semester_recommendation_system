@@ -1,0 +1,32 @@
+{% extends 'frontend/base.html' %}
+
+{% block body_class %}homepage{% endblock %}
+
+{% block title %}
+网站首页 - 电影推荐系统
+{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">你好，电影推荐系统！</h1>
+    </div>
+</div>
+
+<h2>热门电影</h2>
+<hr>
+<div class="row">
+    {% for movie in movies %}
+    <div class="col-lg-3 col-md-4 mb-4">
+        <div class="card h-100">
+            <img src="{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text text-muted">{{ movie.year }}</p>
+                <a href="{% url 'movie-detail' movie.id %}" class="btn btn-primary">查看详情</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}
+电影详情 - {{ movie_title }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <img src="https://via.placeholder.com/300x450.png?text=电影海报" class="img-fluid rounded" alt="电影海报">
+    </div>
+    <div class="col-md-8">
+        <h1>{{ movie_title }}</h1>
+        <p><strong>导演:</strong> 某某某</p>
+        <p><strong>主演:</strong> 张三 / 李四 / 王五</p>
+        <hr>
+        <h3>剧情简介</h3>
+        <p>
+            这里是一段关于电影《{{ movie_title }}》的精彩剧情简介...
+        </p>
+    </div>
+</div>
+{% endblock %}
