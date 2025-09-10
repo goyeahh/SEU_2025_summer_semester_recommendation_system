@@ -1,0 +1,14 @@
+# Python 缓存
+__pycache__/
+*.pyc
+
+# IDE 配置
+.idea/
+
+# 模型 / 大文件
+*.bin
+*.npy
+bert-base-chinese/
+bert-base-uncased/
+transformers/
+
