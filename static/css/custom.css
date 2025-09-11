@@ -129,9 +129,9 @@ body.homepage .navbar-nav .nav-link[href="/"] {
 
 /* --- 页脚美化 --- */
 
-/* 改变页脚文字的颜色，让它在深色背景下也清晰可见 */
-footer .text-muted {
-    color: rgba(255, 255, 255, 0.7) !important; /* 使用70%透明度的白色，而不是纯白，看起来更柔和 */
+/* 只在首页(body.homepage)才把页脚文字变白 */
+body.homepage footer .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* --- 搜索栏美化 --- */
@@ -159,4 +159,46 @@ footer .text-muted {
     border: none; /* 移除按钮自己的边框 */
     border-radius: 0; /* 移除按钮自己的圆角，让它和输入框无缝拼接 */
     background-color: #dc3545; /* 设置背景为红色 */
+}
+
+/* --- 内页（非首页）通用样式 --- */
+
+/* 为所有非首页的 h1, h3, h4 以及 lead 段落设置清晰的深色 */
+/* :not(.homepage) 这个选择器表示“只要 body 没有 homepage 这个 class” */
+body:not(.homepage) h1,
+body:not(.homepage) h3,
+body:not(.homepage) h4,
+body:not(.homepage) .lead,
+body:not(.homepage) p { /* 确保所有普通段落也是深色 */
+    color: #212529; /* 使用一个非常深的灰色，接近黑色 */
+}
+
+/* 确保详情页的深色卡片内部文字是白色的 */
+.movie-detail-card .card-title,
+.movie-detail-card .card-text {
+    color: #ffffff !important; /* 增加 !important 确保这条规则的优先级最高 */
+}
+
+/* --- 星级评分美化 (支持半星, 使用 Font Awesome) --- */
+
+.star-rating {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.star-rating i {
+    font-size: 2rem;
+    color: #6c757d; /* 默认空心星的颜色（灰色） */
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out; /* 增加 transform 过渡 */
+    padding: 0 2px;
+}
+
+/* 鼠标悬停时给一点放大效果，增加交互感 */
+.star-rating i:hover {
+    transform: scale(1.2);
+}
+
+/* 被JS点亮的星星（无论是半星还是全星）都用这个颜色 */
+.star-rating i.active {
+    color: #ffc107; /* 金色 */
 }

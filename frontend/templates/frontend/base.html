@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -96,6 +98,66 @@
         }
       }
     };
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const starRatingContainer = document.querySelector('.star-rating');
+    if (starRatingContainer) {
+        const stars = starRatingContainer.querySelectorAll('i');
+        const hiddenInput = document.getElementById('rating-value');
+
+        // 核心函数：根据传入的数值（如3.5），更新星星的图标
+        function updateStars(rating) {
+        stars.forEach((star, index) => {
+            const starValue = index + 1;
+            // 先重置所有星星为空心
+            star.className = 'fa-regular fa-star';
+            star.classList.remove('active');
+
+            if (rating >= starValue) {
+            // 如果评分大于等于当前星星的值，则为实心星
+            star.className = 'fa-solid fa-star';
+            star.classList.add('active');
+            } else if (rating > index && rating < starValue) {
+            // 如果评分在当前星星和前一个星星之间，则为半实心星
+            star.className = 'fa-solid fa-star-half-stroke';
+            star.classList.add('active');
+            }
+        });
+        }
+
+        // 计算鼠标在评分条上的精确位置，并转换为0.5为单位的评分
+        function getRatingFromMouseEvent(e) {
+            const rect = starRatingContainer.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const percentage = mouseX / rect.width;
+            const preciseRating = percentage * 5;
+            // 将评分四舍五入到最近的0.5
+            return Math.round(preciseRating * 2) / 2;
+        }
+
+        // 鼠标移动时的悬停效果
+        starRatingContainer.addEventListener('mousemove', (e) => {
+        const hoverRating = getRatingFromMouseEvent(e);
+        updateStars(hoverRating);
+        });
+
+        // 鼠标移出时，恢复到已保存的评分
+        starRatingContainer.addEventListener('mouseleave', () => {
+        const savedRating = parseFloat(starRatingContainer.getAttribute('data-rating') || 0);
+        updateStars(savedRating);
+        });
+
+        // 点击时，保存评分
+        starRatingContainer.addEventListener('click', (e) => {
+        const finalRating = getRatingFromMouseEvent(e);
+        starRatingContainer.setAttribute('data-rating', finalRating);
+        hiddenInput.value = finalRating;
+        updateStars(finalRating); // 固化评分
+        console.log(`你最终选择了 ${finalRating} 星评分！`);
+        });
+    }
+    });
   </script>
 </body>
 </html>

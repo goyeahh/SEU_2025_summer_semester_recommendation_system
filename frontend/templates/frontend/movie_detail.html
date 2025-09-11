@@ -7,17 +7,37 @@
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <img src="https://via.placeholder.com/300x450.png?text=电影海报" class="img-fluid rounded" alt="电影海报">
+        <img src="https://via.placeholder.com/300x450.png?text={{ movie_title }} 海报" class="img-fluid rounded shadow" alt="{{ movie_title }} 海报">
     </div>
+    
     <div class="col-md-8">
-        <h1>{{ movie_title }}</h1>
-        <p><strong>导演:</strong> 某某某</p>
-        <p><strong>主演:</strong> 张三 / 李四 / 王五</p>
-        <hr>
+        <h1 class="display-4">{{ movie_title }}</h1>
+        <p class="lead">上映年份: 2024</p>
+        <hr class="border-light">
+
+        <div class="card bg-dark my-4 movie-detail-card">
+            <div class="card-body">
+                <h5 class="card-title">基本信息</h5>
+                <p class="card-text mb-1"><strong>导演:</strong> 某某某</p>
+                <p class="card-text"><strong>主演:</strong> 张三 / 李四 / 王五</p>
+            </div>
+        </div>
+
         <h3>剧情简介</h3>
         <p>
             这里是一段关于电影《{{ movie_title }}》的精彩剧情简介...
         </p>
+
+        <hr class="border-light mt-4">
+        <h4>为这部电影评分</h4>
+        <div class="star-rating" data-rating="0">
+            <i class="fa-regular fa-star" data-value="1"></i>
+            <i class="fa-regular fa-star" data-value="2"></i>
+            <i class="fa-regular fa-star" data-value="3"></i>
+            <i class="fa-regular fa-star" data-value="4"></i>
+            <i class="fa-regular fa-star" data-value="5"></i>
+            <input type="hidden" name="user_rating" id="rating-value" value="0">
+        </div>
     </div>
 </div>
 {% endblock %}
