@@ -1,0 +1,58 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}影片分类 - 电影推荐系统{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card bg-dark text-white mb-5">
+        <div class="card-body">
+            <div class="row align-items-center mb-3">
+                <div class="col-auto">
+                    <span class="filter-label">类型:</span>
+                </div>
+                <div class="col">
+                    <ul class="nav nav-pills filter-pills">
+                        <li class="nav-item"><a href="?genre=全部&year={{ selected_year }}" class="nav-link {% if selected_genre == '全部' %}active{% endif %}">全部</a></li>
+                        {% for genre in genres %}
+                        <li class="nav-item"><a href="?genre={{ genre }}&year={{ selected_year }}" class="nav-link {% if genre == selected_genre %}active{% endif %}">{{ genre }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <span class="filter-label">年份:</span>
+                </div>
+                <div class="col">
+                    <ul class="nav nav-pills filter-pills">
+                        {% for year in years %}
+                        <li class="nav-item"><a href="?genre={{ selected_genre }}&year={{ year }}" class="nav-link {% if year|stringformat:"s" == selected_year %}active{% endif %}">{{ year }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <h3 class="mb-4">筛选结果</h3>
+    <div class="row">
+        {% for i in "123456789abc" %}
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="card h-100 similar-movie-card">
+                <a href="#">
+                    <img src="https://via.placeholder.com/200x300.png?text=电影+{{ forloop.counter }}" class="card-img-top" alt="筛选结果电影">
+                </a>
+                <div class="card-body">
+                    <h6 class="card-title mb-1">电影 {{ forloop.counter }}</h6>
+                    <small class="text-warning">
+                        <i class="fa-solid fa-star"></i> 7.{{ forloop.counter }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

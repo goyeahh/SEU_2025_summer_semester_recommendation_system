@@ -7,13 +7,36 @@
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <img src="https://via.placeholder.com/300x450.png?text={{ movie_title }} 海报" class="img-fluid rounded shadow" alt="{{ movie_title }} 海报">
-    </div>
-    
+        <img src="https://via.placeholder.com/300x450.png?text={{ movie_title }} 海报" class="img-fluid rounded shadow mb-4" alt="{{ movie_title }} 海报">
+
+        <h3 class="mb-3">喜欢这部电影的人也喜欢...</h3>
+        <div class="row">
+            {% for i in "1234" %}
+            <div class="col-6 mb-4">
+                <div class="card similar-movie-card">
+                    <a href="#">
+                        <img src="https://via.placeholder.com/200x300.png?text=电影+{{ forloop.counter }}" class="card-img-top" alt="相似电影">
+                    </a>
+                    <div class="card-body">
+                        <h6 class="card-title mb-1">相似电影 {{ forloop.counter }}</h6>
+                        <small class="text-warning">
+                            <i class="fa-solid fa-star"></i> 7.{{ forloop.counter }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        </div>
     <div class="col-md-8">
         <h1 class="display-4">{{ movie_title }}</h1>
         <p class="lead">上映年份: 2024</p>
-        <hr class="border-light">
+        <div class="mb-3">
+            {% for genre in movie_genres %}
+            <a href="{% url 'movie-categories' %}?genre={{ genre }}&year=全部" class="badge text-bg-danger text-decoration-none me-1">{{ genre }}</a>
+            {% endfor %}
+        </div>
+        <hr>
 
         <div class="card bg-dark my-4 movie-detail-card">
             <div class="card-body">
@@ -28,7 +51,7 @@
             这里是一段关于电影《{{ movie_title }}》的精彩剧情简介...
         </p>
 
-        <hr class="border-light mt-4">
+        <hr>
         <h4>为这部电影评分</h4>
         <div class="star-rating" data-rating="0">
             <i class="fa-regular fa-star" data-value="1"></i>
@@ -39,7 +62,7 @@
             <input type="hidden" name="user_rating" id="rating-value" value="0">
         </div>
 
-        <hr class="border-light mt-4">
+        <hr>
         <h4>发表你的看法</h4>
         <form action="#" method="POST">
             {% csrf_token %}
@@ -52,10 +75,10 @@
         <hr class="border-light mt-5">
         <h3 class="mb-4">热门评论</h3>
 
-        {% for i in "123" %} <div class="comment mb-3">
+        {% for i in "123" %}
+        <div class="comment mb-3">
             <div class="d-flex">
-                
-                <div class="flex-grow-1 ms-3">
+                <div class="flex-grow-1">
                     <h5 class="mt-0 mb-1">用户_{{ forloop.counter }}</h5>
                     <p class="comment-text">
                         这是第 {{ forloop.counter }} 条非常精彩的评论！我觉得这部电影真是太棒了，故事情节非常吸引人，演员的表演也十分到位。
@@ -66,5 +89,5 @@
         </div>
         {% endfor %}
     </div>
-</div>
+    </div>
 {% endblock %}

@@ -21,20 +21,20 @@ def index(request):
     return render(request, 'frontend/index.html', context)
 
 def movie_detail(request, movie_id):
-    # 以后我们会根据 movie_id 去数据库查找真实的电影
-    # 现在，我们先创建一个假的电影列表来模拟
+    # 我们把假的数据库升级一下，让它能包含更多信息
     fake_movie_db = {
-        1: '沙丘',
-        2: '流浪地球',
-        3: '星际穿越'
+        1: {'title': '沙丘', 'genres': ['科幻', '冒险']},
+        2: {'title': '流浪地球', 'genres': ['科幻', '灾难']},
+        3: {'title': '星际穿越', 'genres': ['科幻', '剧情', '冒险']}
     }
 
-    # .get(movie_id, '未知电影') 的意思是尝试获取ID对应的电影名，如果找不到，就返回'未知电影'
-    movie_title = fake_movie_db.get(movie_id, '未知电影')
+    # 查找电影，如果找不到，就给一个默认值
+    movie_info = fake_movie_db.get(movie_id, {'title': '未知电影', 'genres': []})
 
     context = {
-        'movie_title': movie_title,
-        'movie_id': movie_id # 我们也可以把ID本身传给模板，备用
+        'movie_title': movie_info['title'],
+        'movie_genres': movie_info['genres'], # 把类型列表也传给模板
+        'movie_id': movie_id
     }
     return render(request, 'frontend/movie_detail.html', context)
 
@@ -80,3 +80,21 @@ def logout_view(request):
 
     # 处理完毕后，将用户重定向回首页
     return redirect('index') # 'index' 是我们给首页URL起的名字
+
+def categories_view(request):
+    # 模拟的电影类型数据
+    genre_list = ['科幻', '动作', '喜剧', '爱情', '悬疑', '动画', '恐怖', '犯罪', '战争', '冒险', '武侠', '奇幻']
+    # 模拟的年份数据
+    year_list = ['全部', 2024, 2023, 2022, 2021, 2020, 2019, 2018, '更早']
+
+    # 从URL的查询参数中获取用户当前选择的类型和年份，如果没有选，默认为'全部'
+    selected_genre = request.GET.get('genre', '全部')
+    selected_year = request.GET.get('year', '全部')
+
+    context = {
+        'genres': genre_list,
+        'years': year_list,
+        'selected_genre': selected_genre,
+        'selected_year': selected_year,
+    }
+    return render(request, 'frontend/categories.html', context)
