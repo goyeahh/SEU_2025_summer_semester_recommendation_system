@@ -15,9 +15,14 @@ import logging
 class IMDBPageParser:
     """IMDB页面解析器"""
     
-    def __init__(self):
+    def __init__(self, network_manager=None, config=None):
         self.logger = logging.getLogger(__name__)
         self.base_url = "https://www.imdb.com"
+        self.network_manager = network_manager
+        
+        # 从配置中获取输出控制设置
+        from .config import IMDBConfig
+        self.show_parsing_details = getattr(config or IMDBConfig, 'SHOW_PARSING_SUCCESS', True)
     
     def parse_movie_list(self, response, url_type='chart'):
         """
@@ -200,19 +205,11 @@ class IMDBPageParser:
             
             soup = BeautifulSoup(html_content, 'html.parser')
             
-            # 提取电影ID
-            movie_id = self._extract_movie_id(movie_url)
-            
-            # 提取电影信息
+            # 提取电影信息 - 仅保留数据库需要的字段
             movie_info = {
-                'platform': 'IMDB',
-                'imdb_id': movie_id,
-                'url': movie_url,
                 'title': self._extract_title(soup),
-                'original_title': self._extract_original_title(soup),
                 'year': self._extract_year(soup),
                 'rating': self._extract_rating(soup),
-                'rating_count': self._extract_rating_count(soup),
                 'genres': self._extract_genres(soup),
                 'duration': self._extract_duration(soup),
                 'directors': self._extract_directors(soup),
@@ -220,26 +217,17 @@ class IMDBPageParser:
                 'plot': self._extract_plot(soup),
                 'poster_url': self._extract_poster(soup),
                 'countries': self._extract_countries(soup),
-                'languages': self._extract_languages(soup),
-                'release_date': self._extract_release_date(soup),
-                'budget': self._extract_budget(soup),
-                'box_office': self._extract_box_office(soup),
-                'awards': self._extract_awards(soup)
+                'rating_distribution': self._extract_rating_distribution_from_url(movie_url)
             }
             
             # 调试日志
-            self.logger.info(f"解析结果: ID={movie_id}, 标题='{movie_info['title']}', 评分={movie_info['rating']}")
+            self.logger.info(f"解析结果: 标题='{movie_info['title']}', 评分={movie_info['rating']}")
             
             return movie_info
             
         except Exception as e:
             self.logger.error(f"解析电影详情失败 {movie_url}: {e}")
             return None
-    
-    def _extract_movie_id(self, url):
-        """提取电影ID"""
-        match = re.search(r'/title/(tt\d+)/', url)
-        return match.group(1) if match else ''
     
     def _extract_title(self, soup):
         """提取电影标题 - 更新版本"""
@@ -273,32 +261,41 @@ class IMDBPageParser:
                 return title
         
         return ''
-    
-    def _extract_original_title(self, soup):
-        """提取原始标题"""
-        # 尝试从页面中提取原始标题
-        original_title = soup.select_one('[data-testid="hero-title-block__original-title"]')
-        if original_title:
-            text = original_title.get_text(strip=True)
-            # 移除"Original title: "前缀
-            return text.replace('Original title: ', '')
-        return ''
-    
+
     def _extract_year(self, soup):
-        """提取上映年份"""
-        selectors = [
-            'a[href*="year"]',
-            '.sc-8c396aa2-2 a',
-            '[data-testid="hero-title-block__metadata"] a'
+        """提取上映年份 - 优化版本"""
+        # 1. 尝试从hero标题块的元数据提取
+        metadata_links = soup.select('[data-testid="hero-title-block__metadata"] a')
+        for link in metadata_links:
+            href = link.get('href', '')
+            if '/year/' in href:
+                year_match = re.search(r'/year/(\d{4})/', href)
+                if year_match:
+                    return int(year_match.group(1))
+        
+        # 2. 尝试从页面文本中提取年份
+        year_patterns = [
+            r'\b(19|20)\d{2}\b',  # 匹配1900-2099年
         ]
         
-        for selector in selectors:
-            elements = soup.select(selector)
-            for element in elements:
-                text = element.get_text(strip=True)
-                year_match = re.search(r'\b(19|20)\d{2}\b', text)
-                if year_match:
-                    return int(year_match.group())
+        # 在标题区域查找
+        title_section = soup.select_one('[data-testid="hero-title-block__metadata"]')
+        if title_section:
+            text = title_section.get_text()
+            for pattern in year_patterns:
+                match = re.search(pattern, text)
+                if match:
+                    year = int(match.group())
+                    if 1880 <= year <= 2030:  # 合理的电影年份范围
+                        return year
+        
+        # 3. 从页面标题提取
+        page_title = soup.find('title')
+        if page_title:
+            title_text = page_title.get_text()
+            year_match = re.search(r'\((\d{4})\)', title_text)
+            if year_match:
+                return int(year_match.group(1))
         
         return None
     
@@ -342,51 +339,53 @@ class IMDBPageParser:
                 continue
         
         return None
-    
-    def _extract_rating_count(self, soup):
-        """提取评分人数"""
-        selectors = [
-            '[data-testid="hero-rating-bar__aggregate-rating__score"] + div',
-            '.sc-7ab21ed2-3'
-        ]
-        
-        for selector in selectors:
-            element = soup.select_one(selector)
-            if element:
-                text = element.get_text(strip=True)
-                # 提取数字，可能包含K、M等单位
-                count_match = re.search(r'([\d,]+(?:\.\d+)?)\s*([KMB]?)', text)
-                if count_match:
-                    number = float(count_match.group(1).replace(',', ''))
-                    unit = count_match.group(2)
-                    if unit == 'K':
-                        number *= 1000
-                    elif unit == 'M':
-                        number *= 1000000
-                    elif unit == 'B':
-                        number *= 1000000000
-                    return int(number)
-        
-        return None
-    
+
     def _extract_genres(self, soup):
-        """提取电影类型"""
+        """提取电影类型 - 优化版本"""
         genres = []
         
-        selectors = [
-            '[data-testid="genres"] a',
-            '.sc-16ede01-3 a',
-            '[class*="genre"] a'
-        ]
+        # 1. 首先尝试从genres测试ID提取
+        genre_elements = soup.select('[data-testid="genres"] a, [data-testid="genres"] span')
+        for element in genre_elements:
+            genre = element.get_text(strip=True)
+            if genre and genre not in genres:
+                genres.append(genre)
         
-        for selector in selectors:
-            elements = soup.select(selector)
-            for element in elements:
-                genre = element.get_text(strip=True)
-                if genre and genre not in genres:
-                    genres.append(genre)
+        # 2. 如果没找到，尝试其他选择器
+        if not genres:
+            selectors = [
+                '.ipc-chip-list__scroller a',
+                '.sc-16ede01-3 a',
+                '[class*="genre"] a',
+                'a[href*="/search/title/?genres="]'
+            ]
+            
+            for selector in selectors:
+                elements = soup.select(selector)
+                for element in elements:
+                    genre = element.get_text(strip=True)
+                    # 过滤掉明显不是类型的文本
+                    if (genre and genre not in genres and 
+                        len(genre) < 20 and  # 类型名通常较短
+                        not any(word in genre.lower() for word in ['see', 'more', 'all', 'imdb'])):
+                        genres.append(genre)
         
-        return genres
+        # 3. 最后尝试从JSON-LD数据提取
+        if not genres:
+            json_scripts = soup.find_all('script', {'type': 'application/ld+json'})
+            for script in json_scripts:
+                try:
+                    data = json.loads(script.string)
+                    if isinstance(data, dict) and 'genre' in data:
+                        genre_data = data['genre']
+                        if isinstance(genre_data, list):
+                            genres.extend(genre_data)
+                        elif isinstance(genre_data, str):
+                            genres.append(genre_data)
+                except:
+                    continue
+        
+        return genres[:10]  # 限制最多10个类型
     
     def _extract_duration(self, soup):
         """提取电影时长"""
@@ -419,26 +418,61 @@ class IMDBPageParser:
         return None
     
     def _extract_directors(self, soup):
-        """提取导演"""
+        """提取导演 - 优化版本"""
         directors = []
         
-        selectors = [
-            '[data-testid="title-pc-principal-credit"]:has-text("Director") a',
-            '.credit_summary_item:has-text("Director") a'
-        ]
-        
-        # 查找导演部分
-        director_sections = soup.find_all(['div', 'li'], string=re.compile(r'Director|Directed'))
-        for section in director_sections:
-            parent = section.find_parent()
-            if parent:
-                links = parent.find_all('a')
+        # 1. 尝试从principal credits提取导演
+        credits_sections = soup.select('[data-testid="title-pc-principal-credit"]')
+        for section in credits_sections:
+            # 查找包含"Director"的部分
+            section_text = section.get_text()
+            if 'Director' in section_text:
+                # 提取该部分的所有链接
+                links = section.select('a')
                 for link in links:
                     name = link.get_text(strip=True)
-                    if name and name not in directors:
+                    if (name and name not in directors and 
+                        not any(word in name.lower() for word in ['director', 'more', 'see', 'full'])):
                         directors.append(name)
         
-        return directors
+        # 2. 如果没找到，尝试其他方法
+        if not directors:
+            # 查找包含"Director"文本的区域
+            for element in soup.find_all(text=re.compile(r'Director', re.I)):
+                parent = element.parent
+                if parent:
+                    # 在父元素及其兄弟元素中查找链接
+                    for sibling in parent.find_next_siblings():
+                        links = sibling.find_all('a') if sibling else []
+                        for link in links:
+                            name = link.get_text(strip=True)
+                            if (name and name not in directors and 
+                                not any(word in name.lower() for word in ['director', 'more', 'see'])):
+                                directors.append(name)
+                                break
+                    if directors:
+                        break
+        
+        # 3. 尝试从JSON-LD数据提取
+        if not directors:
+            json_scripts = soup.find_all('script', {'type': 'application/ld+json'})
+            for script in json_scripts:
+                try:
+                    data = json.loads(script.string)
+                    if isinstance(data, dict) and 'director' in data:
+                        director_data = data['director']
+                        if isinstance(director_data, list):
+                            for director in director_data:
+                                if isinstance(director, dict) and 'name' in director:
+                                    directors.append(director['name'])
+                                elif isinstance(director, str):
+                                    directors.append(director)
+                        elif isinstance(director_data, dict) and 'name' in director_data:
+                            directors.append(director_data['name'])
+                except:
+                    continue
+        
+        return directors[:5]  # 限制最多5个导演
     
     def _extract_actors(self, soup):
         """提取主要演员"""
@@ -502,70 +536,221 @@ class IMDBPageParser:
                         countries.append(country)
         
         return countries
-    
-    def _extract_languages(self, soup):
-        """提取语言"""
-        languages = []
+
+    def _extract_rating_distribution_from_url(self, movie_url):
+        """从IMDB ratings页面提取评分分布数据"""
+        try:
+            # 构建ratings页面URL
+            movie_id_match = re.search(r'/title/(tt\d+)/', movie_url)
+            if not movie_id_match:
+                self.logger.warning(f"无法从URL中提取电影ID: {movie_url}")
+                return {}
+            
+            movie_id = movie_id_match.group(1)
+            ratings_url = f"https://www.imdb.com/title/{movie_id}/ratings/"
+            
+            if self.network_manager:
+                # 获取ratings页面 - 精简日志
+                response = self.network_manager.get_page(ratings_url)
+                if response:
+                    soup = BeautifulSoup(response, 'html.parser')
+                    distribution = self._parse_rating_distribution(soup)
+                    if distribution:
+                        # 只在详细模式下显示成功信息
+                        if getattr(self, 'show_parsing_details', True):
+                            self.logger.info(f"✓ 评分分布解析成功: {len(distribution)} 个等级")
+                        return distribution
+                    else:
+                        self.logger.warning(f"未能解析到评分分布数据: {ratings_url}")
+                else:
+                    self.logger.warning(f"无法访问ratings页面: {ratings_url}")
+            else:
+                self.logger.warning("网络管理器未初始化，无法获取ratings页面")
+            
+            return {}
+            
+        except Exception as e:
+            self.logger.error(f"获取评分分布数据失败 {movie_url}: {e}")
+            return {}
+
+    def _parse_rating_distribution(self, soup):
+        """解析ratings页面的评分分布数据"""
+        distribution = {}
         
-        # 查找语言信息
-        lang_sections = soup.find_all(['span', 'div'], string=re.compile(r'Language|Languages'))
-        for section in lang_sections:
-            parent = section.find_parent()
-            if parent:
-                links = parent.find_all('a')
-                for link in links:
-                    language = link.get_text(strip=True)
-                    if language and language not in languages:
-                        languages.append(language)
+        try:
+            self.logger.debug("开始解析IMDB ratings页面的评分分布数据")
+            
+            # 获取页面文本
+            page_text = soup.get_text()
+            
+            # 根据IMDB ratings页面的实际结构进行解析
+            # 关键发现：评分数字1-10被连续显示为"1234567891"，然后紧跟着百分比数据
+            # 格式: "1234567891038.3% (591K)31.6% (488K)17.8% (274K)..."
+            # 实际含义: 10分:38.3%, 9分:31.6%, 8分:17.8%...
+            
+            self.logger.debug(f"页面文本长度: {len(page_text)}")
+            
+            # 方法1: 查找连续评分序列后的百分比数据
+            # 查找模式: "1234567891" + 百分比数据序列
+            sequence_pattern = r'1234567891(\d+\.?\d*)%\s*\([^)]+\)(.*?)(?:Unweighted mean|More from)'
+            sequence_match = re.search(sequence_pattern, page_text, re.DOTALL)
+            
+            if sequence_match:
+                self.logger.debug("找到连续评分序列，开始解析")
+                
+                # 第一个百分比数据（10分）
+                first_percentage = float(sequence_match.group(1))
+                distribution["10"] = first_percentage
+                self.logger.debug(f"评分 10 分: {first_percentage}%")
+                
+                # 解析后续的百分比数据（9分到1分）
+                remaining_text = sequence_match.group(2)
+                
+                # 查找所有后续的百分比数据
+                percent_pattern = r'(\d+\.?\d*)%\s*\([^)]+\)'
+                percent_matches = re.findall(percent_pattern, remaining_text)
+                
+                # 按顺序分配给9,8,7,6,5,4,3,2,1分
+                for i, percent_str in enumerate(percent_matches[:9]):  # 只取前9个（9分到1分）
+                    try:
+                        percentage = float(percent_str)
+                        rating_score = str(9 - i)  # 9, 8, 7, 6, 5, 4, 3, 2, 1
+                        distribution[rating_score] = percentage
+                        self.logger.debug(f"评分 {rating_score} 分: {percentage}%")
+                    except ValueError:
+                        continue
+            
+            # 方法2: 如果方法1失败，尝试查找所有K格式数据并按IMDB标准顺序分配
+            if len(distribution) < 8:
+                self.logger.debug("连续序列解析不足，尝试标准K格式解析")
+                
+                # 查找所有K/M格式的百分比数据
+                k_pattern = r'(\d+\.?\d*)%\s*\([^)]*[KM]\)'
+                k_matches = re.findall(k_pattern, page_text)
+                
+                # 过滤合理的百分比（排除异常值）
+                valid_percentages = []
+                for match in k_matches:
+                    try:
+                        pct = float(match)
+                        # 第一个可能是异常值（包含连续数字），跳过超大值
+                        if pct > 1000:
+                            # 提取正确的百分比部分
+                            # 例如从"1234567891038.3"中提取"38.3"
+                            if len(str(int(pct))) > 3:
+                                pct_str = str(pct)
+                                if '.' in pct_str:
+                                    # 查找小数点，取小数点前的最后几位和小数部分
+                                    decimal_pos = pct_str.find('.')
+                                    if decimal_pos > 2:
+                                        corrected_pct = float(pct_str[decimal_pos-2:])
+                                        if 0.1 <= corrected_pct <= 60:
+                                            valid_percentages.append(corrected_pct)
+                                            continue
+                        elif 0.1 <= pct <= 60:
+                            valid_percentages.append(pct)
+                    except ValueError:
+                        continue
+                
+                self.logger.debug(f"K格式解析找到 {len(valid_percentages)} 个有效百分比: {valid_percentages}")
+                
+                # 如果找到足够的数据，按IMDB标准顺序分配（10到1）
+                if len(valid_percentages) >= 10:
+                    distribution.clear()  # 清空之前的部分数据
+                    
+                    for i, percentage in enumerate(valid_percentages[:10]):
+                        rating_score = str(10 - i)  # 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+                        distribution[rating_score] = percentage
+                        self.logger.debug(f"标准顺序 - 评分 {rating_score} 分: {percentage}%")
+            
+            # 方法3: 最后的精确匹配备用方案
+            if len(distribution) < 5:
+                self.logger.debug("使用精确匹配备用方案")
+                
+                # 查找更宽泛的百分比数据
+                all_percent_pattern = r'(\d+\.?\d*)%\s*\([^)]+\)'
+                all_matches = re.findall(all_percent_pattern, page_text)
+                
+                # 过滤并处理数据
+                backup_percentages = []
+                for match in all_matches:
+                    try:
+                        pct = float(match)
+                        if pct > 1000:
+                            # 处理连续数字情况
+                            pct_str = str(pct)
+                            if '.' in pct_str:
+                                decimal_pos = pct_str.find('.')
+                                if decimal_pos > 2:
+                                    corrected_pct = float(pct_str[decimal_pos-2:])
+                                    if 0.1 <= corrected_pct <= 60:
+                                        backup_percentages.append(corrected_pct)
+                                        continue
+                        elif 0.1 <= pct <= 60:
+                            backup_percentages.append(pct)
+                    except ValueError:
+                        continue
+                
+                self.logger.debug(f"备用方案找到 {len(backup_percentages)} 个百分比: {backup_percentages}")
+                
+                if len(backup_percentages) >= 10:
+                    distribution.clear()
+                    for i, percentage in enumerate(backup_percentages[:10]):
+                        rating_score = str(10 - i)
+                        distribution[rating_score] = percentage
+                        self.logger.debug(f"备用分配 - 评分 {rating_score} 分: {percentage}%")
+            
+            # 验证获取到的数据
+            if distribution:
+                total_percentage = sum(distribution.values())
+                
+                # 精简日志输出 - 只显示核心信息
+                if getattr(self, 'show_parsing_details', True):
+                    self.logger.info(f"✓ 评分分布: {len(distribution)}等级 (总计{total_percentage:.1f}%)")
+                    
+                    # 详细分布信息 - 在调试模式下才显示
+                    if self.logger.isEnabledFor(logging.DEBUG):
+                        for rating in sorted(distribution.keys(), key=int, reverse=True):
+                            self.logger.debug(f"  {rating}分: {distribution[rating]}%")
+                
+                # 如果总百分比明显不合理，记录警告但保留数据
+                if total_percentage > 120 or total_percentage < 80:
+                    self.logger.warning(f"评分分布数据可能不完整，总百分比为{total_percentage:.1f}%")
+                    
+            else:
+                self.logger.warning("未能在ratings页面中找到评分分布数据")
+                # 保存页面内容的关键部分用于调试
+                key_content = page_text[:2000] if len(page_text) > 2000 else page_text
+                if any(char in key_content for char in ['%', '1', '2', '3', '4', '5']):
+                    self.logger.debug(f"页面关键内容: {key_content}")
+            
+        except Exception as e:
+            self.logger.error(f"解析评分分布时出错: {e}")
         
-        return languages
-    
-    def _extract_release_date(self, soup):
-        """提取上映日期"""
-        selectors = [
-            '[data-testid="title-details-releasedate"]',
-            '.release_date'
-        ]
+        return distribution
+
+    def _extract_rating_distribution(self, soup):
+        """提取评分分布 (1-10分的百分比)"""
+        distribution = {}
         
-        for selector in selectors:
-            element = soup.select_one(selector)
-            if element:
-                return element.get_text(strip=True)
+        # 尝试从rating histogram或breakdown获取分布数据
+        # IMDB的评分分布通常在专门的评分页面或通过API获取
+        # 这里先返回空字典，在实际应用中可能需要额外的请求
         
-        return ''
-    
-    def _extract_budget(self, soup):
-        """提取预算"""
-        budget_sections = soup.find_all(['span', 'div'], string=re.compile(r'Budget'))
-        for section in budget_sections:
-            parent = section.find_parent()
-            if parent:
-                text = parent.get_text()
-                budget_match = re.search(r'\$?([\d,]+)', text)
-                if budget_match:
-                    return budget_match.group(1)
+        # 查找可能的评分分布数据
+        rating_elements = soup.select('[class*="rating"], [class*="histogram"], [data-testid*="rating"]')
+        for element in rating_elements:
+            text = element.get_text()
+            # 尝试匹配百分比数据
+            percent_matches = re.findall(r'(\d+).*?(\d+\.?\d*)%', text)
+            for match in percent_matches:
+                try:
+                    rating_score = int(match[0])
+                    percentage = float(match[1])
+                    if 1 <= rating_score <= 10:
+                        distribution[str(rating_score)] = percentage
+                except:
+                    continue
         
-        return ''
-    
-    def _extract_box_office(self, soup):
-        """提取票房"""
-        box_office_sections = soup.find_all(['span', 'div'], string=re.compile(r'Box office|Gross'))
-        for section in box_office_sections:
-            parent = section.find_parent()
-            if parent:
-                text = parent.get_text()
-                box_office_match = re.search(r'\$?([\d,]+)', text)
-                if box_office_match:
-                    return box_office_match.group(1)
-        
-        return ''
-    
-    def _extract_awards(self, soup):
-        """提取获奖信息"""
-        awards = []
-        
-        awards_sections = soup.find_all(['span', 'div'], string=re.compile(r'Award|Oscar|Emmy|Golden Globe'))
-        for section in awards_sections:
-            awards.append(section.get_text(strip=True))
-        
-        return awards[:5]  # 限制前5个奖项
+        # 如果没有找到分布数据，返回空字典
+        return distribution

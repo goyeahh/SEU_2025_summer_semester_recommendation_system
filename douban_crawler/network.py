@@ -1,188 +1,216 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-网络请求模块
-负责处理HTTP请求和浏览器操作
+网络请求模块 - 豆瓣纯Selenium版（参考IMDB配置）
+负责处理HTTP请求和浏览器操作，优化反爬虫策略
 """
 
-import requests
 import time
 import random
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from fake_useragent import UserAgent
 from retrying import retry
 import logging
 
 from .config import Config
 
+# 抑制WebDriver Manager日志
+logging.getLogger('WDM').setLevel(logging.WARNING)
+os.environ['WDM_LOG'] = '0'
+
 
 class NetworkManager:
-    """网络请求管理器"""
+    """网络请求管理器 - 豆瓣反爬虫增强版"""
     
     def __init__(self):
-        self.session = requests.Session()
         self.driver = None
         self.logger = logging.getLogger(__name__)
-        self._setup_session()
+        self._cookies_accepted = False
+        self._driver_ready = False
+        
+        # 用户代理池 - 参考IMDB
+        self._user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        ]
     
-    def _setup_session(self):
-        """设置requests会话"""
-        ua = UserAgent()
-        headers = Config.DEFAULT_HEADERS.copy()
-        headers['User-Agent'] = ua.chrome
-        self.session.headers.update(headers)
-    
-    @retry(stop_max_attempt_number=Config.MAX_RETRY_TIMES, wait_fixed=Config.RETRY_DELAY)
-    def get_page(self, url, use_selenium=False, force_selenium=False):
-        """获取网页内容 - 智能策略"""
+    @retry(stop_max_attempt_number=3, wait_fixed=2000)
+    def get_page(self, url, use_selenium=None):
+        """获取网页内容 - 豆瓣强制使用Selenium（参考IMDB）"""
+        # 豆瓣对requests拦截严格，完全使用Selenium
         try:
-            # 每次请求前轮换User-Agent并设置Referer，模拟浏览器行为
-            self._rotate_user_agent()
-            self.session.headers['Referer'] = Config.BASE_URL
-            # 智能选择请求方式
-            if force_selenium or self._should_use_selenium(url):
-                return self._get_with_selenium(url)
-            else:
-                response = self._get_with_requests(url)
-                # 检查响应是否被反爬虫拦截
-                if self._is_blocked_response(response):
-                    self.logger.warning(f"检测到反爬虫拦截，切换到Selenium: {url}")
-                    return self._get_with_selenium(url)
-                return response
+            return self._get_with_selenium(url)
         except Exception as e:
-            self.logger.warning(f"请求失败，正在重试: {url}, 错误: {e}")
-            self._random_delay()
+            self.logger.warning(f"豆瓣请求失败: {url}, 错误: {e}")
             raise e
     
-    def _should_use_selenium(self, url):
-        """判断是否应该使用Selenium"""
-        # 对于某些特定页面或高页数使用Selenium
-        if 'typerank' in url and ('start=75' in url or 'start=100' in url):
-            return True
-        if 'chart' in url and any(x in url for x in ['start=200', 'start=225']):
-            return True
-        return False
-    
-    def _is_blocked_response(self, response):
-        """检查响应是否被反爬虫拦截"""
-        # 检查状态码
-        if response.status_code in [403, 429, 503]:
-            return True
+    def _smart_delay(self):
+        """智能延时控制 - 纯Selenium模式"""
+        current_time = time.time()
+        self._request_count += 1
         
-        # 检查内容长度
-        if len(response.content) < 1000:  # 页面内容太短可能是被拦截
-            return True
+        # 基础延时 - 纯Selenium模式使用更长延时
+        base_delay = random.uniform(Config.DELAY_MIN, Config.DELAY_MAX)
         
-        # 检查页面内容
-        content_text = response.text.lower()
-        blocked_keywords = ['验证', '安全验证', 'captcha', 'blocked', '拒绝访问', '访问被限制']
-        if any(keyword in content_text for keyword in blocked_keywords):
-            return True
+        # 根据请求频率调整延时
+        if self._request_count > 20:
+            base_delay *= 1.5  # 高频访问时增加延时
+        elif self._request_count > 40:
+            base_delay *= 2.5  # 超高频访问时大幅增加延时
         
-        return False
-    
-    def _get_with_requests(self, url):
-        """使用requests获取页面 - 增强反爬虫"""
-        # 添加更多随机性
-        headers = self.session.headers.copy()
+        # 确保与上次请求间隔足够
+        if self._last_request_time > 0:
+            time_since_last = current_time - self._last_request_time
+            if time_since_last < base_delay:
+                additional_delay = base_delay - time_since_last
+                time.sleep(additional_delay)
         
-        # 随机添加额外的浏览器头
-        extra_headers = {
-            'Accept-Language': random.choice([
-                'zh-CN,zh;q=0.9,en;q=0.8',
-                'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
-                'zh,zh-CN;q=0.9,en;q=0.8'
-            ]),
-            'Cache-Control': random.choice(['no-cache', 'max-age=0', '']),
-            'Pragma': random.choice(['no-cache', '']),
-        }
-        
-        for k, v in extra_headers.items():
-            if v:  # 只添加非空值
-                headers[k] = v
-        
-        response = self.session.get(url, headers=headers, timeout=15)
-        response.raise_for_status()
-        return response
+        self._last_request_time = time.time()
+        self.logger.info(f"延时 {base_delay:.1f} 秒 (第 {self._request_count} 次请求)")
     
     def _get_with_selenium(self, url):
-        """使用Selenium获取页面（用于JavaScript渲染的页面）"""
-        if not self.driver:
-            self._init_chrome_driver()
-        
-        if not self.driver:
-            # 如果驱动初始化失败，回退到requests
-            self.logger.warning("Chrome驱动不可用，回退到requests")
-            return self._get_with_requests(url)
-        
+        """使用Selenium获取页面（参考IMDB配置）"""
         try:
+            # 初始化driver
+            if not self._driver_ready:
+                self._init_chrome_driver()
+            
             self.driver.get(url)
-            time.sleep(2)  # 等待页面加载
+            self._random_delay()
             
-            # 创建伪response对象
+            # 等待页面加载
+            time.sleep(random.uniform(2, 4))
+            
+            # 处理Cookie同意（如果需要）
+            if not self._cookies_accepted:
+                self._handle_cookie_consent()
+            
+            # 获取页面源码
+            page_source = self.driver.page_source
+            self.logger.debug(f"豆瓣Selenium成功: {url}")
+            
+            # 创建伪response对象（兼容解析器）
             class SeleniumResponse:
-                def __init__(self, driver):
-                    self.content = driver.page_source.encode('utf-8')
-                    self.text = driver.page_source
+                def __init__(self, page_source, url):
+                    self.content = page_source.encode('utf-8')
+                    self.text = page_source
                     self.status_code = 200
+                    self.url = url
+                    
+                def json(self):
+                    return {}
             
-            return SeleniumResponse(self.driver)
-        
+            return SeleniumResponse(page_source, url)
+            
         except Exception as e:
-            self.logger.warning(f"Selenium获取页面失败: {e}")
-            # 尝试用requests作为备用
-            return self._get_with_requests(url)
+            self.logger.warning(f"豆瓣Selenium请求失败: {url}, 错误: {e}")
+            return None
     
     def _init_chrome_driver(self):
-        """初始化Chrome浏览器驱动"""
+        """初始化Chrome驱动 - 完全参考IMDB配置"""
         try:
             chrome_options = Options()
             
-            # 添加配置选项
+            # 使用豆瓣配置中的Chrome选项（参考IMDB）
             for option in Config.CHROME_OPTIONS:
                 chrome_options.add_argument(option)
             
-            # 设置User-Agent
-            chrome_options.add_argument(f'--user-agent={self.session.headers["User-Agent"]}')
-            
-            # 添加更多稳定性配置
-            chrome_options.add_argument('--no-first-run')
-            chrome_options.add_argument('--disable-default-apps')
-            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            # 隐藏自动化特征和抑制输出（参考IMDB）
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
             chrome_options.add_experimental_option('useAutomationExtension', False)
+            chrome_options.add_experimental_option("detach", True)
             
-            # 使用webdriver-manager自动管理驱动
+            # 创建驱动（抑制日志）- 参考IMDB
             service = Service(ChromeDriverManager().install())
+            service.log_path = os.devnull  # 抑制ChromeDriver日志
+            
+            # 添加抑制DevTools输出的参数（参考IMDB）
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            chrome_options.add_argument('--remote-debugging-port=0')  # 禁用DevTools监听
+            
             self.driver = webdriver.Chrome(service=service, options=chrome_options)
             
-            # 设置超时
-            self.driver.set_page_load_timeout(30)
-            self.driver.implicitly_wait(10)
+            # 执行反检测脚本（参考IMDB）
+            self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
             
-            self.logger.info("Chrome驱动初始化成功")
+            self._driver_ready = True
+            self.logger.info("✓ 豆瓣Chrome驱动初始化成功（IMDB配置）")
             
         except Exception as e:
-            self.logger.error(f"Chrome驱动初始化失败: {e}")
-            self.logger.info("将使用requests作为备用方案")
+            self.logger.error(f"豆瓣Chrome驱动初始化失败: {e}")
+            raise
+            
+        except Exception as e:
+            self.logger.error(f"豆瓣Chrome驱动初始化失败: {e}")
             self.driver = None
-            # 不抛出异常，允许继续使用requests
+            self._driver_ready = False
+            raise Exception(f"Selenium驱动初始化失败，无法继续: {e}")
+    
+    def _handle_cookie_consent(self):
+        """处理Cookie同意弹窗（参考IMDB）"""
+        try:
+            # 豆瓣可能的Cookie同意按钮
+            accept_selectors = [
+                "button[class*='accept']",
+                ".accept-cookies",
+                "#accept-cookies",
+                "button[data-testid='accept-button']"
+            ]
+            
+            for selector in accept_selectors:
+                try:
+                    element = self.driver.find_element("css selector", selector)
+                    if element.is_displayed():
+                        element.click()
+                        self.logger.info("豆瓣Cookie同意已处理")
+                        self._cookies_accepted = True
+                        time.sleep(1)
+                        return
+                except:
+                    continue
+                    
+        except Exception as e:
+            self.logger.debug(f"豆瓣处理Cookie同意失败（可忽略）: {e}")
+        
+        self._cookies_accepted = True  # 标记为已处理，避免重复尝试
     
     def _random_delay(self):
-        """随机延时"""
+        """添加随机延时（参考IMDB）"""
         delay = random.uniform(Config.DELAY_MIN, Config.DELAY_MAX)
         time.sleep(delay)
     
-    def _rotate_user_agent(self):
-        """轮换User-Agent"""
+    def close(self):
+        """关闭所有连接（参考IMDB）"""
         try:
-            ua = UserAgent()
-            new_ua = ua.chrome
-            self.session.headers.update({'User-Agent': new_ua})
             if self.driver:
+                self.driver.quit()
+                self.driver = None
+                self._driver_ready = False
+                self.logger.info("豆瓣Chrome驱动已关闭")
+        except Exception as e:
+            self.logger.warning(f"关闭豆瓣Chrome驱动失败: {e}")
+    
+    def __del__(self):
+        """析构函数（参考IMDB）"""
+        self.close()
+    
+    def _rotate_user_agent(self):
+        """轮换User-Agent - 增强版"""
+        try:
+            new_ua = random.choice(self._user_agents)
+            self.session.headers.update({'User-Agent': new_ua})
+            
+            # 如果使用Selenium，也更新浏览器的User-Agent
+            if self.driver and self._driver_ready:
                 self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": new_ua})
+                
+            self.logger.debug(f"轮换豆瓣User-Agent: {new_ua[:50]}...")
         except Exception as e:
             self.logger.warning(f"轮换User-Agent失败: {e}")
     
@@ -201,20 +229,3 @@ class NetworkManager:
                 self.logger.warning(f"请求失败，正在轮换UA重试 ({attempt+1}/{max_attempts}): {e}")
         
         return None
-    
-    def close(self):
-        """关闭网络连接"""
-        if self.driver:
-            self.driver.quit()
-            self.driver = None
-        
-        if self.session:
-            self.session.close()
-    
-    def __enter__(self):
-        """上下文管理器进入"""
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """上下文管理器退出"""
-        self.close()

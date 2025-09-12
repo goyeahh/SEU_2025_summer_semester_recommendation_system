@@ -265,10 +265,16 @@ def print_single_result(platform_name, result):
     if message:
         print(f"消息: {message}")
     
-    # 显示保存的文件
+    # 显示保存的文件 - 支持新的数据库格式
+    print("\n保存文件:")
+    
+    # 检查数据库格式文件
+    if 'database_csv' in result:
+        print(f"  database_csv: {result['database_csv']}")
+    
+    # 兼容旧格式
     files = result.get('file_paths', {})
     if files:
-        print("\n保存文件:")
         for file_type, file_path in files.items():
             print(f"  {file_type}: {file_path}")
 
@@ -276,8 +282,8 @@ def print_single_result(platform_name, result):
 if __name__ == "__main__":
     main()
 
-# 爬取命令示例：
-# 豆瓣 - 250部，8个不同分类
-# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform douban --max-movies 25 --categories hot top250 new_movies weekly_best classic comedy action romance
-# IMDB - 250部，4个不同分类
-# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform imdb --max-movies 25 --categories top250
+# 爬取命令：
+# 豆瓣 - 1000部电影，多分类混合
+# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform douban --max-movies 1000 --categories hot top250 new_movies weekly_best classic comedy action romance sci_fi
+# IMDB - 1000部电影，多分类混合
+# D:\Anaconda_envs\envs\Recommendation_System\python.exe main.py --platform imdb --max-movies 1000 --categories top250 popular most_popular_movies top_rated_movies recent_movies

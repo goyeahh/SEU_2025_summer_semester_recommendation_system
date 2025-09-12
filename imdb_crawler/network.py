@@ -8,15 +8,23 @@ IMDB网络请求模块 - 反爬虫优化版本
 import requests
 import time
 import random
+import os
+import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from fake_useragent import UserAgent
 from retrying import retry
-import logging
 
 from .config import IMDBConfig
+
+# 抑制WebDriver Manager和TensorFlow日志
+if IMDBConfig.LOG_CONFIG.get('level') == 'INFO':
+    logging.getLogger('WDM').setLevel(logging.WARNING)
+    logging.getLogger('tensorflow').setLevel(logging.ERROR)
+    os.environ['WDM_LOG'] = '0'
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class IMDBNetworkManager:
@@ -183,33 +191,30 @@ class IMDBNetworkManager:
         try:
             chrome_options = Options()
             
-            # 反爬虫策略：使用非无头模式
-            # chrome_options.add_argument('--headless')  # 注释掉无头模式
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--window-size=1920,1080')
+            # 使用配置中的Chrome选项
+            for option in IMDBConfig.CHROME_OPTIONS:
+                chrome_options.add_argument(option)
             
-            # 隐藏自动化特征
-            chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            # 隐藏自动化特征和抑制输出
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
             chrome_options.add_experimental_option('useAutomationExtension', False)
+            chrome_options.add_experimental_option("detach", True)
             
-            # 添加更多反检测参数
-            chrome_options.add_argument('--disable-extensions')
-            chrome_options.add_argument('--disable-plugins')
-            chrome_options.add_argument('--disable-images')  # 不加载图片，提高速度
-            chrome_options.add_argument('--user-agent=' + random.choice(self._user_agents))
-            
-            # 创建驱动
+            # 创建驱动（抑制日志）
             service = Service(ChromeDriverManager().install())
+            service.log_path = os.devnull  # 抑制ChromeDriver日志
+            
+            # 添加抑制DevTools输出的参数
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            chrome_options.add_argument('--remote-debugging-port=0')  # 禁用DevTools监听
+            
             self.driver = webdriver.Chrome(service=service, options=chrome_options)
             
             # 执行反检测脚本
             self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
             
             self._driver_ready = True
-            self.logger.info("IMDB Chrome驱动反爬虫版本初始化成功")
+            self.logger.info("✓ IMDB Chrome驱动初始化成功")
             
         except Exception as e:
             self.logger.error(f"IMDB Chrome驱动初始化失败: {e}")

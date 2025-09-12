@@ -53,42 +53,27 @@ class IMDBDataProcessor:
         return cleaned_data
     
     def _clean_single_movie(self, movie):
-        """清洗单个电影数据"""
+        """清洗单个电影数据 - 仅保留数据库需要的字段"""
         cleaned = {
-            'platform': movie.get('platform', 'IMDB'),
-            'imdb_id': self._clean_string(movie.get('imdb_id', '')),
-            'url': self._clean_string(movie.get('url', '')),
             'title': self._clean_string(movie.get('title', '')),
-            'original_title': self._clean_string(movie.get('original_title', '')),
-            'year': self._clean_year(movie.get('year')),
-            'rating': self._clean_rating(movie.get('rating')),
-            'rating_count': self._clean_number(movie.get('rating_count')),
             'genres': self._clean_list(movie.get('genres', [])),
-            'duration': self._clean_number(movie.get('duration')),
+            'year': self._clean_year(movie.get('year')),
+            'countries': self._clean_list(movie.get('countries', [])),
             'directors': self._clean_list(movie.get('directors', [])),
             'actors': self._clean_list(movie.get('actors', [])),
+            'duration': self._clean_number(movie.get('duration')),
             'plot': self._clean_text(movie.get('plot', '')),
-            'poster_url': self._clean_string(movie.get('poster_url', '')),
-            'poster_path': self._download_poster(movie.get('poster_url'), self._clean_string(movie.get('imdb_id', ''))),  # 修复引用问题
-            'countries': self._clean_list(movie.get('countries', [])),
-            'languages': self._clean_list(movie.get('languages', [])),
-            'release_date': self._clean_string(movie.get('release_date', '')),
-            'budget': self._clean_string(movie.get('budget', '')),
-            'box_office': self._clean_string(movie.get('box_office', '')),
-            'awards': self._clean_list(movie.get('awards', [])),
-            'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'rating': self._clean_rating(movie.get('rating')),
+            'rating_distribution': movie.get('rating_distribution', {}),
+            'poster_url': self._clean_string(movie.get('poster_url', ''))
         }
         
-        # 验证必要字段 - 放宽验证条件
-        if not cleaned['title'] and not cleaned['imdb_id']:
-            self.logger.warning(f"电影缺少基本信息: title='{cleaned['title']}', imdb_id='{cleaned['imdb_id']}'")
+        # 验证必要字段
+        if not cleaned['title']:
+            self.logger.warning(f"电影缺少标题信息")
             return None
         
-        # 如果有基本信息，就保留
-        if cleaned['title'] or cleaned['imdb_id']:
-            return cleaned
-            
-        return None
+        return cleaned
     
     def _clean_string(self, value):
         """清洗字符串"""
@@ -157,57 +142,10 @@ class IMDBDataProcessor:
             return [self._clean_string(item) for item in value.split(',') if item.strip()]
         
         return []
-    
-    def _download_poster(self, poster_url, imdb_id):
-        """下载电影封面图片"""
-        if not poster_url or not imdb_id:
-            return None
-            
-        try:
-            # 清理URL，确保是有效的图片链接
-            if not poster_url.startswith('http'):
-                if poster_url.startswith('//'):
-                    poster_url = 'https:' + poster_url
-                else:
-                    return None
-            
-            # 获取文件扩展名
-            parsed_url = urllib.parse.urlparse(poster_url)
-            file_ext = os.path.splitext(parsed_url.path)[1]
-            if not file_ext or file_ext.lower() not in ['.jpg', '.jpeg', '.png', '.webp']:
-                file_ext = '.jpg'  # 默认扩展名
-            
-            # 生成本地文件名 (使用IMDB ID)
-            filename = f"{imdb_id}{file_ext}"
-            local_path = os.path.join(self.poster_dir, filename)
-            
-            # 如果文件已存在，直接返回路径
-            if os.path.exists(local_path):
-                return os.path.abspath(local_path)
-            
-            # 下载图片
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Referer': 'https://www.imdb.com/'
-            }
-            
-            response = requests.get(poster_url, headers=headers, timeout=10)
-            response.raise_for_status()
-            
-            # 保存图片
-            with open(local_path, 'wb') as f:
-                f.write(response.content)
-            
-            self.logger.info(f"成功下载IMDB封面图片: {filename}")
-            return os.path.abspath(local_path)
-            
-        except Exception as e:
-            self.logger.warning(f"下载IMDB封面图片失败 (ID: {imdb_id}): {e}")
-            return None
-    
+
     def save_processed_data(self, data, output_dir):
         """
-        保存处理后的数据
+        保存处理后的数据 - 仅数据库格式
         
         Args:
             data: 处理后的数据列表
@@ -223,139 +161,144 @@ class IMDBDataProcessor:
         # 确保输出目录存在
         os.makedirs(output_dir, exist_ok=True)
         
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         saved_files = {}
         
         try:
-            # 保存为JSON格式
-            json_filename = f"imdb_movies_{timestamp}.json"
-            json_path = os.path.join(output_dir, json_filename)
-            
-            with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            
-            saved_files['json'] = json_path
-            self.logger.info(f"JSON数据已保存: {json_path}")
-            
-            # 保存为CSV格式
-            csv_filename = f"imdb_movies_{timestamp}.csv"
-            csv_path = os.path.join(output_dir, csv_filename)
-            
-            # 转换为DataFrame并保存
-            df = pd.DataFrame(data)
-            
-            # 处理列表类型的列
-            list_columns = ['genres', 'directors', 'actors', 'countries', 'languages', 'awards']
-            for col in list_columns:
-                if col in df.columns:
-                    df[col] = df[col].apply(lambda x: '; '.join(x) if isinstance(x, list) else x)
-            
-            df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-            saved_files['csv'] = csv_path
-            self.logger.info(f"CSV数据已保存: {csv_path}")
-            
-            # 保存统计信息
-            stats_filename = f"imdb_stats_{timestamp}.json"
-            stats_path = os.path.join(output_dir, stats_filename)
-            
-            stats = self._generate_statistics(data)
-            with open(stats_path, 'w', encoding='utf-8') as f:
-                json.dump(stats, f, ensure_ascii=False, indent=2)
-            
-            saved_files['stats'] = stats_path
-            self.logger.info(f"统计信息已保存: {stats_path}")
+            # 只保存数据库格式
+            db_path = self.save_database_format(data, output_dir)
+            if db_path:
+                saved_files['database_csv'] = db_path
+                self.logger.info(f"数据库格式CSV已保存: {db_path}")
+            else:
+                self.logger.error("保存数据库格式失败")
             
         except Exception as e:
             self.logger.error(f"保存数据时发生错误: {e}")
             
         return saved_files
-    
-    def _generate_statistics(self, data):
-        """生成数据统计信息"""
-        if not data:
-            return {}
-        
-        df = pd.DataFrame(data)
-        
-        stats = {
-            'total_movies': len(data),
-            'crawl_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'platform': 'IMDB',
-            'data_quality': {
-                'movies_with_rating': len(df[df['rating'].notna()]),
-                'movies_with_plot': len(df[df['plot'].str.len() > 0]),
-                'movies_with_poster_url': len(df[df['poster_url'].str.len() > 0]),
-                'movies_with_poster_downloaded': len(df[df['poster_path'].notna()]) if 'poster_path' in df.columns else 0,
-                'average_rating': float(df['rating'].mean()) if 'rating' in df.columns else None,
-                'year_range': {
-                    'min': int(df['year'].min()) if 'year' in df.columns and df['year'].notna().any() else None,
-                    'max': int(df['year'].max()) if 'year' in df.columns and df['year'].notna().any() else None
-                }
-            }
-        }
-        
-        # 类型统计
-        if 'genres' in df.columns:
-            all_genres = []
-            for genres in df['genres']:
-                if isinstance(genres, list):
-                    all_genres.extend(genres)
-            
-            genre_counts = pd.Series(all_genres).value_counts().head(10).to_dict()
-            stats['top_genres'] = genre_counts
-        
-        # 年份分布
-        if 'year' in df.columns:
-            year_counts = df['year'].value_counts().head(10).to_dict()
-            stats['year_distribution'] = {str(k): int(v) for k, v in year_counts.items()}
-        
-        return stats
-    
-    def merge_with_douban_data(self, imdb_data, douban_data):
-        """
-        将IMDB数据与豆瓣数据合并（基于电影标题和年份）
-        
-        Args:
-            imdb_data: IMDB电影数据列表
-            douban_data: 豆瓣电影数据列表
-            
-        Returns:
-            list: 合并后的数据列表
-        """
-        merged_data = []
-        
-        # 创建豆瓣数据的查找字典
-        douban_dict = {}
-        for movie in douban_data:
-            key = f"{movie.get('title', '').lower()}_{movie.get('year', '')}"
-            douban_dict[key] = movie
-        
-        for imdb_movie in imdb_data:
-            # 尝试匹配豆瓣数据
-            key = f"{imdb_movie.get('title', '').lower()}_{imdb_movie.get('year', '')}"
-            douban_movie = douban_dict.get(key)
-            
-            merged_movie = imdb_movie.copy()
-            if douban_movie:
-                # 添加豆瓣数据
-                merged_movie.update({
-                    'douban_id': douban_movie.get('movie_id'),
-                    'douban_rating': douban_movie.get('rating'),
-                    'douban_rating_count': douban_movie.get('rating_count'),
-                    'douban_url': douban_movie.get('url')
-                })
-            
-            merged_data.append(merged_movie)
-        
-        self.logger.info(f"合并完成，共 {len(merged_data)} 部电影")
-        return merged_data
-    
-    def save_raw_data(self, raw_data, file_path):
-        """保存原始数据 - 用于进度保存"""
+
+    def save_database_format(self, data, output_dir):
+        """按数据库格式保存数据"""
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(raw_data, f, ensure_ascii=False, indent=2)
-            return file_path
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            csv_file = os.path.join(output_dir, f"imdb_database_{timestamp}.csv")
+            
+            # 创建数据库格式的DataFrame
+            db_data = []
+            for index, movie in enumerate(data, start=1):  # 从1开始的自定义ID
+                db_row = self._convert_to_database_format(movie, custom_id=index)
+                if db_row:
+                    db_data.append(db_row)
+            
+            if not db_data:
+                self.logger.warning("没有有效的电影数据用于数据库格式保存")
+                return None
+            
+            # 创建DataFrame并保存为CSV
+            df = pd.DataFrame(db_data)
+            
+            # 设置列的顺序
+            column_order = [
+                'id', 'name', 'genres', 'year', 'countries', 'directors', 
+                'actors', 'duration_minutes', 'plot', 
+                'rating_10', 'rating_9', 'rating_8', 'rating_7', 'rating_6',
+                'rating_5', 'rating_4', 'rating_3', 'rating_2', 'rating_1',
+                'processed_rating', 'poster_path'
+            ]
+            
+            # 重新排序列
+            df = df.reindex(columns=column_order)
+            
+            # 保存为CSV
+            df.to_csv(csv_file, index=False, encoding='utf-8-sig')
+            
+            self.logger.info(f"数据库格式数据保存成功: {csv_file}")
+            return csv_file
+            
         except Exception as e:
-            self.logger.error(f"保存IMDB原始数据失败: {e}")
+            self.logger.error(f"保存数据库格式数据失败: {e}")
             return None
+
+    def _convert_to_database_format(self, movie, custom_id):
+        """将电影数据转换为数据库格式"""
+        try:
+            # 提取评分分布
+            rating_dist = movie.get('rating_distribution', {})
+            
+            # 如果没有评分分布数据，创建默认值
+            if not rating_dist:
+                rating_dist = {str(i): 0.0 for i in range(1, 11)}
+            
+            # 下载海报并重命名为自定义ID
+            poster_path = self._download_poster_with_custom_id(
+                movie.get('poster_url'), custom_id
+            )
+            
+            db_row = {
+                'id': custom_id,  # 使用自定义的顺序ID
+                'name': movie.get('title', ''),
+                'genres': ','.join(movie.get('genres', [])),
+                'year': movie.get('year', ''),
+                'countries': ','.join(movie.get('countries', [])),
+                'directors': ','.join(movie.get('directors', [])),
+                'actors': ','.join(movie.get('actors', [])[:5]),  # 限制前5个主要演员
+                'duration_minutes': movie.get('duration', ''),
+                'plot': movie.get('plot', ''),
+                'rating_10': rating_dist.get('10', 0.0),
+                'rating_9': rating_dist.get('9', 0.0),
+                'rating_8': rating_dist.get('8', 0.0),
+                'rating_7': rating_dist.get('7', 0.0),
+                'rating_6': rating_dist.get('6', 0.0),
+                'rating_5': rating_dist.get('5', 0.0),
+                'rating_4': rating_dist.get('4', 0.0),
+                'rating_3': rating_dist.get('3', 0.0),
+                'rating_2': rating_dist.get('2', 0.0),
+                'rating_1': rating_dist.get('1', 0.0),
+                'processed_rating': movie.get('rating', 0.0),  # 满分十分的处理后评分
+                'poster_path': poster_path if poster_path else ''  # 海报相对路径
+            }
+            
+            return db_row
+            
+        except Exception as e:
+            self.logger.warning(f"转换电影数据为数据库格式失败: {e}")
+            return None
+
+    def _download_poster_with_custom_id(self, poster_url, custom_id):
+        """使用自定义ID下载海报"""
+        if not poster_url:
+            return ''
+        
+        try:
+            # 从URL中提取文件扩展名
+            ext = '.jpg'  # 默认扩展名
+            if '.' in poster_url:
+                url_ext = poster_url.split('.')[-1].lower()
+                if url_ext in ['jpg', 'jpeg', 'png', 'webp']:
+                    ext = f'.{url_ext}'
+            
+            # 使用自定义ID作为文件名
+            filename = f"{custom_id}{ext}"
+            local_path = os.path.join(self.poster_dir, filename)
+            
+            # 如果文件已存在，返回相对路径
+            if os.path.exists(local_path):
+                relative_path = f"data/imdb_posters/{filename}"
+                return relative_path
+            
+            # 下载海报
+            response = requests.get(poster_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
+            response.raise_for_status()
+            
+            # 保存到本地
+            with open(local_path, 'wb') as f:
+                f.write(response.content)
+            
+            # 返回相对路径
+            relative_path = f"data/imdb_posters/{filename}"
+            self.logger.info(f"成功下载IMDB海报: {filename}")
+            return relative_path
+            
+        except Exception as e:
+            self.logger.warning(f"下载IMDB海报失败 (ID: {custom_id}): {e}")
+            return ''

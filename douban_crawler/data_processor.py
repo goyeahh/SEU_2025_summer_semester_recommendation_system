@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-数据处理模块
-负责豆瓣数据清洗和文件输出
+豆瓣数据处理模块 - 数据库格式专用
+负责豆瓣数据清洗和数据库格式输出
 """
 
 import pandas as pd
@@ -13,23 +13,22 @@ import requests
 import urllib.parse
 from datetime import datetime
 import logging
-import numpy as np
 
 from .config import Config
 
 
 class DataProcessor:
-    """数据处理器"""
+    """豆瓣数据处理器 - 数据库格式专用"""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        # 创建图片存储目录
+        # 创建海报存储目录
         self.poster_dir = "data/douban_posters"
         if not os.path.exists(self.poster_dir):
             os.makedirs(self.poster_dir)
     
     def clean_movie_data(self, raw_data):
-        """清洗电影数据"""
+        """清洗电影数据 - 只保留数据库格式所需字段"""
         cleaned_data = []
         
         for movie in raw_data:
@@ -40,12 +39,11 @@ class DataProcessor:
             if cleaned_movie:
                 cleaned_data.append(cleaned_movie)
         
-        self.logger.info(f"数据清洗完成，有效数据: {len(cleaned_data)} 条")
+        self.logger.info(f"数据清洗完成，有效电影数据: {len(cleaned_data)} 部")
         return cleaned_data
     
     def _is_valid_movie(self, movie):
-        """验证电影数据是否有效 - 放宽验证条件"""
-        # 只要有豆瓣ID和标题之一即可，评分可以为空
+        """验证电影数据是否有效"""
         return (movie.get('douban_id') or 
                 (movie.get('title') and movie.get('title').strip()))
     
@@ -60,36 +58,20 @@ class DataProcessor:
             return None
     
     def _clean_single_movie(self, movie):
-        """清洗单个电影数据"""
+        """清洗单个电影数据 - 只保留数据库格式字段"""
         try:
             cleaned = {
-                # 基本信息
+                # 保留豆瓣ID用于内部处理（海报下载等）
                 'douban_id': str(movie['douban_id']),
                 'title': self._clean_text(movie['title']),
-                'url': movie['url'],
                 'year': movie.get('year'),
-                
-                # 评分信息
                 'rating': float(movie.get('rating', 0)),
-                'rating_count': int(movie.get('rating_count', 0)),
-                
-                # 演职人员
                 'directors': self._clean_list(movie.get('directors', [])),
                 'actors': self._clean_list(movie.get('actors', [])),
-                
-                # 电影信息
                 'genres': self._clean_list(movie.get('genres', [])),
                 'countries': self._clean_list(movie.get('countries', [])),
-                'languages': self._clean_list(movie.get('languages', [])),
-                'release_dates': self._clean_list(movie.get('release_dates', [])),
-                
-                # 技术信息
                 'runtime_minutes': movie.get('runtime_minutes'),
-                'imdb_id': movie.get('imdb_id'),
-                
-                # 文本信息
                 'summary': self._clean_summary(movie.get('summary', '')),
-                'tags': self._clean_list(movie.get('tags', [])),
                 
                 # 评分分布
                 'star_5': float(movie.get('star_5', 0)),
@@ -101,9 +83,6 @@ class DataProcessor:
             
             # 处理封面图片
             cleaned['poster_path'] = self._download_poster(movie.get('poster_url'), cleaned['douban_id'])
-            
-            # 添加计算字段
-            cleaned.update(self._add_computed_fields(cleaned))
             
             return cleaned
             
@@ -137,35 +116,6 @@ class DataProcessor:
             summary = summary[:max_length] + "..."
         
         return summary
-    
-    def _add_computed_fields(self, movie):
-        """添加计算字段"""
-        computed = {}
-        
-        # 评分相关计算
-        computed['rating_normalized'] = movie['rating'] / 10.0
-        computed['rating_count_log'] = np.log1p(movie['rating_count'])
-        
-        # 时长标准化
-        if movie['runtime_minutes']:
-            computed['runtime_normalized'] = min(movie['runtime_minutes'] / 180.0, 2.0)
-        else:
-            computed['runtime_normalized'] = 0.0
-        
-        # 评分分布特征
-        total_ratings = sum([movie[f'star_{i}'] for i in range(1, 6)])
-        if total_ratings > 0:
-            computed['rating_variance'] = self._calculate_rating_variance(movie)
-        else:
-            computed['rating_variance'] = 0.0
-        
-        # 内容特征
-        computed['genre_count'] = len(movie['genres'])
-        computed['actor_count'] = len(movie['actors'])
-        computed['director_count'] = len(movie['directors'])
-        computed['country_count'] = len(movie['countries'])
-        
-        return computed
     
     def _download_poster(self, poster_url, douban_id):
         """下载电影封面图片"""
@@ -207,65 +157,146 @@ class DataProcessor:
             with open(local_path, 'wb') as f:
                 f.write(response.content)
             
-            self.logger.info(f"成功下载封面图片: {filename}")
+            self.logger.info(f"成功下载豆瓣封面图片: {filename}")
             return os.path.abspath(local_path)
             
         except Exception as e:
             self.logger.warning(f"下载封面图片失败 (ID: {douban_id}): {e}")
             return None
     
-    def _calculate_rating_variance(self, movie):
-        """计算评分方差（衡量评分分歧度）"""
-        ratings = []
-        weights = [movie[f'star_{i}'] for i in range(5, 0, -1)]  # 5星到1星
-        
-        for i, weight in enumerate(weights):
-            ratings.extend([5-i] * int(weight))
-        
-        if len(ratings) < 2:
-            return 0.0
-        
-        return np.var(ratings)
+    def _rename_poster_with_custom_id(self, movie, custom_id):
+        """使用自定义ID重命名海报文件"""
+        try:
+            old_poster_path = movie.get('poster_path')
+            if not old_poster_path or not os.path.exists(old_poster_path):
+                return
+            
+            # 获取文件扩展名
+            file_ext = os.path.splitext(old_poster_path)[1] or '.jpg'
+            
+            # 新文件名使用自定义ID
+            new_filename = f"{custom_id}{file_ext}"
+            new_poster_path = os.path.join(self.poster_dir, new_filename)
+            
+            # 如果新文件名与旧文件名不同，则重命名
+            if old_poster_path != new_poster_path:
+                if os.path.exists(new_poster_path):
+                    # 如果目标文件已存在，删除旧文件
+                    os.remove(old_poster_path)
+                else:
+                    # 重命名文件
+                    os.rename(old_poster_path, new_poster_path)
+                    self.logger.info(f"海报重命名: {os.path.basename(old_poster_path)} → {new_filename}")
+                
+                # 更新电影数据中的路径
+                movie['poster_path'] = new_poster_path
+                
+        except Exception as e:
+            self.logger.warning(f"海报重命名失败 (ID: {custom_id}): {e}")
     
-
-    
-    def save_processed_data(self, cleaned_data, output_dir="data"):
-        """保存处理后的数据"""
+    def save_database_format(self, cleaned_data, output_dir="data"):
+        """保存数据库格式的数据 - 豆瓣专用"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        # 保存清洗后的原始数据
-        json_file = f"{output_dir}/cleaned_movies_{timestamp}.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
-            json.dump(cleaned_data, f, ensure_ascii=False, indent=2)
-        
-        # 保存为DataFrame格式
-        df = pd.DataFrame(cleaned_data)
-        
-        # 保存CSV文件
-        csv_file = f"{output_dir}/cleaned_movies_{timestamp}.csv"
-        df.to_csv(csv_file, index=False, encoding='utf-8-sig')
-        
-        # 保存数据摘要信息
-        data_summary = self._create_data_summary(cleaned_data)
-        
-        info_file = f"{output_dir}/data_info_{timestamp}.json"
-        with open(info_file, 'w', encoding='utf-8') as f:
-            json.dump({
-                'sample_count': len(cleaned_data),
-                'timestamp': timestamp,
-                'data_summary': data_summary
-            }, f, ensure_ascii=False, indent=2)
-        
-        self.logger.info(f"处理后的数据已保存:")
-        self.logger.info(f"- JSON: {json_file}")
-        self.logger.info(f"- CSV: {csv_file}")
-        self.logger.info(f"- 数据信息: {info_file}")
-        
-        return {
-            'json': json_file,
-            'csv': csv_file,
-            'info': info_file
-        }
+        try:
+            # 转换为数据库格式并重命名海报
+            database_data = []
+            for idx, movie in enumerate(cleaned_data):
+                custom_id = idx + 1
+                # 重命名海报文件
+                self._rename_poster_with_custom_id(movie, custom_id)
+                # 转换数据格式
+                data = self._convert_to_database_format(movie, custom_id)
+                if data:
+                    database_data.append(data)
+            
+            # 创建DataFrame
+            df = pd.DataFrame(database_data)
+            
+            # 确保字段顺序
+            column_order = [
+                'id', 'name', 'genres', 'year', 'countries', 'directors', 
+                'actors', 'duration_minutes', 'plot', 
+                'star_5', 'star_4', 'star_3', 'star_2', 'star_1',
+                'processed_rating', 'poster_path'
+            ]
+            
+            # 重新排序列
+            df = df.reindex(columns=column_order)
+            
+            # 保存文件
+            database_file = f"{output_dir}/douban_database_{timestamp}.csv"
+            df.to_csv(database_file, index=False, encoding='utf-8-sig')
+            
+            self.logger.info(f"数据库格式数据保存成功: {database_file}")
+            self.logger.info(f"数据库格式CSV已保存: {database_file}")
+            
+            return database_file
+            
+        except Exception as e:
+            self.logger.error(f"保存数据库格式数据失败: {e}")
+            return None
+    
+    def _convert_to_database_format(self, movie, movie_id):
+        """将豆瓣电影数据转换为统一的数据库格式"""
+        try:
+            # 处理海报路径 - 使用自定义ID生成相对路径
+            poster_path = ""
+            if movie.get('poster_path'):
+                # 从绝对路径中提取文件名，生成相对路径
+                abs_path = movie.get('poster_path')
+                if os.path.exists(abs_path):
+                    filename = os.path.basename(abs_path)
+                    poster_path = f"data/douban_posters/{filename}"
+                else:
+                    # 使用自定义ID作为fallback
+                    poster_path = f"data/douban_posters/{movie_id}.jpg"
+            
+            # 处理时长 - 确保是数字
+            duration_minutes = movie.get('runtime_minutes', 0)
+            if duration_minutes is None or duration_minutes == "":
+                duration_minutes = 0
+            
+            # 处理评分 - 确保是数字
+            processed_rating = movie.get('rating', 0)
+            if processed_rating is None or processed_rating == "":
+                processed_rating = 0.0
+            
+            # 处理列表字段 - 转换为字符串
+            genres_str = ",".join(movie.get('genres', []))
+            countries_str = ",".join(movie.get('countries', []))
+            directors_str = ",".join(movie.get('directors', []))
+            actors_str = ",".join(movie.get('actors', []))
+            
+            # 处理剧情简介
+            plot = movie.get('summary', '')
+            if not plot:
+                plot = ''
+            
+            database_record = {
+                'id': movie_id,
+                'name': movie.get('title', ''),
+                'genres': genres_str,
+                'year': movie.get('year', ''),
+                'countries': countries_str,
+                'directors': directors_str,
+                'actors': actors_str,
+                'duration_minutes': int(duration_minutes),
+                'plot': plot,
+                'star_5': float(movie.get('star_5', 0)),
+                'star_4': float(movie.get('star_4', 0)),
+                'star_3': float(movie.get('star_3', 0)),
+                'star_2': float(movie.get('star_2', 0)),
+                'star_1': float(movie.get('star_1', 0)),
+                'processed_rating': float(processed_rating),
+                'poster_path': poster_path
+            }
+            
+            return database_record
+            
+        except Exception as e:
+            self.logger.error(f"转换数据库格式失败: {movie.get('title', 'Unknown')}, 错误: {e}")
+            return None
     
     def save_raw_data(self, raw_data, file_path):
         """保存原始数据 - 用于进度保存"""
@@ -276,19 +307,3 @@ class DataProcessor:
         except Exception as e:
             self.logger.error(f"保存原始数据失败: {e}")
             return None
-    
-    def _create_data_summary(self, data):
-        """创建数据摘要"""
-        if not data:
-            return {}
-        
-        df = pd.DataFrame(data)
-        
-        return {
-            'total_movies': len(data),
-            'avg_rating': float(df['rating'].mean()),
-            'rating_range': [float(df['rating'].min()), float(df['rating'].max())],
-            'year_range': [int(df['year'].min()), int(df['year'].max())] if 'year' in df else None,
-            'top_genres': df['genres'].explode().value_counts().head(10).to_dict() if 'genres' in df else {},
-            'avg_runtime': float(df['runtime_minutes'].mean()) if 'runtime_minutes' in df else None
-        }

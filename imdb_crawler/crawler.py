@@ -24,7 +24,7 @@ class IMDBMovieCrawler:
         """初始化爬虫"""
         self.config = config or IMDBConfig()
         self.network_manager = IMDBNetworkManager()
-        self.parser = IMDBPageParser()
+        self.parser = IMDBPageParser(self.network_manager, self.config)  # 传入网络管理器和配置
         self.data_processor = IMDBDataProcessor()
         
         # 创建输出目录
@@ -78,10 +78,9 @@ class IMDBMovieCrawler:
                 target_batch_links = min(batch_size, remaining * 2)  # 每批收集的链接数
                 
                 self.logger.info(f"=== 第 {batch_count} 批IMDB爬取 ===")
-                self.logger.info(f"已获取: {len(all_movie_data)} 部电影，还需: {remaining} 部")
+                self.logger.info(f"进度: {len(all_movie_data)}/{max_movies} 部电影")
                 
                 # 阶段1：收集一批新的电影链接（不重复）
-                self.logger.info(f"阶段1: 收集 {target_batch_links} 个IMDB电影链接...")
                 new_links = self._collect_batch_links(categories, target_batch_links, collected_links, max_pages)
                 
                 if not new_links:
@@ -89,15 +88,14 @@ class IMDBMovieCrawler:
                     break
                 
                 collected_links.update(new_links)
-                self.logger.info(f"✓ 链接收集完成！本批收集 {len(new_links)} 个新链接")
+                self.logger.info(f"✓ 收集到 {len(new_links)} 个新链接")
                 
                 # 阶段2：完全解析这批电影（直到完成或失败）
-                self.logger.info(f"阶段2: 开始解析本批 {len(new_links)} 个IMDB电影...")
                 batch_movies = self._parse_batch_movies(list(new_links), remaining)
                 
                 if batch_movies:
                     all_movie_data.extend(batch_movies)
-                    self.logger.info(f"✓ 本批解析完成！获取 {len(batch_movies)} 部电影，总计: {len(all_movie_data)}/{max_movies}")
+                    self.logger.info(f"✓ 解析完成: +{len(batch_movies)} 部电影 (总计: {len(all_movie_data)}/{max_movies})")
                 else:
                     self.logger.warning(f"✗ 本批链接解析失败，跳过继续下一批")
                 
@@ -223,7 +221,8 @@ class IMDBMovieCrawler:
                 
                 if movie_info and movie_info.get('title'):
                     movie_data.append(movie_info)
-                    self.logger.info(f"✓ IMDB解析成功: {movie_info.get('title')} ({len(movie_data)}/{max_count})")
+                    # 简化成功信息 - 只显示标题和进度
+                    self.logger.info(f"✓ {movie_info.get('title')} ({len(movie_data)}/{max_count})")
                 else:
                     self.logger.warning(f"✗ IMDB电影信息不完整: {link}")
                 
@@ -388,7 +387,7 @@ class IMDBMovieCrawler:
     def get_movies_by_genre(self, genre, max_movies=50):
         """根据类型获取电影"""
         try:
-            urls = self.config.get_genre_url(genre)
+            urls = self.config.get_genre_urls([genre], max_pages=3)
             # 使用新的两阶段方法
             movie_links = self._collect_sufficient_links([genre], max_movies, max_pages=3)
             
@@ -409,7 +408,15 @@ class IMDBMovieCrawler:
         Returns:
             dict: 分类字典，键为分类代码，值为分类名称
         """
-        return self.config.CRAWL_CATEGORIES.copy()
+        return {
+            'top250': 'IMDB Top 250',
+            'popular': '最受欢迎电影',
+            'upcoming': '即将上映',
+            'in_theaters': '正在上映',
+            'most_popular_movies': '最受欢迎电影（多页）',
+            'top_rated_movies': '评分最高电影（多页）',
+            'recent_movies': '最新电影（多页）'
+        }
     
     def test_connection(self):
         """

@@ -39,6 +39,17 @@ class MultiPlatformCrawler:
     
     def _setup_logging(self):
         """设置日志记录"""
+        # 抑制第三方库的详细日志
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
+        logging.getLogger('selenium').setLevel(logging.WARNING)
+        logging.getLogger('WDM').setLevel(logging.WARNING)
+        logging.getLogger('tensorflow').setLevel(logging.ERROR)
+        
+        # 抑制Chrome DevTools输出
+        import os
+        os.environ['WDM_LOG'] = '0'
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

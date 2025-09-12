@@ -115,7 +115,9 @@ class DoubanMovieCrawler:
                 # 限制到目标数量
                 final_movies = all_movie_data[:max_movies]
                 cleaned_data = self.data_processor.clean_movie_data(final_movies)
-                saved_files = self.data_processor.save_processed_data(
+                
+                # 只保存数据库格式
+                database_csv = self.data_processor.save_database_format(
                     cleaned_data, 
                     self.config.OUTPUT_DIR
                 )
@@ -125,7 +127,7 @@ class DoubanMovieCrawler:
                 return {
                     'success': True,
                     'data_count': len(cleaned_data),
-                    'file_paths': saved_files,
+                    'database_csv': database_csv,
                     'message': f'成功爬取 {len(cleaned_data)} 部豆瓣电影'
                 }
             else:
@@ -457,6 +459,22 @@ class DoubanMovieCrawler:
                 continue
         
         return collected_movies
+
+    def _is_movie_info_complete(self, movie_info):
+        """检查电影信息是否完整 - 放宽标准"""
+        if not movie_info:
+            return False
+        
+        # 至少需要有标题或ID之一
+        has_title = bool(movie_info.get('title', '').strip())
+        has_id = bool(movie_info.get('douban_id', '').strip())
+        
+        if not has_title and not has_id:
+            return False
+        
+        # 如果有基本信息，就认为是完整的
+        # 评分可能为None或0，这是正常的
+        return True
 
     def _crawl_movie_details(self, movie_links):
         """爬取电影详情"""
