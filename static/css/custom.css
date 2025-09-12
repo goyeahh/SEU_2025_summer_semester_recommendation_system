@@ -202,3 +202,51 @@ body:not(.homepage) p { /* 确保所有普通段落也是深色 */
 .star-rating i.active {
     color: #ffc107; /* 金色 */
 }
+
+/* --- 评论区美化 (最终简化版) --- */
+
+/* 1. 评论区在首页(homepage)的样式 */
+body.homepage .comment {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+}
+body.homepage .comment .comment-username {
+    color: #ffffff;
+}
+body.homepage .comment .comment-text {
+    color: #adb5bd;
+}
+body.homepage .comment .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 2. 评论区在内页(非homepage)的样式 */
+body:not(.homepage) .comment {
+    padding: 1.25rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+body:not(.homepage) .comment .comment-username {
+    color: #212529; /* 明确指定用户名为深色 */
+}
+body:not(.homepage) .comment .comment-text {
+    color: #495057; /* 明确指定评论内容为标准深灰色 */
+}
+
+/* --- 用户头像及下拉菜单美化 --- */
+.user-avatar {
+    display: inline-flex; /* 使用 flex 布局方便居中 */
+    align-items: center;  /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    width: 32px;  /* 设置宽度 */
+    height: 32px; /* 设置高度 */
+    border-radius: 50%; /* 关键：将div变成圆形 */
+    background-color: #0d6efd; /* 一个默认的蓝色背景 (Bootstrap的主色) */
+    color: #ffffff; /* 文字颜色为白色 */
+    font-weight: bold;
+    font-size: 1rem;
+    /* user-select: none; 可以防止用户不小心选中头像里的文字 */
+    user-select: none;
+}
