@@ -7,17 +7,53 @@
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <img src="https://via.placeholder.com/300x450.png?text=电影海报" class="img-fluid rounded" alt="电影海报">
+        <!-- 动态加载电影海报 -->
+        <img src="{{ movie.poster.url|default:'https://via.placeholder.com/150x220.png?text=暂无海报' }}"  
+             class="img-fluid rounded" alt="{{ movie.title }}">
     </div>
     <div class="col-md-8">
-        <h1>{{ movie_title }}</h1>
-        <p><strong>导演:</strong> 某某某</p>
-        <p><strong>主演:</strong> 张三 / 李四 / 王五</p>
+        <h1>{{ movie.name }}</h1>
+        <p><strong>导演:</strong> {{ movie.director }}</p>
+        <p><strong>主演:</strong> {{ movie.actors }}</p>
+        <p><strong>上映年份:</strong> {{ movie.year }}</p>
+        <p><strong>评分:</strong> {{ movie.rating }}</p>
+        <p><strong>类型:</strong> 
+            {% for genre in movie.genres.all %}
+                {{ genre.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
         <hr>
         <h3>剧情简介</h3>
         <p>
-            这里是一段关于电影《{{ movie_title }}》的精彩剧情简介...
+            {{ movie.description|default:"暂无简介" }}
         </p>
     </div>
 </div>
+
+{# --- 第五步：添加相似电影推荐板块 --- #}
+{% if recommended_movies %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-3">喜欢这部电影的人也喜欢：</h3>
+        <hr>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for movie in recommended_movies %}
+        <div class="col">
+            <div class="card h-100">
+                <a href="{% url 'movie-detail' movie.id %}">
+                    <img src="{{ movie.poster.url|default:'https://via.placeholder.com/220x330.png?text=暂无海报' }}" class="card-img-top" alt="{{ movie.name }}">
+                </a>
+                <div class="card-body p-2">
+                    <h6 class="card-title text-truncate">
+                        <a href="{% url 'movie-detail' movie.id %}" class="text-decoration-none text-dark">{{ movie.name }}</a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{# --- 推荐板块结束 --- #}
 {% endblock %}

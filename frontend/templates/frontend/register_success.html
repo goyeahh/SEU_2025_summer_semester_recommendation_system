@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册成功</title>
+    <script>
+        // 在 1 秒后跳转到指定的 URL
+        setTimeout(function() {
+            window.location.href = "{% url redirect_url %}";
+        }, 1000); // 1000 毫秒 = 1 秒
+    </script>
+</head>
+<body>
+    <h1>注册成功！</h1>
+    <p>1 秒后将自动跳转到登录页面...</p>
+</body>
+</html>

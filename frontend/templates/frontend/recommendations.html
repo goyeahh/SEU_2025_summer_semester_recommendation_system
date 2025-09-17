@@ -1,0 +1,50 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}个性化推荐 - 电影推荐系统{% endblock %}
+
+{% block content %}
+<div class="p-4 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">猜你喜欢</h1>
+        <p class="col-md-8 fs-5">根据您的观影历史，我们为您推荐了以下电影。</p>
+    </div>
+</div>
+
+<style>
+    .card-img-container {
+        height: 330px; /* 您可以在这里调整想要的统一高度 */
+        overflow: hidden;
+    }
+    .card-img-container .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 确保图片填满容器，同时保持其纵横比，多余部分会被裁剪 */
+    }
+</style>
+
+{% if personalized_recs %}
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+    {% for movie in personalized_recs %}
+    <div class="col">
+        <div class="card h-100">
+            <a href="{% url 'movie-detail' movie.id %}">
+                <div class="card-img-container">
+                    <img src="{{ movie.poster.url|default:'https://via.placeholder.com/220x330.png?text=暂无海报' }}" class="card-img-top" alt="{{ movie.name }}">
+                </div>
+            </a>
+            <div class="card-body p-2">
+                <h6 class="card-title text-truncate">
+                    <a href="{% url 'movie-detail' movie.id %}" class="text-decoration-none text-dark">{{ movie.name }}</a>
+                </h6>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    我们还没有足够的观影数据来为您生成个性化推荐。请先浏览一些您感兴趣的电影！
+</div>
+{% endif %}
+
+{% endblock %}

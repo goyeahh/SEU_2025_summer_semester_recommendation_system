@@ -160,3 +160,29 @@ footer .text-muted {
     border-radius: 0; /* 移除按钮自己的圆角，让它和输入框无缝拼接 */
     background-color: #dc3545; /* 设置背景为红色 */
 }
+
+
+.card-img-container {
+    height: 200px; /* 固定图片高度 */
+    overflow: hidden; /* 防止图片超出容器 */
+}
+
+.card-img-top {
+    width: 100%; /* 图片宽度占满容器 */
+    height: 100%; /* 图片高度占满容器 */
+    object-fit: cover; /* 图片适应容器 */
+}
+
+.card-body {
+    text-align: end; /* 固定文字位置 */
+}
+
+.card-title {
+    font-size: 1.2rem; /* 固定标题大小 */
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    font-size: 0.9rem; /* 固定文字大小 */
+    margin-bottom: 0.3rem;
+}
