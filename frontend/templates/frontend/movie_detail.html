@@ -1,0 +1,87 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}
+电影详情 - {{ movie_title }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- 动态加载电影海报 -->
+        <img src="{{ movie.poster.url|default:'https://via.placeholder.com/150x220.png?text=暂无海报' }}"  
+             class="img-fluid rounded" alt="{{ movie.title }}">
+    </div>
+    <div class="col-md-8">
+        <h1>{{ movie.name }}</h1>
+        <p><strong>导演:</strong> {{ movie.director }}</p>
+        <p><strong>主演:</strong> {{ movie.actors }}</p>
+        <p><strong>上映年份:</strong> {{ movie.year }}</p>
+        <p><strong>评分:</strong> {{ movie.rating }}</p>
+        <p><strong>类型:</strong> 
+            {% for genre in movie.genres.all %}
+                {{ genre.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <hr>
+        <h3>剧情简介</h3>
+        <p>
+            {{ movie.description|default:"暂无简介" }}
+        </p>
+    </div>
+</div>
+
+{# --- 新增：用户评分板块 --- #}
+{% if user.is_authenticated %}
+<div class="my-4 p-3 border rounded">
+    <h5>我的评分</h5>
+    {% if current_rating %}
+        <p>您已为这部电影评分为: <strong>{{ current_rating.rating }} / 10</strong></p>
+    {% else %}
+        <p>您还未对这部电影评分。</p>
+    {% endif %}
+    <form method="post" class="d-flex align-items-center">
+        {% csrf_token %}
+        {{ rating_form.rating.label_tag }}
+        <div class="mx-2">{{ rating_form.rating }}</div>
+        <button type="submit" class="btn btn-primary btn-sm">提交</button>
+    </form>
+</div>
+{% endif %}
+
+{# 在页面顶部或底部显示成功消息 #}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+{# --- 第五步：添加相似电影推荐板块 --- #}
+{% if recommended_movies %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-3">喜欢这部电影的人也喜欢：</h3>
+        <hr>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for movie in recommended_movies %}
+        <div class="col">
+            <div class="card h-100">
+                <a href="{% url 'movie-detail' movie.id %}">
+                    <img src="{{ movie.poster.url|default:'https://via.placeholder.com/220x330.png?text=暂无海报' }}" class="card-img-top" alt="{{ movie.name }}">
+                </a>
+                <div class="card-body p-2">
+                    <h6 class="card-title text-truncate">
+                        <a href="{% url 'movie-detail' movie.id %}" class="text-decoration-none text-dark">{{ movie.name }}</a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{# --- 推荐板块结束 --- #}
+{% endblock %}

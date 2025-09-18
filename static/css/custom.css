@@ -1,0 +1,188 @@
+body {
+    background-color: #f8f9fa; /* 这是一个备用的浅灰色背景 */
+    /* 我们从一个免费纹理网站引用一张图片作为背景，让页面更有质感 */
+    background-image: url('https://www.transparenttextures.com/patterns/subtle-zebra-3d.png');
+    color: #343a40; /* 设置一个更柔和的深灰色作为主要文字颜色 */
+    font-family: 'Noto Sans SC', sans-serif;
+
+    padding-top: 5rem; /* 为固定的导航栏留出大约80像素的空间 */
+}
+
+/* 让首页那个大标题块的背景变成纯白，并加上一点边框，看起来更干净 */
+.bg-light {
+    background-color: #ffffff !important; /* !important 用于确保覆盖掉Bootstrap的默认样式 */
+    border: 1px solid #dee2e6;
+}
+
+/* 为卡片增加平滑过渡的动画效果 */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none; /* 移除卡片默认的边框，让阴影效果更突出 */
+}
+
+/* 定义鼠标悬停在卡片上时的样式 */
+.card:hover {
+    transform: translateY(-5px); /* 鼠标悬停时，卡片向上移动5像素，产生“上浮”效果 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* 增加一个更明显的阴影，让“上浮”感觉更立体 */
+}
+
+/* ▼▼▼ 首页专属的背景样式 ▼▼▼ */
+body.homepage {
+    background-image: url('../images/hero-background.jpg');
+    background-size: cover; /* 让图片铺满整个屏幕 */
+    background-position: center center; /* 图片居中显示 */
+    background-repeat: no-repeat; /* 图片不重复 */
+    background-attachment: fixed; /* 固定背景，这样页面滚动时背景图不动 */
+}
+
+/* 这是一个可选的技巧：为背景添加一个半透明的黑色遮罩层 */
+/* 这样可以使背景变暗，让前景的白色文字（比如导航栏）更清晰 */
+body.homepage::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 0.5代表50%透明度的黑色 */
+    z-index: -1; /* 把遮罩层放在最底层，内容的后面 */
+}
+
+/* --- 首页内容美化 --- */
+
+/* 让首页的大标题区域背景透明，并改变文字颜色 */
+body.homepage .p-5.bg-body-tertiary {
+    background-color: transparent !important; /* !important 确保覆盖 Bootstrap 的样式 */
+    border: none; /* 移除我们之前加的边框 */
+    color: #ffffff; /* 将内部所有文字变成白色 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* 给文字加上一点阴影，让它更突出 */
+}
+
+/* 同样地，让内部的段落文字也更清晰 */
+body.homepage .p-5 p {
+    color: #f0f0f0; /* 使用一个柔和的灰白色，避免过于刺眼 */
+}
+
+/* 改变“热门电影”标题的颜色 */
+body.homepage h2 {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* 同样加上文字阴影 */
+}
+
+/* 为了让卡片本身和背景区分开，给卡片一个半透明的“毛玻璃”效果 */
+body.homepage .card {
+    background-color: rgba(255, 255, 255, 0.1); /* 10%透明度的白色 */
+    backdrop-filter: blur(10px); /* 毛玻璃效果，让背景模糊一点（在支持的浏览器上效果很酷） */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 半透明的白色边框 */
+}
+
+/* 改变卡片内部文字的颜色 */
+body.homepage .card .card-title {
+    color: #ffffff; /* 卡片标题为白色 */
+}
+
+body.homepage .card .card-text {
+    color: #d0d0d0; /* 卡片次要文字（年份）为灰白色 */
+}
+
+/* --- 导航栏美化 --- */
+
+/* ▼▼▼ 新增一个通用导航栏样式 ▼▼▼ */
+.navbar {
+    background-color: #212529; /* 为所有导航栏设置一个默认的深色背景 */
+}
+
+/* 1. 让导航栏背景在首页透明化 */
+body.homepage .navbar {
+    background-color: transparent !important;
+    /* 从透明到黑色的背景色过渡动画 */
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* 2. 导航栏标题字体加粗 */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* 3. 让导航链接在未被选中的状态下是白色 */
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.8); /* 使用80%透明度的白色，而不是纯白，更有质感 */
+    font-weight: 500;
+    margin: 0 0.5rem; /* 给链接之间增加一点间距 */
+    transition: color 0.2s; /* 颜色变化动画 */
+}
+
+/* 4. 关键：让“首页”链接在首页时显示为红色 */
+body.homepage .navbar-nav .nav-link[href="/"] {
+    color: #dc3545; /* Bootstrap 的危险色（红色）变量 */
+}
+
+/* 5. 鼠标悬停在链接上时，也变成红色 */
+.navbar .nav-link:hover {
+    color: #dc3545;
+}
+
+/* 6. 定义一个新样式，用于页面向下滚动时，给导航栏一个深色背景，避免和白色内容混在一起 */
+.navbar-scrolled {
+    background-color: #212529 !important; /* Bootstrap的深色 */
+}
+
+/* --- 页脚美化 --- */
+
+/* 改变页脚文字的颜色，让它在深色背景下也清晰可见 */
+footer .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important; /* 使用70%透明度的白色，而不是纯白，看起来更柔和 */
+}
+
+/* --- 搜索栏美化 --- */
+
+.search-bar-container {
+    display: flex; /* 让输入框和按钮在同一行水平排列 */
+    border-radius: 50px; /* 超级关键：让整个容器变成圆形边缘 */
+    overflow: hidden; /* 这个属性会把超出圆形边缘的直角部分隐藏掉 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 给整个搜索栏一个淡淡的边框 */
+    background-color: #ffffff; /* 确保容器背景是白色 */
+}
+
+/* 针对输入框的样式 */
+.search-bar-container .form-control {
+    border: none; /* 移除输入框自己的边框 */
+}
+
+/* 移除点击输入框时的蓝色辉光效果，让它更干净 */
+.search-bar-container .form-control:focus {
+    box-shadow: none; 
+}
+
+/* 针对按钮的样式 */
+.search-bar-container .search-button {
+    border: none; /* 移除按钮自己的边框 */
+    border-radius: 0; /* 移除按钮自己的圆角，让它和输入框无缝拼接 */
+    background-color: #dc3545; /* 设置背景为红色 */
+}
+
+
+.card-img-container {
+    height: 200px; /* 固定图片高度 */
+    overflow: hidden; /* 防止图片超出容器 */
+}
+
+.card-img-top {
+    width: 100%; /* 图片宽度占满容器 */
+    height: 100%; /* 图片高度占满容器 */
+    object-fit: cover; /* 图片适应容器 */
+}
+
+.card-body {
+    text-align: end; /* 固定文字位置 */
+}
+
+.card-title {
+    font-size: 1.2rem; /* 固定标题大小 */
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    font-size: 0.9rem; /* 固定文字大小 */
+    margin-bottom: 0.3rem;
+}

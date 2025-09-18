@@ -1,0 +1,56 @@
+{% extends 'frontend/base.html' %}
+
+{% block title %}个人中心 - 电影推荐系统{% endblock %}
+
+{% block content %}
+<div class="p-4 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">欢迎, {{ user.username }}!</h1>
+        <p class="col-md-8 fs-4">这里是您的个人中心。</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>我的信息</h2>
+        <hr>
+        <p><strong>用户名:</strong> {{ user.username }}</p>
+        <p><strong>电子邮箱:</strong> {{ user.email }}</p>
+
+    </div>
+</div>
+
+<!-- 1. 在这里添加 mt-5 类来增加顶部间距 -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>最近浏览</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for movie in recent_movies %}
+        <div class="col">
+            <div class="card h-100">
+                <!-- 2. 将图片包裹在 a 标签中 -->
+                <a href="{% url 'movie-detail' movie.id %}">
+                    <img src="{{ movie.poster.url|default:'https://via.placeholder.com/220x330.png?text=暂无海报' }}" class="card-img-top" alt="{{ movie.name }}">
+                </a>
+                <div class="card-body d-flex flex-column p-2">
+                    <div>
+                        <!-- 3. 将标题也包裹在 a 标签中，并添加样式使其看起来像普通文本 -->
+                        <h5 class="card-title">
+                            <a href="{% url 'movie-detail' movie.id %}" class="text-decoration-none text-dark">{{ movie.name }}</a>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>您还没有浏览任何电影。</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
