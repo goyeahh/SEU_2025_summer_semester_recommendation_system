@@ -30,6 +30,34 @@
     </div>
 </div>
 
+{# --- 新增：用户评分板块 --- #}
+{% if user.is_authenticated %}
+<div class="my-4 p-3 border rounded">
+    <h5>我的评分</h5>
+    {% if current_rating %}
+        <p>您已为这部电影评分为: <strong>{{ current_rating.rating }} / 10</strong></p>
+    {% else %}
+        <p>您还未对这部电影评分。</p>
+    {% endif %}
+    <form method="post" class="d-flex align-items-center">
+        {% csrf_token %}
+        {{ rating_form.rating.label_tag }}
+        <div class="mx-2">{{ rating_form.rating }}</div>
+        <button type="submit" class="btn btn-primary btn-sm">提交</button>
+    </form>
+</div>
+{% endif %}
+
+{# 在页面顶部或底部显示成功消息 #}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
 {# --- 第五步：添加相似电影推荐板块 --- #}
 {% if recommended_movies %}
 <div class="row mt-5">

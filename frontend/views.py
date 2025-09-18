@@ -7,10 +7,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.shortcuts import render, get_object_or_404
-from .models import Movie, Genre, UserMovieView
+from .models import Movie, Genre, UserMovieView, UserMovieRating
 from django.utils import timezone
 from .recommender_loader import bert_recommender # 导入全局推荐器实例
 from .recommender_loader import bert_recommender, personalize_recommender
+from .forms import RatingForm # 导入新表单
+from django.contrib import messages # 导入消息框架
 
 # Create your views here.
 def index(request):
@@ -23,16 +25,34 @@ def index(request):
     return render(request, 'frontend/index.html', context)
 
 def movie_detail(request, movie_id):
-    # 根据 movie_id 从数据库中获取电影对象
     movie = get_object_or_404(Movie, id=movie_id)
-    
+    rating_form = RatingForm()
+    current_rating = None
+
+    # 处理评分表单提交
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            # 使用 update_or_create 来新建或更新评分
+            UserMovieRating.objects.update_or_create(
+                user=request.user,
+                movie=movie,
+                defaults={'rating': form.cleaned_data['rating']}
+            )
+            messages.success(request, '感谢您的评分！')
+            return redirect('movie-detail', movie_id=movie.id)
+
     if request.user.is_authenticated:
         UserMovieView.objects.update_or_create(
             user=request.user,
             movie=movie,
             defaults={'viewed_at': timezone.now()}
         )
-    
+        try:
+            current_rating = UserMovieRating.objects.get(user=request.user, movie=movie)
+        except UserMovieRating.DoesNotExist:
+            current_rating = None
+
     # --- 推荐逻辑 ---
     recommended_movies = []
     if bert_recommender:
@@ -49,7 +69,9 @@ def movie_detail(request, movie_id):
     # 将电影对象传递到模板
     context = {
         'movie': movie,
-        'recommended_movies': recommended_movies, # 把电影对象列表传给模板
+        'recommended_movies': recommended_movies,
+        'rating_form': rating_form, # 传递表单到模板
+        'current_rating': current_rating, # 传递用户当前的评分
     }
     return render(request, 'frontend/movie_detail.html', context)
 
@@ -183,19 +205,35 @@ def personal_center_view(request):
 def recommendations_view(request):
     personalized_recs = []
     if personalize_recommender:
-        # 1. 获取用户的浏览历史
-        viewed_movie_ids = UserMovieView.objects.filter(user=request.user).order_by('-viewed_at').values_list('movie_id', flat=True)
-        unique_movie_ids = list(dict.fromkeys(viewed_movie_ids))
-        
-        # 2. 准备用户历史数据 (movie_id: rating)
-        user_history = {movie_id: 8.0 for movie_id in unique_movie_ids}
+        # --- 全新的、更智能的混合推荐逻辑 ---
+        user_history = {}
 
+        # 1. 首先，获取最强的信号：用户自己的真实评分。
+        # 这会生成一个 {movie_id: user_rating} 的字典。
+        rated_movies_dict = {rating.movie_id: rating.rating for rating in UserMovieRating.objects.filter(user=request.user)}
+        user_history.update(rated_movies_dict)
+
+        # 2. 然后，获取用户所有浏览过的电影对象。
+        # 我们使用 .distinct() 来确保每部电影只处理一次。
+        browsed_movies = Movie.objects.filter(usermovieview__user=request.user).distinct()
+
+        # 3. 遍历所有浏览过的电影，为那些“未被评分”的电影填补评分。
+        for movie in browsed_movies:
+            # 检查这部电影是否已经有了真实评分 (在第一步中添加的)。
+            if movie.id not in user_history:
+                # 如果没有，说明这部电影只被浏览过。
+                # 我们使用这部电影本身的平均分作为代理评分。
+                # movie.rating 是 Decimal 类型，我们将其四舍五入为整数，以匹配用户评分的类型。
+                proxy_rating = int(round(float(movie.rating)*2))
+                
+                # 确保代理评分至少为1，与用户评分的范围(1-10)保持一致。
+                user_history[movie.id] = max(1, proxy_rating)
+
+        # --- 后续逻辑完全不变 ---
         if user_history:
-            # 3. 调用推荐器获取推荐结果
-            recs_df = personalize_recommender.recommend(user_history, num_recommendations=20) # 可以多推荐一些
+            recs_df = personalize_recommender.recommend(user_history, num_recommendations=20)
             
             if not recs_df.empty:
-                # 4. 从数据库中查询出电影对象用于显示
                 rec_ids = recs_df['id'].tolist()
                 recs_qs = Movie.objects.filter(id__in=rec_ids)
                 recs_dict = {movie.id: movie for movie in recs_qs}

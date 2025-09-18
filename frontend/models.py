@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator # 导入验证器
 
 class Movie(models.Model):
     id = models.AutoField(primary_key=True)  # 电影 ID
@@ -38,3 +39,19 @@ class UserMovieView(models.Model):
 
     def __str__(self):
         return f'{self.user.username} viewed {self.movie.name} at {self.viewed_at}'
+    
+class UserMovieRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
+    rated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # 确保一个用户对一部电影只能有一个评分
+        unique_together = ('user', 'movie')
+        ordering = ['-rated_at']
+
+    def __str__(self):
+        return f'{self.user.username} rated {self.movie.name}: {self.rating}/10'
